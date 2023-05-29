@@ -1,0 +1,50 @@
+{
+  "name": "@odata2ts/http-client-axios",
+  "version": "0.6.0",
+  "publishConfig": {
+    "access": "public"
+  },
+  "description": "Axios based odata HTTP client consumable by odata2ts",
+  "license": "MIT",
+  "repository": "git@github.com:odata2ts/odata2ts.git",
+  "author": "texttechne",
+  "main": "./lib/index.js",
+  "scripts": {
+    "build": "yarn clean && yarn compile",
+    "check-circular-deps": "madge ./src --extensions ts --circular",
+    "clean": "rimraf lib coverage",
+    "compile": "tsc",
+    "prepublish": "yarn build",
+    "test": "jest --passWithNoTests"
+  },
+  "files": [
+    "*.md",
+    "lib",
+    "LICENSE"
+  ],
+  "keywords": [
+    "http client",
+    "axios",
+    "odata",
+    "odata2ts",
+    "ts",
+    "typescript"
+  ],
+  "peerDependencies": {
+    "axios": "^0.27.0 || ^1.0.0"
+  },
+  "dependencies": {
+    "@odata2ts/odata-client-api": "^0.6.3"
+  },
+  "devDependencies": {
+    "@types/jest": "^27.4.1",
+    "@types/node": "^17.0.23",
+    "axios": "^1.4.0",
+    "jest": "29.5.0",
+    "rimraf": "^5.0.1",
+    "ts-jest": "^29.1.0",
+    "ts-node": "10.9.1",
+    "typescript": "5.0.4"
+  },
+  "types": "./lib/index.d.ts"
+}
