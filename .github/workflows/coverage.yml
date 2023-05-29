@@ -59,9 +59,7 @@ jobs:
       - name: Test with coverage
         run: yarn coverage
       - name: Coveralls
-        uses: coverallsapp/github-action@v1.1.2
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
+        uses: coverallsapp/github-action@v2
   int_tests:
     name: Integration Tests
     runs-on: ubuntu-latest
