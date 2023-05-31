@@ -1,11 +1,11 @@
 import { ODataCollectionResponseV4, ODataModelResponseV4 } from "@odata2ts/odata-core";
 
-import { AxiosODataClient, AxiosODataClientError } from "../src";
+import { AxiosClient, AxiosClientError } from "../src";
 
 describe("HTTP Communication Tests", function () {
   const BASE_URL = "https://services.odata.org/TripPinRESTierService/(S(xxxsujx4iqjss1vkeighyks5))";
 
-  const REAL_CLIENT = new AxiosODataClient();
+  const REAL_CLIENT = new AxiosClient();
 
   test("Simple Get", async () => {
     const url = BASE_URL + "/People('russellwhyte')";
@@ -33,11 +33,11 @@ describe("HTTP Communication Tests", function () {
     try {
       await REAL_CLIENT.get<ODataCollectionResponseV4<any>>(url);
     } catch (e) {
-      expect(e).toBeInstanceOf(AxiosODataClientError);
+      expect(e).toBeInstanceOf(AxiosClientError);
 
-      const error = e as AxiosODataClientError;
+      const error = e as AxiosClientError;
       expect(error).toMatchObject({
-        name: "AxiosODataClientError",
+        name: "AxiosClientError",
         status: 404,
         message: `OData server responded with error: ${expectedErrorMsg}`,
       });

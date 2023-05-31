@@ -1,7 +1,7 @@
 import { HttpResponseModel, ODataClient } from "@odata2ts/odata-client-api";
 import axios, { AxiosError, AxiosInstance, AxiosRequestConfig as OriginalRequestConfig } from "axios";
 
-import { AxiosODataClientError } from "./AxiosODataClientError";
+import { AxiosClientError } from "./AxiosClientError";
 import { AxiosRequestConfig, InternalRequestConfig, getDefaultConfig, mergeConfig } from "./AxiosRequestConfig";
 
 export type ErrorMessageRetriever<ResponseType = any> = (error: any) => string | null | undefined;
@@ -29,7 +29,7 @@ export const getV2OrV4ErrorMessage: ErrorMessageRetriever = (responseData: any):
   return typeof eMsg?.value === "string" ? eMsg.value : eMsg;
 };
 
-export class AxiosODataClient implements ODataClient<AxiosRequestConfig> {
+export class AxiosClient implements ODataClient<AxiosRequestConfig> {
   private readonly client: AxiosInstance;
   private csrfToken: string | undefined;
   private getErrorMessage: ErrorMessageRetriever = getV2OrV4ErrorMessage;
@@ -99,11 +99,11 @@ export class AxiosODataClient implements ODataClient<AxiosRequestConfig> {
         // regular failure handling
         if (axiosError.response) {
           const msg = buildErrorMessage(FAILURE_RESPONSE_MESSAGE, this.getErrorMessage(axiosError.response.data));
-          throw new AxiosODataClientError(msg, axiosError.response.status, axiosError);
+          throw new AxiosClientError(msg, axiosError.response.status, axiosError);
         }
         // fatal failure without response
         else {
-          throw new AxiosODataClientError(
+          throw new AxiosClientError(
             buildErrorMessage(axiosError.request ? FAILURE_NO_RESPONSE : FAILURE_NO_REQUEST, axiosError),
             undefined,
             axiosError
@@ -111,7 +111,7 @@ export class AxiosODataClient implements ODataClient<AxiosRequestConfig> {
         }
       }
       // not an Axios error
-      throw new AxiosODataClientError(buildErrorMessage(FAILURE_AXIOS, error), undefined, error);
+      throw new AxiosClientError(buildErrorMessage(FAILURE_AXIOS, error), undefined, error);
     }
   }
 

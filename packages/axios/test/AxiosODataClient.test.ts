@@ -1,8 +1,8 @@
 import { AxiosResponse, CreateAxiosDefaults, AxiosRequestConfig as OriginalRequestConfig } from "axios";
 
-import { AxiosODataClient, AxiosRequestConfig } from "../src";
+import { AxiosClient, AxiosRequestConfig } from "../src";
 
-let axiosClient: AxiosODataClient;
+let axiosClient: AxiosClient;
 let requestConfig: OriginalRequestConfig | undefined;
 let simulateNoContent: boolean = false;
 
@@ -39,7 +39,7 @@ describe("Axios HTTP Client Tests", function () {
   beforeEach(() => {
     requestConfig = undefined;
     simulateNoContent = false;
-    axiosClient = new AxiosODataClient();
+    axiosClient = new AxiosClient();
   });
 
   test("get request", async () => {

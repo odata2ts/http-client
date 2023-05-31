@@ -1,12 +1,9 @@
 [![npm (scoped)](https://img.shields.io/npm/v/@odata2ts/http-client-axios?style=for-the-badge)](https://www.npmjs.com/package/@odata2ts/http-client-axios)
 
-# Axios OData HTTP Client
+# Axios HTTP Client
 
-The **Axios OData Client** serves as HTTP client for [odata2ts](https://github.com/odata2ts/odata2ts)
-and uses - as its name suggests - [axios](https://github.com/axios/axios) for realizing the HTTP communication.
-
-It's V2 as well as V4 compatible and represents the reference implementation
-of the [odata-client-api](https://www.npmjs.com/package/@odata2ts/odata-client-api).
+The **Axios HTTP Client** uses - as its name suggests - [axios](https://github.com/axios/axios) for realizing
+the HTTP communication for [odata2ts](https://github.com/odata2ts/odata2ts).
 
 It supports:
 
@@ -21,8 +18,7 @@ Install package `@odata2ts/http-client-axios` as runtime dependency:
 npm install --save @odata2ts/http-client-axios
 ```
 
-Axios is a peer-dependency of this package, so it's not contained in or installed through this package
-and must be installed separately.
+s
 
 ## Documentation
 
