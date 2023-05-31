@@ -1,4 +1,4 @@
-export class FetchODataClientError extends Error {
+export class FetchClientError extends Error {
   constructor(
     message: string,
     public readonly status?: number,

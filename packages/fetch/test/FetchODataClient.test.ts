@@ -1,7 +1,7 @@
-import { FetchODataClient, FetchRequestConfig } from "../src";
+import { FetchClient, FetchRequestConfig } from "../src";
 
-describe("FetchODataClient Tests", function () {
-  let fetchClient: FetchODataClient;
+describe("FetchClient Tests", function () {
+  let fetchClient: FetchClient;
   let requestUrl: string | undefined;
   let requestConfig: RequestInit | undefined;
   let simulateNoContent: boolean = false;
@@ -58,7 +58,7 @@ describe("FetchODataClient Tests", function () {
   beforeEach(() => {
     requestUrl = undefined;
     requestConfig = undefined;
-    fetchClient = new FetchODataClient();
+    fetchClient = new FetchClient();
     simulateNoContent = false;
   });
 
