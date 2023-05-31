@@ -1,11 +1,11 @@
 import crypto from "crypto";
 
-import { FetchODataClient } from "../src";
+import { FetchClient } from "../src";
 
 type MockResponse = Required<Pick<Response, "status" | "statusText" | "ok" | "json" | "headers">>;
 
 describe("Automatic CSRF Handling Test", function () {
-  let fetchClient: FetchODataClient;
+  let fetchClient: FetchClient;
   let requestUrl: string | undefined;
   let requestConfig: RequestInit | undefined;
   let csrfToken: string | undefined;
@@ -62,14 +62,14 @@ describe("Automatic CSRF Handling Test", function () {
     requestConfig = undefined;
     csrfToken = undefined;
     simulateExpiredCsrfToken = false;
-    fetchClient = new FetchODataClient(undefined, {
+    fetchClient = new FetchClient(undefined, {
       useCsrfProtection: true,
       csrfTokenFetchUrl: "/root/",
     });
   });
 
   test("fail without csrfTokenFetchUrl", async () => {
-    expect(() => new FetchODataClient(undefined, { useCsrfProtection: true })).toThrow("URL");
+    expect(() => new FetchClient(undefined, { useCsrfProtection: true })).toThrow("URL");
   });
 
   test("added generated token", async () => {

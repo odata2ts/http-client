@@ -1,6 +1,6 @@
 import { HttpResponseModel, ODataClient } from "@odata2ts/odata-client-api";
 
-import { FetchODataClientError } from "./FetchODataClientError";
+import { FetchClientError } from "./FetchClientError";
 import { FetchRequestConfig, getDefaultConfig, mergeFetchConfig } from "./FetchRequestConfig";
 
 export type ErrorMessageRetriever = (errorResponse: any) => string | undefined;
@@ -25,7 +25,7 @@ function buildErrorMessage(prefix: string, error: any) {
   return prefix + (msg || DEFAULT_ERROR_MESSAGE);
 }
 
-export class FetchODataClient implements ODataClient<FetchRequestConfig> {
+export class FetchClient implements ODataClient<FetchRequestConfig> {
   private readonly config: RequestInit;
   private csrfToken: string | undefined;
   private retrieveErrorMessage: ErrorMessageRetriever = getV2OrV4ErrorMessage;
@@ -86,11 +86,7 @@ export class FetchODataClient implements ODataClient<FetchRequestConfig> {
     try {
       response = await fetch(url, mergedConfig);
     } catch (fetchError) {
-      throw new FetchODataClientError(
-        buildErrorMessage(FETCH_FAILURE_MESSAGE, fetchError),
-        undefined,
-        fetchError as Error
-      );
+      throw new FetchClientError(buildErrorMessage(FETCH_FAILURE_MESSAGE, fetchError), undefined, fetchError as Error);
     }
 
     // error response
@@ -109,7 +105,7 @@ export class FetchODataClient implements ODataClient<FetchRequestConfig> {
       let data = await this.getResponseBody(response, false);
       const errMsg = this.retrieveErrorMessage(data);
 
-      throw new FetchODataClientError(
+      throw new FetchClientError(
         buildErrorMessage(RESPONSE_FAILURE_MESSAGE, errMsg),
         response.status,
         new Error(errMsg || DEFAULT_ERROR_MESSAGE),
@@ -142,7 +138,7 @@ export class FetchODataClient implements ODataClient<FetchRequestConfig> {
       return await response.json();
     } catch (error) {
       if (isFailedJsonFatal) {
-        throw new FetchODataClientError(
+        throw new FetchClientError(
           buildErrorMessage(JSON_RETRIEVAL_FAILURE_MESSAGE, error),
           response.status,
           error as Error

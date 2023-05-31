@@ -1,7 +1,7 @@
-import { DEFAULT_ERROR_MESSAGE, FetchODataClient, FetchODataClientError, FetchRequestConfig } from "../src";
+import { DEFAULT_ERROR_MESSAGE, FetchClient, FetchClientError, FetchRequestConfig } from "../src";
 
 describe("Failure Handling Tests", function () {
-  let fetchClient: FetchODataClient;
+  let fetchClient: FetchClient;
   let requestConfig: RequestInit | undefined;
   let simulateFailure: {
     isFetchFailure?: boolean;
@@ -32,7 +32,7 @@ describe("Failure Handling Tests", function () {
 
   beforeEach(() => {
     requestConfig = undefined;
-    fetchClient = new FetchODataClient();
+    fetchClient = new FetchClient();
     simulateFailure = {};
   });
 
@@ -42,16 +42,16 @@ describe("Failure Handling Tests", function () {
     try {
       await fetchClient.get("");
     } catch (e) {
-      expect(e).toBeInstanceOf(FetchODataClientError);
+      expect(e).toBeInstanceOf(FetchClientError);
 
-      const error = e as FetchODataClientError;
+      const error = e as FetchClientError;
       expect(error.status).toBe(400);
-      expect(error.name).toBe("FetchODataClientError");
+      expect(error.name).toBe("FetchClientError");
       expect(error.message).toContain(simulateFailure.message);
       expect(error.cause).toBeInstanceOf(Error);
       expect(error.cause?.message).toBe(simulateFailure.message);
       expect(error.stack).toContain(simulateFailure.message);
-      expect(error.stack).toContain("FetchODataClientError");
+      expect(error.stack).toContain("FetchClientError");
     }
   });
 
@@ -70,16 +70,16 @@ describe("Failure Handling Tests", function () {
     try {
       await fetchClient.get("");
     } catch (e) {
-      expect(e).toBeInstanceOf(FetchODataClientError);
+      expect(e).toBeInstanceOf(FetchClientError);
 
-      const error = e as FetchODataClientError;
+      const error = e as FetchClientError;
       expect(error.status).toBeUndefined();
-      expect(error.name).toBe("FetchODataClientError");
+      expect(error.name).toBe("FetchClientError");
       expect(error.message).toContain(simulateFailure.message);
       expect(error.cause).toBeInstanceOf(Error);
       expect(error.cause?.message).toBe(simulateFailure.message);
       expect(error.stack).toContain(simulateFailure.message);
-      expect(error.stack).toContain("FetchODataClientError");
+      expect(error.stack).toContain("FetchClientError");
     }
   });
 
@@ -94,16 +94,16 @@ describe("Failure Handling Tests", function () {
     try {
       await fetchClient.get("");
     } catch (e) {
-      expect(e).toBeInstanceOf(FetchODataClientError);
+      expect(e).toBeInstanceOf(FetchClientError);
 
-      const error = e as FetchODataClientError;
+      const error = e as FetchClientError;
       expect(error.status).toBe(200);
-      expect(error.name).toBe("FetchODataClientError");
+      expect(error.name).toBe("FetchClientError");
       expect(error.message).toContain(simulateFailure.message);
       expect(error.cause).toBeInstanceOf(Error);
       expect(error.cause?.message).toBe(simulateFailure.message);
       expect(error.stack).toContain(simulateFailure.message);
-      expect(error.stack).toContain("FetchODataClientError");
+      expect(error.stack).toContain("FetchClientError");
     }
   });
 
@@ -114,11 +114,11 @@ describe("Failure Handling Tests", function () {
     try {
       await fetchClient.get("");
     } catch (e) {
-      expect(e).toBeInstanceOf(FetchODataClientError);
+      expect(e).toBeInstanceOf(FetchClientError);
 
-      const error = e as FetchODataClientError;
+      const error = e as FetchClientError;
       expect(error.status).toBe(400);
-      expect(error.name).toBe("FetchODataClientError");
+      expect(error.name).toBe("FetchClientError");
       expect(error.message).toContain(DEFAULT_ERROR_MESSAGE);
       expect(error.cause).toBeInstanceOf(Error);
       expect(error.cause?.message).toBe(DEFAULT_ERROR_MESSAGE);

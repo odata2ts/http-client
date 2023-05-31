@@ -1,11 +1,11 @@
 import { ODataCollectionResponseV4, ODataModelResponseV4 } from "@odata2ts/odata-core";
 
-import { FetchODataClient, FetchODataClientError } from "../src";
+import { FetchClient, FetchClientError } from "../src";
 
 describe("HTTP Communication Tests", function () {
   const BASE_URL = "https://services.odata.org/TripPinRESTierService/(S(xxxsujx4iqjss1vkeighyks5))";
 
-  const REAL_CLIENT = new FetchODataClient();
+  const REAL_CLIENT = new FetchClient();
 
   test("Simple Get", async () => {
     const url = BASE_URL + "/People('russellwhyte')";
@@ -33,11 +33,11 @@ describe("HTTP Communication Tests", function () {
     try {
       await REAL_CLIENT.get<ODataCollectionResponseV4<any>>(url);
     } catch (e) {
-      expect(e).toBeInstanceOf(FetchODataClientError);
+      expect(e).toBeInstanceOf(FetchClientError);
 
-      const error = e as FetchODataClientError;
+      const error = e as FetchClientError;
       expect(error).toMatchObject({
-        name: "FetchODataClientError",
+        name: "FetchClientError",
         status: 404,
         message: `OData server responded with error: ${expectedErrorMsg}`,
       });
