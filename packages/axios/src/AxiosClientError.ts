@@ -1,6 +1,6 @@
 import type { AxiosError } from "axios";
 
-export class AxiosODataClientError extends Error {
+export class AxiosClientError extends Error {
   constructor(
     msg: string,
     public readonly status: number | undefined,

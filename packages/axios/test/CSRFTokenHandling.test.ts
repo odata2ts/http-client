@@ -3,10 +3,10 @@ import crypto from "crypto";
 import axios, { AxiosRequestConfig } from "axios";
 import { AxiosResponse, CreateAxiosDefaults, AxiosRequestConfig as OriginalRequestConfig } from "axios/index";
 
-import { AxiosODataClient } from "../src";
+import { AxiosClient } from "../src";
 
 describe("Automatic CSRF Handling Test", function () {
-  let client: AxiosODataClient;
+  let client: AxiosClient;
   let requestUrl: string | undefined;
   let requestConfig: AxiosRequestConfig | undefined;
   let csrfToken: string | undefined;
@@ -70,14 +70,14 @@ describe("Automatic CSRF Handling Test", function () {
     requestConfig = undefined;
     csrfToken = undefined;
     simulateExpiredCsrfToken = false;
-    client = new AxiosODataClient(undefined, {
+    client = new AxiosClient(undefined, {
       useCsrfProtection: true,
       csrfTokenFetchUrl: "/root/",
     });
   });
 
   test("fail without csrfTokenFetchUrl", async () => {
-    expect(() => new AxiosODataClient(undefined, { useCsrfProtection: true })).toThrow("URL");
+    expect(() => new AxiosClient(undefined, { useCsrfProtection: true })).toThrow("URL");
   });
 
   test("added generated token", async () => {

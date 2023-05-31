@@ -6,11 +6,11 @@ import axios, {
   AxiosRequestConfig as OriginalRequestConfig,
 } from "axios";
 
-import { AxiosODataClientError, AxiosRequestConfig, DEFAULT_ERROR_MESSAGE } from "../src";
-import { AxiosODataClient } from "../src";
+import { AxiosClientError, AxiosRequestConfig, DEFAULT_ERROR_MESSAGE } from "../src";
+import { AxiosClient } from "../src";
 
 describe("Failure Handling Tests", function () {
-  let axiosClient: AxiosODataClient;
+  let axiosClient: AxiosClient;
   let requestConfig: OriginalRequestConfig | undefined;
   let simulateFailure: {
     isPlainError?: boolean;
@@ -64,7 +64,7 @@ describe("Failure Handling Tests", function () {
   }));
 
   beforeEach(() => {
-    axiosClient = new AxiosODataClient();
+    axiosClient = new AxiosClient();
     requestConfig = undefined;
     simulateFailure = {};
   });
@@ -75,16 +75,16 @@ describe("Failure Handling Tests", function () {
     try {
       await axiosClient.get("");
     } catch (e) {
-      expect(e).toBeInstanceOf(AxiosODataClientError);
+      expect(e).toBeInstanceOf(AxiosClientError);
 
-      const error = e as AxiosODataClientError;
+      const error = e as AxiosClientError;
       expect(error.status).toBe(400);
-      expect(error.name).toBe("AxiosODataClientError");
+      expect(error.name).toBe("AxiosClientError");
       expect(error.message).toContain(simulateFailure.message);
       expect(error.cause).toBeInstanceOf(Error);
       expect(error.cause?.message).toBe(simulateFailure.message);
       expect(error.stack).toContain(simulateFailure.message);
-      expect(error.stack).toContain("AxiosODataClientError");
+      expect(error.stack).toContain("AxiosClientError");
     }
   });
 
@@ -105,16 +105,16 @@ describe("Failure Handling Tests", function () {
     try {
       await axiosClient.get("");
     } catch (e) {
-      expect(e).toBeInstanceOf(AxiosODataClientError);
+      expect(e).toBeInstanceOf(AxiosClientError);
 
-      const error = e as AxiosODataClientError;
+      const error = e as AxiosClientError;
       expect(error.status).toBeUndefined();
-      expect(error.name).toBe("AxiosODataClientError");
+      expect(error.name).toBe("AxiosClientError");
       expect(error.message).toContain(simulateFailure.message);
       expect(error.cause).toBeInstanceOf(Error);
       expect(error.cause?.message).toBe(simulateFailure.message);
       expect(error.stack).toContain(simulateFailure.message);
-      expect(error.stack).toContain("AxiosODataClientError");
+      expect(error.stack).toContain("AxiosClientError");
     }
   });
 
@@ -129,16 +129,16 @@ describe("Failure Handling Tests", function () {
     try {
       await axiosClient.get("");
     } catch (e) {
-      expect(e).toBeInstanceOf(AxiosODataClientError);
+      expect(e).toBeInstanceOf(AxiosClientError);
 
-      const error = e as AxiosODataClientError;
+      const error = e as AxiosClientError;
       expect(error.status).toBeUndefined();
-      expect(error.name).toBe("AxiosODataClientError");
+      expect(error.name).toBe("AxiosClientError");
       expect(error.message).toContain(simulateFailure.message);
       expect(error.cause).toBeInstanceOf(Error);
       expect(error.cause?.message).toBe(simulateFailure.message);
       expect(error.stack).toContain(simulateFailure.message);
-      expect(error.stack).toContain("AxiosODataClientError");
+      expect(error.stack).toContain("AxiosClientError");
     }
   });
 
