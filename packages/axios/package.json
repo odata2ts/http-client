@@ -6,7 +6,7 @@
   },
   "description": "Axios based odata HTTP client consumable by odata2ts",
   "license": "MIT",
-  "repository": "git@github.com:odata2ts/odata2ts.git",
+  "repository": "git@github.com:odata2ts/http-client.git",
   "author": "texttechne",
   "main": "./lib/index.js",
   "scripts": {
