@@ -22,6 +22,7 @@
     "@lerna-lite/cli": "^1.17.0",
     "@lerna-lite/run": "^1.17.0",
     "@prettier/plugin-xml": "^2.2.0",
+    "@types/node": "^20.2.5",
     "env-cmd": "^10.1.0",
     "husky": "^8.0.3",
     "import-sort-style-module": "^6.0.0",
@@ -53,7 +54,6 @@
     ]
   },
   "workspaces": [
-    "packages/*",
-    "examples/*"
+    "packages/*"
   ]
 }
