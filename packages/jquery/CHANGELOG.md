@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# 0.4.0 (2023-06-03)
+
+### Features
+
+* **jquery:** copy over jquery-client and rename ([#3](https://github.com/odata2ts/http-client/issues/3)) ([55deb6c](https://github.com/odata2ts/http-client/commit/55deb6c75159bfc46b0ae87cb3c0ec3afda9508e))
+* switch to http-client-api ([52d1b86](https://github.com/odata2ts/http-client/commit/52d1b868ee82dbaf45486da6b22fdcf4c773dfb8))
+* switch to http-client-api ([5a6da23](https://github.com/odata2ts/http-client/commit/5a6da23053b3ea5adb866bb7e30b469f1b8ed260))
+
 ## [0.3.1](https://github.com/odata2ts/odata2ts/compare/@odata2ts/jquery-odata-client@0.3.0...@odata2ts/jquery-odata-client@0.3.1) (2023-05-02)
 
 ### Bug Fixes

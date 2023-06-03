@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.2.0](https://github.com/odata2ts/http-client/compare/@odata2ts/http-client-fetch@0.1.0...@odata2ts/http-client-fetch@0.2.0) (2023-06-03)
+
+### Features
+
+* switch to http-client-api ([52d1b86](https://github.com/odata2ts/http-client/commit/52d1b868ee82dbaf45486da6b22fdcf4c773dfb8))
+* switch to http-client-api ([5a6da23](https://github.com/odata2ts/http-client/commit/5a6da23053b3ea5adb866bb7e30b469f1b8ed260))
+
 # 0.1.0 (2023-05-29)
 
 ### Features

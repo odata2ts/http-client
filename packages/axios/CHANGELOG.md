@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# 0.7.0 (2023-06-03)
+
+### Features
+
+* **axios:** take over axios-odata-client as http-client-axios ([#1](https://github.com/odata2ts/http-client/issues/1)) ([d679f60](https://github.com/odata2ts/http-client/commit/d679f60087adfdefa00f2a4860bed77ca9b15654))
+* switch to http-client-api ([52d1b86](https://github.com/odata2ts/http-client/commit/52d1b868ee82dbaf45486da6b22fdcf4c773dfb8))
+* switch to http-client-api ([5a6da23](https://github.com/odata2ts/http-client/commit/5a6da23053b3ea5adb866bb7e30b469f1b8ed260))
+
+### BREAKING CHANGES
+
+* **axios:** new name and axios becomes peer dependency
+
 # [0.6.0](https://github.com/odata2ts/odata2ts/compare/@odata2ts/axios-odata-client@0.5.3...@odata2ts/axios-odata-client@0.6.0) (2023-04-20)
 
 ### Features
@@ -26,6 +38,7 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 ### Features
 
 * **axios-odata-client:** default error message retriever ([#82](https://github.com/odata2ts/odata2ts/issues/82)) ([11b7b61](https://github.com/odata2ts/odata2ts/commit/11b7b6171291ba78c2e2b4c7ab39a6c425d02cf1))
+
 * **axios-odata-client:** MERGE implementation for V2 ([#83](https://github.com/odata2ts/odata2ts/issues/83)) ([097005f](https://github.com/odata2ts/odata2ts/commit/097005fda1f4008c1fe3ea71f177697867e761fe))
 
 ### BREAKING CHANGES
