@@ -1341,11 +1341,18 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@odata2ts/http-client-api@npm:^0.1.0":
+  version: 0.1.0
+  resolution: "@odata2ts/http-client-api@npm:0.1.0"
+  checksum: 32e55d09acdab69d25db2feca5563c6ab713c014e6d745cb1487609cbe7fd71b840d18b5ffb72ca5c573663d0412fa809a37f8f7274a86fc936e3d370fb78a3b
+  languageName: node
+  linkType: hard
+
 "@odata2ts/http-client-axios@workspace:packages/axios":
   version: 0.0.0-use.local
   resolution: "@odata2ts/http-client-axios@workspace:packages/axios"
   dependencies:
-    "@odata2ts/odata-client-api": ^0.6.3
+    "@odata2ts/http-client-api": ^0.1.0
     "@types/jest": ^27.4.1
     "@types/node": ^17.0.23
     axios: ^1.4.0
@@ -1363,7 +1370,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@odata2ts/http-client-fetch@workspace:packages/fetch"
   dependencies:
-    "@odata2ts/odata-client-api": ^0.6.3
+    "@odata2ts/http-client-api": ^0.1.0
     "@odata2ts/odata-core": ^0.3.7
     "@types/jest": ^27.4.1
     "@types/node": ^17.0.23
@@ -1379,7 +1386,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@odata2ts/http-client-jquery@workspace:packages/jquery"
   dependencies:
-    "@odata2ts/odata-client-api": ^0.6.3
+    "@odata2ts/http-client-api": ^0.1.0
     "@types/jest": ^27.4.1
     "@types/jquery": ^3.5.16
     "@types/node": ^20.2.5
@@ -1418,13 +1425,6 @@ __metadata:
     typescript: ^5.0.4
   languageName: unknown
   linkType: soft
-
-"@odata2ts/odata-client-api@npm:^0.6.3":
-  version: 0.6.3
-  resolution: "@odata2ts/odata-client-api@npm:0.6.3"
-  checksum: 73bedc57a625ad8c588ceeb3eeac4d15498b631099fc2f958746e0ff578f2118320f12c5b4dd08189f22c9214cb41fa1a212a077198a496f7284522d03cca1fd
-  languageName: node
-  linkType: hard
 
 "@odata2ts/odata-core@npm:^0.3.7":
   version: 0.3.7

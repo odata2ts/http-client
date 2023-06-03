@@ -29,7 +29,8 @@ Main documentation for the odata2ts eco system:
 
 ## Tests
 
-Admittedly, there are no unit tests as of now.
+See folder [test](https://github.com/odata2ts/http-client/tree/main/packages/jquery/test)
+for unit tests.
 
 ## Support, Feedback, Contributing
 

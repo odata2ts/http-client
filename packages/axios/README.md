@@ -29,11 +29,11 @@ Main documentation for the odata2ts eco system:
 
 ## Tests
 
-Admittedly, there are no unit tests as of now.
+See folder [test](https://github.com/odata2ts/http-client/tree/main/packages/axios/test)
+for unit tests.
 
-However, the Axios OData Client is used by most integration tests.
-See [examples](#examples) and watch out for the `int-test` folder:
-[Trippin example](https://github.com/odata2ts/odata2ts/blob/main/examples/trippin/int-test/TrippinIntegration.test.ts).
+See folder [int-test](https://github.com/odata2ts/http-client/tree/main/packages/axios/int-test) for
+integration tests.
 
 ## Support, Feedback, Contributing
 

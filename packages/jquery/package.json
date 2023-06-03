@@ -34,7 +34,7 @@
     "jquery": ">1.0"
   },
   "dependencies": {
-    "@odata2ts/odata-client-api": "^0.6.3"
+    "@odata2ts/http-client-api": "^0.1.0"
   },
   "devDependencies": {
     "@types/jest": "^27.4.1",
