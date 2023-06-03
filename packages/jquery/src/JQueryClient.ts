@@ -111,9 +111,9 @@ export class JQueryClient implements ODataClient<AjaxRequestConfig> {
           else {
             const message = this.getErrorMessage(jqXHR.responseJSON);
             if (message) {
-              reject(new JQueryClientError("Server responded with error: " + message, jqXHR.status, { cause: jqXHR }));
+              reject(new JQueryClientError("Server responded with error: " + message, jqXHR.status, jqXHR));
             } else {
-              reject(new JQueryClientError(textStatus + " " + thrownError, jqXHR.status, { cause: jqXHR }));
+              reject(new JQueryClientError(textStatus + " " + thrownError, jqXHR.status, jqXHR));
             }
           }
         },
