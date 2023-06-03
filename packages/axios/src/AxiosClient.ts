@@ -1,4 +1,4 @@
-import { HttpResponseModel, ODataClient } from "@odata2ts/odata-client-api";
+import { HttpResponseModel, ODataHttpClient } from "@odata2ts/http-client-api";
 import axios, { AxiosError, AxiosInstance, AxiosRequestConfig as OriginalRequestConfig } from "axios";
 
 import { AxiosClientError } from "./AxiosClientError";
@@ -29,7 +29,7 @@ export const getV2OrV4ErrorMessage: ErrorMessageRetriever = (responseData: any):
   return typeof eMsg?.value === "string" ? eMsg.value : eMsg;
 };
 
-export class AxiosClient implements ODataClient<AxiosRequestConfig> {
+export class AxiosClient implements ODataHttpClient<AxiosRequestConfig> {
   private readonly client: AxiosInstance;
   private csrfToken: string | undefined;
   private getErrorMessage: ErrorMessageRetriever = getV2OrV4ErrorMessage;

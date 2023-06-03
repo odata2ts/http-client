@@ -1,7 +1,7 @@
 /// <reference path="../../../node_modules/@types/jquery/misc.d.ts" />
 /// <reference path="../../../node_modules/@types/jquery/JQueryStatic.d.ts" />
 
-import { HttpResponseModel, ODataClient } from "@odata2ts/odata-client-api";
+import { HttpResponseModel, ODataHttpClient } from "@odata2ts/http-client-api";
 
 import { AjaxRequestConfig, getDefaultConfig, mergeAjaxConfig } from "./AjaxRequestConfig";
 import { JQueryClientError } from "./JQueryClientError";
@@ -18,7 +18,7 @@ export const getV2OrV4ErrorMessage: ErrorMessageRetriever = (errorResponse: any)
   return typeof eMsg?.value === "string" ? eMsg.value : eMsg;
 };
 
-export class JQueryClient implements ODataClient<AjaxRequestConfig> {
+export class JQueryClient implements ODataHttpClient<AjaxRequestConfig> {
   private readonly client: JQueryStatic;
   private readonly config: JQuery.AjaxSettings;
   private csrfToken: string | undefined;

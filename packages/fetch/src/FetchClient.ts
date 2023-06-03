@@ -1,4 +1,4 @@
-import { HttpResponseModel, ODataClient } from "@odata2ts/odata-client-api";
+import { HttpResponseModel, ODataHttpClient } from "@odata2ts/http-client-api";
 
 import { FetchClientError } from "./FetchClientError";
 import { FetchRequestConfig, getDefaultConfig, mergeFetchConfig } from "./FetchRequestConfig";
@@ -25,7 +25,7 @@ function buildErrorMessage(prefix: string, error: any) {
   return prefix + (msg || DEFAULT_ERROR_MESSAGE);
 }
 
-export class FetchClient implements ODataClient<FetchRequestConfig> {
+export class FetchClient implements ODataHttpClient<FetchRequestConfig> {
   private readonly config: RequestInit;
   private csrfToken: string | undefined;
   private retrieveErrorMessage: ErrorMessageRetriever = getV2OrV4ErrorMessage;
