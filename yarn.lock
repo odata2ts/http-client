@@ -1382,6 +1382,7 @@ __metadata:
     "@lerna-lite/cli": ^1.17.0
     "@lerna-lite/run": ^1.17.0
     "@prettier/plugin-xml": ^2.2.0
+    "@types/node": ^20.2.5
     env-cmd: ^10.1.0
     husky: ^8.0.3
     import-sort-style-module: ^6.0.0
@@ -1619,7 +1620,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/node@npm:*":
+"@types/node@npm:*, @types/node@npm:^20.2.5":
   version: 20.2.5
   resolution: "@types/node@npm:20.2.5"
   checksum: 38ce7c7e9d76880dc632f71d71e0d5914fcda9d5e9a7095d6c339abda55ca4affb0f2a882aeb29398f8e09d2c5151f0b6586c81c8ccdfe529c34b1ea3337425e
