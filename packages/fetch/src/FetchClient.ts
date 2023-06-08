@@ -86,7 +86,12 @@ export class FetchClient implements ODataHttpClient<FetchRequestConfig> {
     try {
       response = await fetch(url, mergedConfig);
     } catch (fetchError) {
-      throw new FetchClientError(buildErrorMessage(FETCH_FAILURE_MESSAGE, fetchError), undefined, fetchError as Error);
+      throw new FetchClientError(
+        buildErrorMessage(FETCH_FAILURE_MESSAGE, fetchError),
+        undefined,
+        undefined,
+        fetchError as Error
+      );
     }
 
     // error response
@@ -108,6 +113,7 @@ export class FetchClient implements ODataHttpClient<FetchRequestConfig> {
       throw new FetchClientError(
         buildErrorMessage(RESPONSE_FAILURE_MESSAGE, errMsg),
         response.status,
+        this.mapHeaders(response.headers),
         new Error(errMsg || DEFAULT_ERROR_MESSAGE),
         response
       );
@@ -141,6 +147,7 @@ export class FetchClient implements ODataHttpClient<FetchRequestConfig> {
         throw new FetchClientError(
           buildErrorMessage(JSON_RETRIEVAL_FAILURE_MESSAGE, error),
           response.status,
+          this.mapHeaders(response.headers),
           error as Error
         );
       }
@@ -198,5 +205,12 @@ export class FetchClient implements ODataHttpClient<FetchRequestConfig> {
   }
   public delete(url: string, requestConfig?: FetchRequestConfig): Promise<HttpResponseModel<void>> {
     return this.sendRequest<void>(url, { method: "DELETE" }, requestConfig);
+  }
+
+  private mapHeaders(headers: Headers): Record<string, string> {
+    const result: Record<string, string> = {};
+    headers.forEach((value, key) => (result[key] = value));
+
+    return result;
   }
 }
