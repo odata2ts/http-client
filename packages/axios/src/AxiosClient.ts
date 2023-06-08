@@ -1,5 +1,11 @@
 import { HttpResponseModel, ODataHttpClient } from "@odata2ts/http-client-api";
-import axios, { AxiosError, AxiosInstance, AxiosRequestConfig as OriginalRequestConfig } from "axios";
+import axios, {
+  AxiosError,
+  AxiosInstance,
+  AxiosResponseHeaders,
+  AxiosRequestConfig as OriginalRequestConfig,
+  RawAxiosResponseHeaders,
+} from "axios";
 
 import { AxiosClientError } from "./AxiosClientError";
 import { AxiosRequestConfig, InternalRequestConfig, getDefaultConfig, mergeConfig } from "./AxiosRequestConfig";
@@ -99,19 +105,25 @@ export class AxiosClient implements ODataHttpClient<AxiosRequestConfig> {
         // regular failure handling
         if (axiosError.response) {
           const msg = buildErrorMessage(FAILURE_RESPONSE_MESSAGE, this.getErrorMessage(axiosError.response.data));
-          throw new AxiosClientError(msg, axiosError.response.status, axiosError);
+          throw new AxiosClientError(
+            msg,
+            axiosError.response.status,
+            this.mapHeaders(axiosError.response.headers),
+            axiosError
+          );
         }
         // fatal failure without response
         else {
           throw new AxiosClientError(
             buildErrorMessage(axiosError.request ? FAILURE_NO_RESPONSE : FAILURE_NO_REQUEST, axiosError),
             undefined,
+            undefined,
             axiosError
           );
         }
       }
       // not an Axios error
-      throw new AxiosClientError(buildErrorMessage(FAILURE_AXIOS, error), undefined, error);
+      throw new AxiosClientError(buildErrorMessage(FAILURE_AXIOS, error), undefined, undefined, error);
     }
   }
 
@@ -158,5 +170,9 @@ export class AxiosClient implements ODataHttpClient<AxiosRequestConfig> {
   }
   public delete(url: string, requestConfig?: AxiosRequestConfig): Promise<HttpResponseModel<void>> {
     return this.sendRequest({ ...requestConfig, url, method: "DELETE" });
+  }
+
+  private mapHeaders(headers: AxiosResponseHeaders | RawAxiosResponseHeaders): Record<string, string> {
+    return headers as Record<string, string>;
   }
 }

@@ -6,6 +6,8 @@ import { HttpResponseModel, ODataHttpClient } from "@odata2ts/http-client-api";
 import { AjaxRequestConfig, getDefaultConfig, mergeAjaxConfig } from "./AjaxRequestConfig";
 import { JQueryClientError } from "./JQueryClientError";
 
+import jqXHR = JQuery.jqXHR;
+
 export type ErrorMessageRetriever = (errorResponse: any) => string | undefined;
 
 export interface ClientOptions {
@@ -47,6 +49,23 @@ export class JQueryClient implements ODataHttpClient<AjaxRequestConfig> {
     return response.headers["x-csrf-token"];
   }
 
+  private mapHeaders(jqXhr: jqXHR): Record<string, string> {
+    return jqXhr
+      .getAllResponseHeaders()
+      .trim()
+      .split(/[\r\n]+/)
+      .reduce((collector: Record<string, string>, line: string) => {
+        const parts = line.split(": ");
+        const header = parts.shift();
+        const value = parts.join(": ");
+
+        if (header) {
+          collector[header.toLowerCase()] = value;
+        }
+        return collector;
+      }, {});
+  }
+
   private async sendRequest<ResponseType>(
     config: JQuery.AjaxSettings,
     requestConfig?: AjaxRequestConfig
@@ -74,20 +93,7 @@ export class JQueryClient implements ODataHttpClient<AjaxRequestConfig> {
         ...mergedConfig,
         success: (response: any, textStatus: string, jqXHR: JQuery.jqXHR) => {
           // Convert the header string into an array of individual headers
-          const headers = jqXHR
-            .getAllResponseHeaders()
-            .trim()
-            .split(/[\r\n]+/)
-            .reduce((collector: Record<string, string>, line: string) => {
-              const parts = line.split(": ");
-              const header = parts.shift();
-              const value = parts.join(": ");
-
-              if (header) {
-                collector[header.toLowerCase()] = value;
-              }
-              return collector;
-            }, {});
+          const headers = this.mapHeaders(jqXHR);
 
           resolve({
             status: jqXHR.status,
@@ -109,12 +115,12 @@ export class JQueryClient implements ODataHttpClient<AjaxRequestConfig> {
           }
           // actual error handling
           else {
-            const message = this.getErrorMessage(jqXHR.responseJSON);
-            if (message) {
-              reject(new JQueryClientError("Server responded with error: " + message, jqXHR.status, jqXHR));
-            } else {
-              reject(new JQueryClientError(textStatus + " " + thrownError, jqXHR.status, jqXHR));
-            }
+            const responseMessage = this.getErrorMessage(jqXHR.responseJSON);
+            const errorMessage = responseMessage
+              ? "Server responded with error: " + responseMessage
+              : textStatus + " " + thrownError;
+            const responseHeaders = this.mapHeaders(jqXHR);
+            reject(new JQueryClientError(errorMessage, jqXHR.status, responseHeaders, new Error(thrownError), jqXHR));
           }
         },
       });

@@ -1,6 +1,7 @@
 import { DEFAULT_ERROR_MESSAGE, FetchClient, FetchClientError, FetchRequestConfig } from "../src";
 
 describe("Failure Handling Tests", function () {
+  const RESPONSE_HEADERS = { "content-type": "application/json" };
   let fetchClient: FetchClient;
   let requestConfig: RequestInit | undefined;
   let simulateFailure: {
@@ -19,12 +20,13 @@ describe("Failure Handling Tests", function () {
     const { isFetchFailure, isV2, isOk, isJsonFailure, message } = simulateFailure;
     let jsonResult = { error: { message: isV2 ? { value: message } : message } };
 
+    const headers = new Headers(RESPONSE_HEADERS);
     return isFetchFailure
       ? Promise.reject(new Error(message))
       : Promise.resolve({
           status: isOk ? 200 : 400,
           statusText: "Client error",
-          headers: new Headers(),
+          headers,
           ok: !!isOk,
           json: () => (isJsonFailure ? Promise.reject(new Error(message)) : Promise.resolve(jsonResult)),
         });
@@ -46,6 +48,7 @@ describe("Failure Handling Tests", function () {
 
       const error = e as FetchClientError;
       expect(error.status).toBe(400);
+      expect(error.headers).toStrictEqual(RESPONSE_HEADERS);
       expect(error.name).toBe("FetchClientError");
       expect(error.message).toContain(simulateFailure.message);
       expect(error.cause).toBeInstanceOf(Error);
@@ -74,6 +77,7 @@ describe("Failure Handling Tests", function () {
 
       const error = e as FetchClientError;
       expect(error.status).toBeUndefined();
+      expect(error.headers).toBeUndefined();
       expect(error.name).toBe("FetchClientError");
       expect(error.message).toContain(simulateFailure.message);
       expect(error.cause).toBeInstanceOf(Error);
