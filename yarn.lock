@@ -1373,9 +1373,9 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@odata2ts/http-client-base@^0.0.0, @odata2ts/http-client-base@workspace:packages/http-client-core":
+"@odata2ts/http-client-base@^0.0.0, @odata2ts/http-client-base@workspace:packages/http-client-base":
   version: 0.0.0-use.local
-  resolution: "@odata2ts/http-client-base@workspace:packages/http-client-core"
+  resolution: "@odata2ts/http-client-base@workspace:packages/http-client-base"
   dependencies:
     "@odata2ts/http-client-api": ^0.1.0
     "@odata2ts/odata-core": ^0.3.7
