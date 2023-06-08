@@ -1341,12 +1341,19 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@odata2ts/http-client-api@npm:^0.1.0":
-  version: 0.1.0
-  resolution: "@odata2ts/http-client-api@npm:0.1.0"
-  checksum: 32e55d09acdab69d25db2feca5563c6ab713c014e6d745cb1487609cbe7fd71b840d18b5ffb72ca5c573663d0412fa809a37f8f7274a86fc936e3d370fb78a3b
-  languageName: node
-  linkType: hard
+"@odata2ts/http-client-api@^0.1.0, @odata2ts/http-client-api@workspace:packages/http-client-api":
+  version: 0.0.0-use.local
+  resolution: "@odata2ts/http-client-api@workspace:packages/http-client-api"
+  dependencies:
+    "@types/jest": ^27.4.1
+    "@types/node": ^20.2.5
+    jest: 29.5.0
+    rimraf: ^5.0.1
+    ts-jest: ^29.1.0
+    ts-node: 10.9.1
+    typescript: 5.0.4
+  languageName: unknown
+  linkType: soft
 
 "@odata2ts/http-client-axios@workspace:packages/axios":
   version: 0.0.0-use.local
