@@ -41,7 +41,10 @@ describe("HTTP Communication Tests", function () {
         status: 404,
         message: `OData server responded with error: ${expectedErrorMsg}`,
       });
-      expect(error.headers).toBeDefined();
+      expect(error.headers).toMatchObject({
+        "content-type": "application/json; odata.metadata=minimal",
+        "cache-control": "no-cache",
+      });
       expect(error.cause?.message).toBe(expectedErrorMsg);
       expect(error.stack).toMatch(expectedErrorMsg);
       expect(error.stack).toMatch(error.name);
