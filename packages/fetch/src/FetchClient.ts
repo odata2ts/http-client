@@ -1,19 +1,10 @@
-import { HttpResponseModel, ODataHttpClient } from "@odata2ts/http-client-api";
+import { HttpResponseModel } from "@odata2ts/http-client-api";
+import { BaseHttpClient, BaseHttpClientOptions, HttpMethods } from "@odata2ts/http-client-base";
 
 import { FetchClientError } from "./FetchClientError";
 import { FetchRequestConfig, getDefaultConfig, mergeFetchConfig } from "./FetchRequestConfig";
 
-export type ErrorMessageRetriever = (errorResponse: any) => string | undefined;
-
-export interface ClientOptions {
-  useCsrfProtection?: boolean;
-  csrfTokenFetchUrl?: string;
-}
-
-export const getV2OrV4ErrorMessage: ErrorMessageRetriever = (errorResponse: any): string | undefined => {
-  const eMsg = errorResponse?.error?.message;
-  return typeof eMsg?.value === "string" ? eMsg.value : eMsg;
-};
+export interface ClientOptions extends BaseHttpClientOptions {}
 
 export const DEFAULT_ERROR_MESSAGE = "No error message!";
 const FETCH_FAILURE_MESSAGE = "OData request failed entirely: ";
@@ -25,66 +16,36 @@ function buildErrorMessage(prefix: string, error: any) {
   return prefix + (msg || DEFAULT_ERROR_MESSAGE);
 }
 
-export class FetchClient implements ODataHttpClient<FetchRequestConfig> {
-  private readonly config: RequestInit;
-  private csrfToken: string | undefined;
-  private retrieveErrorMessage: ErrorMessageRetriever = getV2OrV4ErrorMessage;
+export class FetchClient extends BaseHttpClient<FetchRequestConfig> {
+  protected readonly config: RequestInit;
 
   constructor(config?: FetchRequestConfig, private clientOptions?: ClientOptions) {
+    super(clientOptions);
     this.config = getDefaultConfig(config);
-    if (clientOptions && clientOptions.useCsrfProtection && !clientOptions.csrfTokenFetchUrl?.trim()) {
-      throw new Error(
-        "When automatic CSRF token fetching is activated, the URL must be supplied with attribute [csrfTokenFetchUrl]!"
-      );
-    }
   }
 
-  public setErrorMessageRetriever(getErrorMsg: ErrorMessageRetriever) {
-    this.retrieveErrorMessage = getErrorMsg;
+  addHeaderToRequestConfig(
+    headers: Record<string, string>,
+    config: FetchRequestConfig | undefined
+  ): FetchRequestConfig {
+    return mergeFetchConfig(config, { headers });
   }
 
-  private async setupSecurityToken() {
-    if (!this.csrfToken) {
-      this.csrfToken = await this.fetchSecurityToken();
-    }
-    return this.csrfToken;
-  }
-
-  private async fetchSecurityToken(): Promise<string | undefined> {
-    const fetchUrl = this.clientOptions!.csrfTokenFetchUrl!;
-    const response = await this.get(fetchUrl, { headers: { "x-csrf-token": "Fetch" } });
-
-    return response.headers["x-csrf-token"];
-  }
-
-  private async sendRequest<ResponseType>(
+  async executeRequest<ResponseModel>(
+    method: HttpMethods,
     url: string,
-    config: RequestInit,
-    requestConfig?: FetchRequestConfig
-  ): Promise<HttpResponseModel<ResponseType>> {
-    // noinspection SuspiciousTypeOfGuard
-    if (typeof url !== "string") {
-      throw new Error("Value for URL must be provided!");
-    }
-
-    const mergedConfig = mergeFetchConfig(this.config, requestConfig, config);
-
-    // setup automatic CSRF token handling
-    if (
-      this.clientOptions?.useCsrfProtection &&
-      mergedConfig.method &&
-      ["POST", "PUT", "PATCH", "DELETE"].includes(mergedConfig.method.toUpperCase())
-    ) {
-      const csrfToken = await this.setupSecurityToken();
-      if (typeof csrfToken === "string") {
-        mergedConfig.headers.set("x-csrf-token", csrfToken);
-      }
+    data: any,
+    requestConfig: FetchRequestConfig | undefined = {}
+  ): Promise<HttpResponseModel<ResponseModel>> {
+    const config = mergeFetchConfig(this.config, requestConfig);
+    if (typeof data !== "undefined") {
+      config.body = this.prepareData(data);
     }
 
     // the actual request
     let response: Response;
     try {
-      response = await fetch(url, mergedConfig);
+      response = await fetch(url, config);
     } catch (fetchError) {
       throw new FetchClientError(buildErrorMessage(FETCH_FAILURE_MESSAGE, fetchError), undefined, fetchError as Error);
     }
@@ -92,18 +53,15 @@ export class FetchClient implements ODataHttpClient<FetchRequestConfig> {
     // error response
     if (!response.ok) {
       // automatic CSRF token handling
-      if (
-        this.clientOptions?.useCsrfProtection &&
-        response.status === 403 &&
-        response.headers.get("x-csrf-token") === "Required"
-      ) {
-        // csrf token expired, let's reset it and perform the original request again
-        this.csrfToken = undefined;
-        return this.sendRequest<ResponseType>(url, config, requestConfig);
+      const responseHeaders: Record<string, string> = {};
+      response.headers.forEach((value, key) => (responseHeaders[key] = value));
+      if (this.isRefreshNecessary(response.status, responseHeaders)) {
+        // automatic CSRF token handling: token has been reset: perform the original request again
+        return this.sendRequest<ResponseModel>(method, url, data, requestConfig);
       }
 
-      let data = await this.getResponseBody(response, false);
-      const errMsg = this.retrieveErrorMessage(data);
+      let responseData = await this.getResponseBody(response, false);
+      const errMsg = this.retrieveErrorMessage(responseData);
 
       throw new FetchClientError(
         buildErrorMessage(RESPONSE_FAILURE_MESSAGE, errMsg),
@@ -113,7 +71,7 @@ export class FetchClient implements ODataHttpClient<FetchRequestConfig> {
       );
     }
 
-    const data = await this.getResponseBody(response, true);
+    const responseData = await this.getResponseBody(response, true);
 
     // header
     // Impl Note: No entries prop available, otherwise as one liner Array.from(response.headers.entries)
@@ -126,7 +84,7 @@ export class FetchClient implements ODataHttpClient<FetchRequestConfig> {
       status: response.status,
       statusText: response.statusText,
       headers,
-      data,
+      data: responseData,
     };
   }
 
@@ -150,53 +108,5 @@ export class FetchClient implements ODataHttpClient<FetchRequestConfig> {
 
   private prepareData(data: any): string {
     return JSON.stringify(data);
-  }
-
-  public get<ResponseModel>(
-    url: string,
-    requestConfig?: FetchRequestConfig
-  ): Promise<HttpResponseModel<ResponseModel>> {
-    return this.sendRequest<ResponseModel>(url, { method: "GET" }, requestConfig);
-  }
-  public post<ResponseModel>(
-    url: string,
-    data: any,
-    requestConfig?: FetchRequestConfig
-  ): Promise<HttpResponseModel<ResponseModel>> {
-    return this.sendRequest<ResponseModel>(url, { body: this.prepareData(data), method: "POST" }, requestConfig);
-  }
-  public put<ResponseModel>(
-    url: string,
-    data: any,
-    requestConfig?: FetchRequestConfig
-  ): Promise<HttpResponseModel<ResponseModel>> {
-    return this.sendRequest<ResponseModel>(url, { body: this.prepareData(data), method: "PUT" }, requestConfig);
-  }
-  public patch<ResponseModel>(
-    url: string,
-    data: any,
-    requestConfig?: FetchRequestConfig
-  ): Promise<HttpResponseModel<ResponseModel>> {
-    return this.sendRequest<ResponseModel>(url, { body: this.prepareData(data), method: "PATCH" }, requestConfig);
-  }
-  public merge<ResponseModel>(
-    url: string,
-    data: any,
-    requestConfig?: FetchRequestConfig
-  ): Promise<HttpResponseModel<ResponseModel>> {
-    return this.sendRequest<ResponseModel>(
-      url,
-      {
-        body: this.prepareData(data),
-        method: "POST",
-        headers: {
-          "X-Http-Method": "MERGE",
-        },
-      },
-      requestConfig
-    );
-  }
-  public delete(url: string, requestConfig?: FetchRequestConfig): Promise<HttpResponseModel<void>> {
-    return this.sendRequest<void>(url, { method: "DELETE" }, requestConfig);
   }
 }
