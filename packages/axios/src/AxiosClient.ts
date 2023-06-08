@@ -1,6 +1,12 @@
 import { HttpResponseModel } from "@odata2ts/http-client-api";
 import { BaseHttpClient, BaseHttpClientOptions, HttpMethods } from "@odata2ts/http-client-base";
-import axios, { AxiosError, AxiosInstance, AxiosRequestConfig as OriginalRequestConfig } from "axios";
+import axios, {
+  AxiosError,
+  AxiosInstance,
+  AxiosResponseHeaders,
+  AxiosRequestConfig as OriginalRequestConfig,
+  RawAxiosResponseHeaders,
+} from "axios";
 
 import { AxiosClientError } from "./AxiosClientError";
 import { AxiosRequestConfig, getDefaultConfig, mergeConfig } from "./AxiosRequestConfig";
@@ -56,20 +62,30 @@ export class AxiosClient extends BaseHttpClient<AxiosRequestConfig> {
             return this.sendRequest<ResponseModel>(method, url, data, requestConfig);
           }
 
-          const msg = buildErrorMessage(FAILURE_RESPONSE_MESSAGE, this.retrieveErrorMessage(axiosError.response.data));
-          throw new AxiosClientError(msg, axiosError.response.status, axiosError);
+          const msg = buildErrorMessage(FAILURE_RESPONSE_MESSAGE, this.getErrorMessage(axiosError.response.data));
+          throw new AxiosClientError(
+            msg,
+            axiosError.response.status,
+            this.mapHeaders(axiosError.response.headers),
+            axiosError
+          );
         }
         // fatal failure without response
         else {
           throw new AxiosClientError(
             buildErrorMessage(axiosError.request ? FAILURE_NO_RESPONSE : FAILURE_NO_REQUEST, axiosError),
             undefined,
+            undefined,
             axiosError
           );
         }
       }
       // not an Axios error
-      throw new AxiosClientError(buildErrorMessage(FAILURE_AXIOS, error), undefined, error);
+      throw new AxiosClientError(buildErrorMessage(FAILURE_AXIOS, error), undefined, undefined, error);
     }
+  }
+
+  private mapHeaders(headers: AxiosResponseHeaders | RawAxiosResponseHeaders): Record<string, string> {
+    return headers as Record<string, string>;
   }
 }

@@ -10,6 +10,8 @@ import { AxiosClientError, AxiosRequestConfig, DEFAULT_ERROR_MESSAGE } from "../
 import { AxiosClient } from "../src";
 
 describe("Failure Handling Tests", function () {
+  const RESPONSE_HEADERS = { "content-type": "application/json" };
+
   let axiosClient: AxiosClient;
   let requestConfig: OriginalRequestConfig | undefined;
   let simulateFailure: {
@@ -54,7 +56,7 @@ describe("Failure Handling Tests", function () {
             status: 400,
             statusText: "Client Error!",
             request: requestConfig,
-            headers: {},
+            headers: RESPONSE_HEADERS,
             data: isEmptyBody ? undefined : jsonResult,
             config: {} as InternalAxiosRequestConfig<any>,
           }
@@ -79,6 +81,7 @@ describe("Failure Handling Tests", function () {
 
       const error = e as AxiosClientError;
       expect(error.status).toBe(400);
+      expect(error.headers).toStrictEqual(RESPONSE_HEADERS);
       expect(error.name).toBe("AxiosClientError");
       expect(error.message).toContain(simulateFailure.message);
       expect(error.cause).toBeInstanceOf(Error);
@@ -109,6 +112,7 @@ describe("Failure Handling Tests", function () {
 
       const error = e as AxiosClientError;
       expect(error.status).toBeUndefined();
+      expect(error.headers).toBeUndefined();
       expect(error.name).toBe("AxiosClientError");
       expect(error.message).toContain(simulateFailure.message);
       expect(error.cause).toBeInstanceOf(Error);
