@@ -1,4 +1,4 @@
-import { AxiosResponse, CreateAxiosDefaults, AxiosRequestConfig as OriginalRequestConfig } from "axios";
+import axios, { AxiosResponse, CreateAxiosDefaults, AxiosRequestConfig as OriginalRequestConfig } from "axios";
 
 import { AxiosClient, AxiosRequestConfig } from "../src";
 
@@ -12,8 +12,9 @@ const DEFAULT_HEADERS = { Accept: JSON_VALUE, "Content-Type": JSON_VALUE };
 const DEFAULT_RESPONSE_HEADERS = { accept: JSON_VALUE, "content-type": JSON_VALUE };
 const SUCCESS_BODY = { Name: "Test" };
 
-jest.mock("axios", () => ({
-  create: ({ headers, ...defaultConfig }: CreateAxiosDefaults) => ({
+describe("Axios HTTP Client Tests", function () {
+  // @ts-ignore
+  axios.create = jest.fn(({ headers, ...defaultConfig }: CreateAxiosDefaults) => ({
     request: ({ headers: reqHeaders, ...config }: OriginalRequestConfig): Promise<Partial<AxiosResponse>> => {
       requestConfig = {
         headers: {
@@ -32,10 +33,8 @@ jest.mock("axios", () => ({
         data: simulateNoContent ? undefined : SUCCESS_BODY,
       });
     },
-  }),
-}));
+  }));
 
-describe("Axios HTTP Client Tests", function () {
   beforeEach(() => {
     requestConfig = undefined;
     simulateNoContent = false;

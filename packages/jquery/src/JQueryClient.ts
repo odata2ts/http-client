@@ -1,52 +1,23 @@
-/// <reference path="../../../node_modules/@types/jquery/misc.d.ts" />
 /// <reference path="../../../node_modules/@types/jquery/JQueryStatic.d.ts" />
 
-import { HttpResponseModel, ODataHttpClient } from "@odata2ts/http-client-api";
+import { HttpResponseModel } from "@odata2ts/http-client-api";
+import { BaseHttpClient, BaseHttpClientOptions, HttpMethods } from "@odata2ts/http-client-base";
 
 import { AjaxRequestConfig, getDefaultConfig, mergeAjaxConfig } from "./AjaxRequestConfig";
 import { JQueryClientError } from "./JQueryClientError";
 
 import jqXHR = JQuery.jqXHR;
 
-export type ErrorMessageRetriever = (errorResponse: any) => string | undefined;
+export interface ClientOptions extends BaseHttpClientOptions {}
 
-export interface ClientOptions {
-  useCsrfProtection?: boolean;
-  csrfTokenFetchUrl?: string;
-}
-
-export const getV2OrV4ErrorMessage: ErrorMessageRetriever = (errorResponse: any): string | undefined => {
-  const eMsg = errorResponse?.error?.message;
-  return typeof eMsg?.value === "string" ? eMsg.value : eMsg;
-};
-
-export class JQueryClient implements ODataHttpClient<AjaxRequestConfig> {
+export class JQueryClient extends BaseHttpClient<AjaxRequestConfig> {
   private readonly client: JQueryStatic;
   private readonly config: JQuery.AjaxSettings;
-  private csrfToken: string | undefined;
-  private getErrorMessage: ErrorMessageRetriever = getV2OrV4ErrorMessage;
 
   constructor(jquery: JQueryStatic, config?: AjaxRequestConfig, private clientOptions?: ClientOptions) {
+    super(clientOptions);
     this.client = jquery;
     this.config = getDefaultConfig(config);
-  }
-
-  public setErrorMessageRetriever(getErrorMsg: ErrorMessageRetriever) {
-    this.getErrorMessage = getErrorMsg;
-  }
-
-  private async setupSecurityToken() {
-    if (!this.csrfToken) {
-      this.csrfToken = await this.fetchSecurityToken();
-    }
-    return this.csrfToken;
-  }
-
-  private async fetchSecurityToken(): Promise<string | undefined> {
-    const fetchUrl = this.clientOptions?.csrfTokenFetchUrl ?? "/";
-    const response = await this.get(fetchUrl, { headers: { "x-csrf-token": "Fetch" } });
-
-    return response.headers["x-csrf-token"];
   }
 
   private mapHeaders(jqXhr: jqXHR): Record<string, string> {
@@ -66,108 +37,42 @@ export class JQueryClient implements ODataHttpClient<AjaxRequestConfig> {
       }, {});
   }
 
-  private async sendRequest<ResponseType>(
-    config: JQuery.AjaxSettings,
-    requestConfig?: AjaxRequestConfig
-  ): Promise<HttpResponseModel<ResponseType>> {
-    const mergedConfig = mergeAjaxConfig(mergeAjaxConfig(this.config, requestConfig), config);
+  addHeaderToRequestConfig(headers: Record<string, string>, config?: AjaxRequestConfig): AjaxRequestConfig {
+    return mergeAjaxConfig(config, { headers });
+  }
 
-    // setup automatic CSRF token handling
-    if (
-      this.clientOptions?.useCsrfProtection &&
-      mergedConfig.method &&
-      ["POST", "PUT", "PATCH", "DELETE"].includes(mergedConfig.method.toUpperCase())
-    ) {
-      const csrfToken = await this.setupSecurityToken();
-      if (!mergedConfig.headers) {
-        mergedConfig.headers = {};
-      }
-      if (this.csrfToken) {
-        mergedConfig.headers["x-csrf-token"] = csrfToken;
-      }
-    }
+  executeRequest<ResponseModel>(
+    method: HttpMethods,
+    url: string,
+    data: any,
+    requestConfig?: JQuery.AjaxSettings
+  ): Promise<HttpResponseModel<ResponseModel>> {
+    const mergedConfig = mergeAjaxConfig(this.config, requestConfig);
+    mergedConfig.method = method;
+    mergedConfig.url = url;
+    mergedConfig.data = JSON.stringify(data);
 
     // the actual request
     return new Promise((resolve, reject) => {
       this.client.ajax({
         ...mergedConfig,
         success: (response: any, textStatus: string, jqXHR: JQuery.jqXHR) => {
-          // Convert the header string into an array of individual headers
-          const headers = this.mapHeaders(jqXHR);
-
           resolve({
             status: jqXHR.status,
             statusText: jqXHR.statusText,
-            headers,
+            headers: this.mapHeaders(jqXHR),
             data: response,
           });
         },
         error: (jqXHR: JQuery.jqXHR, textStatus: string, thrownError: string) => {
-          // automatic CSRF token handling
-          if (
-            this.clientOptions?.useCsrfProtection &&
-            jqXHR.status === 403 &&
-            jqXHR.getResponseHeader("x-csrf-token") === "Required"
-          ) {
-            // csrf token expired, let's reset it and perform the original request again
-            this.csrfToken = undefined;
-            this.sendRequest<ResponseType>(config, requestConfig).then(resolve).catch(reject);
-          }
-          // actual error handling
-          else {
-            const responseMessage = this.getErrorMessage(jqXHR.responseJSON);
-            const errorMessage = responseMessage
-              ? "Server responded with error: " + responseMessage
-              : textStatus + " " + thrownError;
-            const responseHeaders = this.mapHeaders(jqXHR);
-            reject(new JQueryClientError(errorMessage, jqXHR.status, responseHeaders, new Error(thrownError), jqXHR));
-          }
+          const responseMessage = this.retrieveErrorMessage(jqXHR.responseJSON);
+          const errorMessage = responseMessage
+            ? "Server responded with error: " + responseMessage
+            : textStatus + " " + thrownError;
+          const responseHeaders = this.mapHeaders(jqXHR);
+          reject(new JQueryClientError(errorMessage, jqXHR.status, responseHeaders, new Error(thrownError), jqXHR));
         },
       });
     });
-  }
-
-  private prepareData(data: any): string {
-    return JSON.stringify(data);
-  }
-
-  public post<ResponseModel>(
-    url: string,
-    data: any,
-    requestConfig?: AjaxRequestConfig
-  ): Promise<HttpResponseModel<ResponseModel>> {
-    return this.sendRequest<ResponseModel>({ url, data: this.prepareData(data), method: "POST" }, requestConfig);
-  }
-  public get<ResponseModel>(url: string, requestConfig?: AjaxRequestConfig): Promise<HttpResponseModel<ResponseModel>> {
-    return this.sendRequest<ResponseModel>({ url, method: "GET" }, requestConfig);
-  }
-  public put<ResponseModel>(
-    url: string,
-    data: any,
-    requestConfig?: AjaxRequestConfig
-  ): Promise<HttpResponseModel<ResponseModel>> {
-    return this.sendRequest<ResponseModel>({ url, data: this.prepareData(data), method: "PUT" }, requestConfig);
-  }
-  public patch<ResponseModel>(
-    url: string,
-    data: any,
-    requestConfig?: AjaxRequestConfig
-  ): Promise<HttpResponseModel<ResponseModel>> {
-    return this.sendRequest<ResponseModel>({ url, data: this.prepareData(data), method: "PATCH" }, requestConfig);
-  }
-  public merge<ResponseModel>(
-    url: string,
-    data: any,
-    requestConfig?: AjaxRequestConfig
-  ): Promise<HttpResponseModel<ResponseModel>> {
-    const config = mergeAjaxConfig(requestConfig, {
-      headers: {
-        "X-Http-Method": "MERGE",
-      },
-    });
-    return this.sendRequest<ResponseModel>({ url, data: this.prepareData(data), method: "POST" }, config);
-  }
-  public delete(url: string, requestConfig?: AjaxRequestConfig): Promise<HttpResponseModel<void>> {
-    return this.sendRequest<void>({ url, method: "DELETE" }, requestConfig);
   }
 }

@@ -46,6 +46,9 @@ export class AxiosClient extends BaseHttpClient<AxiosRequestConfig> {
     requestConfig: AxiosRequestConfig | undefined = {}
   ): Promise<HttpResponseModel<ResponseModel>> {
     const config: OriginalRequestConfig = mergeConfig(requestConfig, { url, method });
+    if (typeof data !== "undefined") {
+      config.data = data;
+    }
 
     try {
       return await this.client.request(config);
@@ -55,14 +58,7 @@ export class AxiosClient extends BaseHttpClient<AxiosRequestConfig> {
 
         // regular failure handling
         if (axiosError.response) {
-          // automatic CSRF token handling: token has been reset: perform the original request again
-          if (
-            this.isRefreshNecessary(axiosError.response.status, axiosError.response.headers as Record<string, string>)
-          ) {
-            return this.sendRequest<ResponseModel>(method, url, data, requestConfig);
-          }
-
-          const msg = buildErrorMessage(FAILURE_RESPONSE_MESSAGE, this.getErrorMessage(axiosError.response.data));
+          const msg = buildErrorMessage(FAILURE_RESPONSE_MESSAGE, this.retrieveErrorMessage(axiosError.response.data));
           throw new AxiosClientError(
             msg,
             axiosError.response.status,

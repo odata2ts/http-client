@@ -38,8 +38,9 @@ export class FetchClient extends BaseHttpClient<FetchRequestConfig> {
     requestConfig: FetchRequestConfig | undefined = {}
   ): Promise<HttpResponseModel<ResponseModel>> {
     const config = mergeFetchConfig(this.config, requestConfig);
+    config.method = method;
     if (typeof data !== "undefined") {
-      config.body = this.prepareData(data);
+      config.body = JSON.stringify(data);
     }
 
     // the actual request
@@ -57,14 +58,6 @@ export class FetchClient extends BaseHttpClient<FetchRequestConfig> {
 
     // error response
     if (!response.ok) {
-      // automatic CSRF token handling
-      const responseHeaders: Record<string, string> = {};
-      response.headers.forEach((value, key) => (responseHeaders[key] = value));
-      if (this.isRefreshNecessary(response.status, responseHeaders)) {
-        // automatic CSRF token handling: token has been reset: perform the original request again
-        return this.sendRequest<ResponseModel>(method, url, data, requestConfig);
-      }
-
       let responseData = await this.getResponseBody(response, false);
       const errMsg = this.retrieveErrorMessage(responseData);
 
@@ -79,17 +72,10 @@ export class FetchClient extends BaseHttpClient<FetchRequestConfig> {
 
     const responseData = await this.getResponseBody(response, true);
 
-    // header
-    // Impl Note: No entries prop available, otherwise as one liner Array.from(response.headers.entries)
-    const headers: { [key: string]: string } = {};
-    response.headers.forEach((value, key) => {
-      headers[key] = value;
-    });
-
     return {
       status: response.status,
       statusText: response.statusText,
-      headers,
+      headers: this.mapHeaders(response.headers),
       data: responseData,
     };
   }
@@ -111,10 +97,6 @@ export class FetchClient extends BaseHttpClient<FetchRequestConfig> {
       }
       return undefined;
     }
-  }
-
-  private prepareData(data: any): string {
-    return JSON.stringify(data);
   }
 
   private mapHeaders(headers: Headers): Record<string, string> {
