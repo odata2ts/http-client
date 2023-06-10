@@ -1,4 +1,4 @@
-import { HttpResponseModel, ODataHttpClient } from "@odata2ts/http-client-api";
+import { HttpResponseModel, ODataClientError, ODataHttpClient } from "@odata2ts/http-client-api";
 
 import { ErrorMessageRetriever, retrieveErrorMessage } from "./ErrorMessageRetriever";
 import { HttpMethods } from "./HttpMethods";
@@ -36,6 +36,10 @@ export abstract class BaseHttpClient<RequestConfigType> implements ODataHttpClie
     config?: RequestConfigType
   ): Promise<HttpResponseModel<ResponseModel>>;
 
+  public getCsrfTokenKey() {
+    return this.csrfTokenKey;
+  }
+
   public setCsrfTokenKey(newKey: string) {
     this.csrfTokenKey = newKey || DEFAULT_CSRF_TOKEN_KEY;
   }
@@ -58,16 +62,6 @@ export abstract class BaseHttpClient<RequestConfigType> implements ODataHttpClie
     return response.headers[this.csrfTokenKey];
   }
 
-  protected isRefreshNecessary(status: number, headers?: Record<string, string>): boolean {
-    const result =
-      !!this.baseOptions.useCsrfProtection && status === 403 && !!headers && headers["x-csrf-token"] === "Required";
-
-    if (result) {
-      this.csrfToken = undefined;
-    }
-    return result;
-  }
-
   /**
    * Follows the template pattern.
    *
@@ -77,28 +71,44 @@ export abstract class BaseHttpClient<RequestConfigType> implements ODataHttpClie
    * @param requestConfig
    * @private
    */
-  protected async sendRequest<ResponseModel>(
+  private async sendRequest<ResponseModel>(
     method: HttpMethods,
     url: string,
     data: any,
     requestConfig?: RequestConfigType
-  ) {
+  ): Promise<HttpResponseModel<ResponseModel>> {
     // noinspection SuspiciousTypeOfGuard
     if (typeof url !== "string") {
       throw new Error(FAILURE_MISSING_URL);
     }
 
+    let config = requestConfig;
+
     // setup automatic CSRF token handling
     if (this.baseOptions.useCsrfProtection && EDIT_METHODS.includes(method)) {
       const [tokenKey, tokenValue] = await this.setupSecurityToken();
       if (tokenValue) {
-        this.addHeaderToRequestConfig({ [tokenKey]: tokenValue }, requestConfig);
+        config = this.addHeaderToRequestConfig({ [tokenKey]: tokenValue }, requestConfig);
       }
     }
 
     try {
-      return this.executeRequest<ResponseModel>(method, url, data, requestConfig);
+      return await this.executeRequest<ResponseModel>(method, url, data, config);
     } catch (e) {
+      const clientError = e as ODataClientError;
+
+      // automatic CSRF token handling
+      if (
+        !!this.baseOptions.useCsrfProtection &&
+        clientError.status === 403 &&
+        !!clientError.headers &&
+        clientError.headers["x-csrf-token"] === "Required"
+      ) {
+        // token has expired: reset csrf token & perform the original request again
+        this.csrfToken = undefined;
+        return this.sendRequest<ResponseModel>(method, url, data, requestConfig);
+      }
+
       throw e;
     }
   }
