@@ -3,7 +3,7 @@ import { ODataCollectionResponseV4, ODataModelResponseV4 } from "@odata2ts/odata
 import { AxiosClient, AxiosClientError } from "../src";
 
 describe("HTTP Communication Tests", function () {
-  const BASE_URL = "https://services.odata.org/TripPinRESTierService/(S(xxxsujx4iqjss1vkeighyks5))";
+  const BASE_URL = "https://services.odata.org/TripPinRESTierService/(S(xxxsujx4iqjss1vkeighyks6))";
 
   const REAL_CLIENT = new AxiosClient();
 

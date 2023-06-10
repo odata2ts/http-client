@@ -3,15 +3,12 @@ import jQuery from "jquery";
 import { JSDOM } from "jsdom";
 
 import { JQueryClient } from "../src";
-import { JqMock } from "./JQueryMock";
 
 describe("HTTP Communication Tests", function () {
-  const BASE_URL = "https://services.odata.org/TripPinRESTierService/(S(xxxsujx4iqjss1vkeighyks5))";
+  const BASE_URL = "https://services.odata.org/TripPinRESTierService/(S(xxxsujx4iqjss1vkeighyks6))";
 
   const $ = jQuery(new JSDOM().window) as unknown as JQueryStatic;
   const REAL_CLIENT = new JQueryClient($);
-  const jqMock = new JqMock() as unknown as JQueryStatic;
-  const MOCK_CLIENT = new JQueryClient(jqMock);
 
   test("Simple Get", async () => {
     const response = await REAL_CLIENT.get<ODataCollectionResponseV4<any>>(BASE_URL + "/");

@@ -1,10 +1,10 @@
 {
-  "name": "@odata2ts/http-client-jquery",
-  "version": "0.4.0",
+  "name": "@odata2ts/http-client-base",
+  "version": "0.0.0",
   "publishConfig": {
     "access": "public"
   },
-  "description": "JQuery based http client usable by odata2ts",
+  "description": "Core functionality for odata2ts HTTP clients",
   "license": "MIT",
   "repository": "git@github.com:odata2ts/http-client.git",
   "author": "texttechne",
@@ -15,7 +15,7 @@
     "clean": "rimraf lib coverage",
     "compile": "tsc",
     "prepublish": "yarn build",
-    "test": "jest --passWithNoTests"
+    "test": "jest ./test"
   },
   "files": [
     "*.md",
@@ -24,25 +24,18 @@
   ],
   "keywords": [
     "http client",
-    "jquery",
-    "ui5",
-    "odata2ts",
+    "odata",
     "ts",
-    "typescript"
+    "odata2ts"
   ],
-  "peerDependencies": {
-    "jquery": ">1.0"
-  },
   "dependencies": {
-    "@odata2ts/http-client-base": "^0.0.0"
+    "@odata2ts/http-client-api": "^0.1.0"
   },
   "devDependencies": {
-    "@types/jest": "^27.4.1",
-    "@types/jquery": "^3.5.16",
+    "@odata2ts/odata-core": "^0.3.7",
+    "@types/jest": "^29.5.2",
     "@types/node": "^20.2.5",
-    "jest": "29.5.0",
-    "jest-environment-jsdom": "^29.5.0",
-    "jquery": "^3.6.3",
+    "jest": "^29.5.0",
     "rimraf": "^5.0.1",
     "ts-jest": "^29.1.0",
     "ts-node": "10.9.1",
