@@ -1,7 +1,7 @@
 [![GitHub Workflow Status](https://img.shields.io/github/actions/workflow/status/odata2ts/http-client/coverage.yml?branch=main&style=for-the-badge)](https://github.com/odata2ts/http-client/actions/workflows/coverage.yml)
 [![Coveralls](https://img.shields.io/coveralls/github/odata2ts/http-client?style=for-the-badge)](https://coveralls.io/github/odata2ts/http-client?branch=main)
 
-# odata2ts HTTP Clients
+# HTTP Clients for odata2ts
 
 This repository contains all official OData HTTP client implementations available
 for [odata2ts](https://github.com/odata2ts/odata2ts).
@@ -9,8 +9,8 @@ for [odata2ts](https://github.com/odata2ts/odata2ts).
 The main implementations are:
 
 - [fetch](./packages/fetch)
-- Axios
-- jQuery
+- [Axios](./packages/axios)
+- [jQuery](./packages/jquery)
 
 ## Documentation
 
