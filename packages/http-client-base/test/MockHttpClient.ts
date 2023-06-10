@@ -36,7 +36,9 @@ export class MockHttpClient extends BaseHttpClient<MockRequestConfig> {
     super(baseOptions);
   }
 
-  public exposedErrorMessageRetriever = this.retrieveErrorMessage;
+  public exposedErrorMessageRetriever(errorResponse: any) {
+    return this.retrieveErrorMessage(errorResponse);
+  }
 
   addHeaderToRequestConfig(headers: Record<string, string>, config: MockRequestConfig | undefined): MockRequestConfig {
     const mergedConfig: MockRequestConfig = config ? { ...config } : {};
