@@ -24,14 +24,14 @@ export class FetchClient extends BaseHttpClient<FetchRequestConfig> {
     this.config = getDefaultConfig(config);
   }
 
-  addHeaderToRequestConfig(
+  protected addHeaderToRequestConfig(
     headers: Record<string, string>,
     config: FetchRequestConfig | undefined
   ): FetchRequestConfig {
     return mergeFetchConfig(config, { headers });
   }
 
-  async executeRequest<ResponseModel>(
+  protected async executeRequest<ResponseModel>(
     method: HttpMethods,
     url: string,
     data: any,
@@ -80,7 +80,7 @@ export class FetchClient extends BaseHttpClient<FetchRequestConfig> {
     };
   }
 
-  private async getResponseBody(response: Response, isFailedJsonFatal: boolean) {
+  protected async getResponseBody(response: Response, isFailedJsonFatal: boolean) {
     if (response.status === 204) {
       return undefined;
     }
@@ -99,7 +99,7 @@ export class FetchClient extends BaseHttpClient<FetchRequestConfig> {
     }
   }
 
-  private mapHeaders(headers: Headers): Record<string, string> {
+  protected mapHeaders(headers: Headers): Record<string, string> {
     const result: Record<string, string> = {};
     headers.forEach((value, key) => (result[key] = value));
 

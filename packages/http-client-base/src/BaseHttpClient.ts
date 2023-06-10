@@ -35,7 +35,10 @@ export abstract class BaseHttpClient<RequestConfigType> implements ODataHttpClie
    * @param config
    * @returns request configuration
    */
-  abstract addHeaderToRequestConfig(headers: Record<string, string>, config?: RequestConfigType): RequestConfigType;
+  protected abstract addHeaderToRequestConfig(
+    headers: Record<string, string>,
+    config?: RequestConfigType
+  ): RequestConfigType;
 
   /**
    * Main function to implement by any extending http client.
@@ -47,7 +50,7 @@ export abstract class BaseHttpClient<RequestConfigType> implements ODataHttpClie
    * @param data
    * @param config
    */
-  abstract executeRequest<ResponseModel>(
+  protected abstract executeRequest<ResponseModel>(
     method: HttpMethods,
     url: string,
     data: any,

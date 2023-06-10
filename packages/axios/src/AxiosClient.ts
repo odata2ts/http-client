@@ -32,14 +32,14 @@ export class AxiosClient extends BaseHttpClient<AxiosRequestConfig> {
     this.client = axios.create(getDefaultConfig(config));
   }
 
-  addHeaderToRequestConfig(
+  protected addHeaderToRequestConfig(
     headers: Record<string, string>,
     config: AxiosRequestConfig | undefined
   ): AxiosRequestConfig {
     return mergeConfig(config, { headers });
   }
 
-  async executeRequest<ResponseModel>(
+  protected async executeRequest<ResponseModel>(
     method: HttpMethods,
     url: string,
     data: any,
@@ -82,7 +82,7 @@ export class AxiosClient extends BaseHttpClient<AxiosRequestConfig> {
     }
   }
 
-  private mapHeaders(headers: AxiosResponseHeaders | RawAxiosResponseHeaders): Record<string, string> {
+  protected mapHeaders(headers: AxiosResponseHeaders | RawAxiosResponseHeaders): Record<string, string> {
     return headers as Record<string, string>;
   }
 }

@@ -20,7 +20,7 @@ export class JQueryClient extends BaseHttpClient<AjaxRequestConfig> {
     this.config = getDefaultConfig(config);
   }
 
-  private mapHeaders(jqXhr: jqXHR): Record<string, string> {
+  protected mapHeaders(jqXhr: jqXHR): Record<string, string> {
     return jqXhr
       .getAllResponseHeaders()
       .trim()
@@ -37,11 +37,11 @@ export class JQueryClient extends BaseHttpClient<AjaxRequestConfig> {
       }, {});
   }
 
-  addHeaderToRequestConfig(headers: Record<string, string>, config?: AjaxRequestConfig): AjaxRequestConfig {
+  protected addHeaderToRequestConfig(headers: Record<string, string>, config?: AjaxRequestConfig): AjaxRequestConfig {
     return mergeAjaxConfig(config, { headers });
   }
 
-  executeRequest<ResponseModel>(
+  protected executeRequest<ResponseModel>(
     method: HttpMethods,
     url: string,
     data: any,
