@@ -45,6 +45,7 @@ export class AxiosClient extends BaseHttpClient<AxiosRequestConfig> {
     data: any,
     requestConfig: AxiosRequestConfig | undefined = {}
   ): Promise<HttpResponseModel<ResponseModel>> {
+    // add URL and HTTP method to the request config
     const config: OriginalRequestConfig = mergeConfig(requestConfig, { url, method });
     if (typeof data !== "undefined") {
       config.data = data;

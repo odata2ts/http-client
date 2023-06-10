@@ -27,8 +27,26 @@ export abstract class BaseHttpClient<RequestConfigType> implements ODataHttpClie
     }
   }
 
+  /**
+   * Use the given headers to either create an entire new request config or merge them into the given
+   * request config.
+   *
+   * @param headers
+   * @param config
+   * @returns request configuration
+   */
   abstract addHeaderToRequestConfig(headers: Record<string, string>, config?: RequestConfigType): RequestConfigType;
 
+  /**
+   * Main function to implement by any extending http client.
+   * As it name suggests, the request gets executed in this method.
+   * Additionally, failures should be handled and errors of type <code>HttpClientError</code> should be thrown.
+   *
+   * @param method
+   * @param url
+   * @param data
+   * @param config
+   */
   abstract executeRequest<ResponseModel>(
     method: HttpMethods,
     url: string,
@@ -149,7 +167,6 @@ export abstract class BaseHttpClient<RequestConfigType> implements ODataHttpClie
       this.addHeaderToRequestConfig({ "X-Http-Method": "MERGE" }, requestConfig)
     );
   }
-
   public delete(url: string, requestConfig?: RequestConfigType): Promise<HttpResponseModel<void>> {
     return this.sendRequest<void>(HttpMethods.Delete, url, undefined, requestConfig);
   }
