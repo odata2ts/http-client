@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.5.0](https://github.com/odata2ts/http-client/compare/@odata2ts/http-client-jquery@0.4.0...@odata2ts/http-client-jquery@0.5.0) (2023-06-10)
+
+### Features
+
+* conventionalize client errors ([#5](https://github.com/odata2ts/http-client/issues/5)) ([a8e8912](https://github.com/odata2ts/http-client/commit/a8e89125eeda47436d48507d6a71efc90953f878))
+
 # 0.4.0 (2023-06-03)
 
 ### Features
