@@ -41,7 +41,7 @@ describe("HTTP Communication Tests", function () {
         status: 404,
         message: `OData server responded with error: ${expectedErrorMsg}`,
       });
-      expect(error.cause?.message).toContain("failed with status code 404");
+      expect(error.cause?.message).toContain(expectedErrorMsg);
       expect(error.stack).toMatch(expectedErrorMsg);
       expect(error.stack).toMatch(error.name);
     }

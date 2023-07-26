@@ -59,11 +59,13 @@ export class AxiosClient extends BaseHttpClient<AxiosRequestConfig> {
 
         // regular failure handling
         if (axiosError.response) {
-          const msg = buildErrorMessage(FAILURE_RESPONSE_MESSAGE, this.retrieveErrorMessage(axiosError.response.data));
+          const errMsg = this.retrieveErrorMessage(axiosError.response.data);
+          const msg = buildErrorMessage(FAILURE_RESPONSE_MESSAGE, errMsg);
           throw new AxiosClientError(
             msg,
             axiosError.response.status,
             this.mapHeaders(axiosError.response.headers),
+            new Error(errMsg || DEFAULT_ERROR_MESSAGE),
             axiosError
           );
         }
@@ -73,6 +75,7 @@ export class AxiosClient extends BaseHttpClient<AxiosRequestConfig> {
             buildErrorMessage(axiosError.request ? FAILURE_NO_RESPONSE : FAILURE_NO_REQUEST, axiosError),
             undefined,
             undefined,
+            error,
             axiosError
           );
         }

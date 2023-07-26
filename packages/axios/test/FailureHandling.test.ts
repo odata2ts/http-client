@@ -86,6 +86,8 @@ describe("Failure Handling Tests", function () {
       expect(error.message).toContain(simulateFailure.message);
       expect(error.cause).toBeInstanceOf(Error);
       expect(error.cause?.message).toBe(simulateFailure.message);
+      expect(error.axiosError).toBeDefined();
+      expect(error.axiosError!.isAxiosError).toBeTruthy();
       expect(error.stack).toContain(simulateFailure.message);
       expect(error.stack).toContain("AxiosClientError");
     }
