@@ -4,11 +4,21 @@ import { ErrorMessageRetriever, retrieveErrorMessage } from "./ErrorMessageRetri
 import { HttpMethods } from "./HttpMethods";
 
 export interface BaseHttpClientOptions {
+  /**
+   * Enable automatic CSRF token handling.
+   */
   useCsrfProtection?: boolean;
+  /**
+   * Specify the URL from which the token is fetched.
+   * This could be any path to your OData service, since the token is exchanged via HTTP request headers.
+   * However, it should be a fast response and usually the root URL to the OData service is a good choice.
+   */
   csrfTokenFetchUrl?: string;
 }
 
 export const DEFAULT_CSRF_TOKEN_KEY = "x-csrf-token";
+const BIG_NUMBER_FORMAT = "application/json;IEEE754Compatible=true";
+export const BIG_NUMBERS_CONFIG = { Accept: BIG_NUMBER_FORMAT, "Content-Type": BIG_NUMBER_FORMAT };
 
 const EDIT_METHODS = ["POST", "PUT", "PATCH", "DELETE"];
 const FAILURE_MISSING_CSRF_URL =
@@ -18,6 +28,7 @@ const FAILURE_MISSING_URL = "Value for URL must be provided!";
 export abstract class BaseHttpClient<RequestConfigType> implements ODataHttpClient<RequestConfigType> {
   private csrfToken: string | undefined;
   private csrfTokenKey = DEFAULT_CSRF_TOKEN_KEY;
+  private bigNumbersAsString: boolean = false;
 
   protected retrieveErrorMessage: ErrorMessageRetriever = retrieveErrorMessage;
 
@@ -103,7 +114,7 @@ export abstract class BaseHttpClient<RequestConfigType> implements ODataHttpClie
       throw new Error(FAILURE_MISSING_URL);
     }
 
-    let config = requestConfig;
+    let config = this.bigNumbersAsString ? this.addHeaderToRequestConfig(BIG_NUMBERS_CONFIG) : requestConfig;
 
     // setup automatic CSRF token handling
     if (this.baseOptions.useCsrfProtection && EDIT_METHODS.includes(method)) {
@@ -172,5 +183,9 @@ export abstract class BaseHttpClient<RequestConfigType> implements ODataHttpClie
   }
   public delete(url: string, requestConfig?: RequestConfigType): Promise<HttpResponseModel<void>> {
     return this.sendRequest<void>(HttpMethods.Delete, url, undefined, requestConfig);
+  }
+
+  public retrieveBigNumbersAsString(enabled: boolean) {
+    this.bigNumbersAsString = enabled;
   }
 }
