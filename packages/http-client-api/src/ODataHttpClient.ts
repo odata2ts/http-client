@@ -60,4 +60,14 @@ export interface ODataHttpClient<RequestConfig = any> {
    * @param requestConfig
    */
   delete(url: string, requestConfig?: RequestConfig): ODataResponse<void>;
+
+  /**
+   * Get `Edm.Int64` and `Edm.Decimal` types as string instead of number to prevent precision loss.
+   * Only applies to V4 services.
+   *
+   * Set by odata2ts.
+   *
+   * @param enabled
+   */
+  retrieveBigNumbersAsString(enabled: boolean): void;
 }

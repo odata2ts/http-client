@@ -165,4 +165,19 @@ describe("BaseHttpClient Tests", () => {
 
     expect(mockClient.exposedErrorMessageRetriever("hi")).toBe(message + "hi");
   });
+
+  test("retrieve big numbers as string", async () => {
+    mockClient.retrieveBigNumbersAsString(true);
+    await mockClient.get(DEFAULT_URL);
+
+    expect(mockClient.lastConfig?.headers).toStrictEqual({
+      Accept: "application/json;IEEE754Compatible=true",
+      "Content-Type": "application/json;IEEE754Compatible=true",
+    });
+
+    mockClient.retrieveBigNumbersAsString(false);
+    await mockClient.get(DEFAULT_URL);
+
+    expect(mockClient.lastConfig?.headers).toBeUndefined();
+  });
 });
