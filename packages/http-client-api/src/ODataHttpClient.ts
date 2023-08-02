@@ -14,10 +14,20 @@ export interface ODataHttpClient<RequestConfig = any> {
    * @param url
    * @param data
    * @param requestConfig
+   * @param additionalHeaders
    */
-  post<ResponseModel>(url: string, data: any, requestConfig?: RequestConfig): ODataResponse<ResponseModel>;
+  post<ResponseModel>(
+    url: string,
+    data: any,
+    requestConfig?: RequestConfig,
+    additionalHeaders?: Record<string, string>
+  ): ODataResponse<ResponseModel>;
 
-  get<ResponseModel>(url: string, requestConfig?: RequestConfig): ODataResponse<ResponseModel>;
+  get<ResponseModel>(
+    url: string,
+    requestConfig?: RequestConfig,
+    additionalHeaders?: Record<string, string>
+  ): ODataResponse<ResponseModel>;
 
   /**
    * Replace a model.
@@ -25,8 +35,14 @@ export interface ODataHttpClient<RequestConfig = any> {
    * @param url
    * @param data
    * @param requestConfig
+   * @param additionalHeaders
    */
-  put<ResponseModel>(url: string, data: any, requestConfig?: RequestConfig): ODataResponse<ResponseModel>;
+  put<ResponseModel>(
+    url: string,
+    data: any,
+    requestConfig?: RequestConfig,
+    additionalHeaders?: Record<string, string>
+  ): ODataResponse<ResponseModel>;
 
   /**
    * Partially update a model.
@@ -34,8 +50,14 @@ export interface ODataHttpClient<RequestConfig = any> {
    * @param url
    * @param data
    * @param requestConfig
+   * @param additionalHeaders
    */
-  patch<ResponseModel>(url: string, data: any, requestConfig?: RequestConfig): ODataResponse<ResponseModel>;
+  patch<ResponseModel>(
+    url: string,
+    data: any,
+    requestConfig?: RequestConfig,
+    additionalHeaders?: Record<string, string>
+  ): ODataResponse<ResponseModel>;
 
   /**
    * OData V2 only feature.
@@ -50,16 +72,23 @@ export interface ODataHttpClient<RequestConfig = any> {
    * @param url
    * @param data
    * @param requestConfig
+   * @param additionalHeaders
    */
-  merge?<ResponseModel>(url: string, data: any, requestConfig?: RequestConfig): ODataResponse<ResponseModel>;
+  merge?<ResponseModel>(
+    url: string,
+    data: any,
+    requestConfig?: RequestConfig,
+    additionalHeaders?: Record<string, string>
+  ): ODataResponse<ResponseModel>;
 
   /**
    * Delete a model or collection.
    *
    * @param url
    * @param requestConfig
+   * @param additionalHeaders
    */
-  delete(url: string, requestConfig?: RequestConfig): ODataResponse<void>;
+  delete(url: string, requestConfig?: RequestConfig, additionalHeaders?: Record<string, string>): ODataResponse<void>;
 
   /**
    * Get `Edm.Int64` and `Edm.Decimal` types as string instead of number to prevent precision loss.
