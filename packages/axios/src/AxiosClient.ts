@@ -36,7 +36,7 @@ export class AxiosClient extends BaseHttpClient<AxiosRequestConfig> {
     headers: Record<string, string>,
     config: AxiosRequestConfig | undefined
   ): AxiosRequestConfig {
-    return mergeConfig(config, { headers });
+    return mergeConfig({ headers }, config);
   }
 
   protected async executeRequest<ResponseModel>(

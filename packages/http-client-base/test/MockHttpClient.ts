@@ -42,11 +42,7 @@ export class MockHttpClient extends BaseHttpClient<MockRequestConfig> {
 
   addHeaderToRequestConfig(headers: Record<string, string>, config: MockRequestConfig | undefined): MockRequestConfig {
     const mergedConfig: MockRequestConfig = config ? { ...config } : {};
-    if (!mergedConfig.headers) {
-      mergedConfig.headers = { ...headers };
-    } else {
-      mergedConfig.headers = { ...mergedConfig.headers, ...headers };
-    }
+    mergedConfig.headers = { ...headers, ...mergedConfig.headers };
 
     return mergedConfig;
   }

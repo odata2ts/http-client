@@ -28,7 +28,7 @@ export class FetchClient extends BaseHttpClient<FetchRequestConfig> {
     headers: Record<string, string>,
     config: FetchRequestConfig | undefined
   ): FetchRequestConfig {
-    return mergeFetchConfig(config, { headers });
+    return mergeFetchConfig({ headers }, config);
   }
 
   protected async executeRequest<ResponseModel>(

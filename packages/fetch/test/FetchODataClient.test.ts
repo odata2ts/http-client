@@ -96,15 +96,23 @@ describe("FetchClient Tests", function () {
     expect(getRequestHeaderRecords()).toStrictEqual({ ...DEFAULT_HEADERS, ...headers });
   });
 
-  test("using config with overrides", async () => {
-    const headers = { Accept: "hey", "Content-Type": "Ho" };
+  test("using additional headers", async () => {
+    const headers = { hey: "Ho" };
+
+    await fetchClient.get("", undefined, headers);
+
+    expect(getRequestHeaderRecords()).toStrictEqual({ ...DEFAULT_HEADERS, ...headers });
+  });
+
+  test("request config overrides everything", async () => {
+    const headers = { Accept: "hey", "Content-Type": "Ho", test: "test" };
     const config: FetchRequestConfig = {
       // @ts-ignore: method is not exposed as it should not be overridden
       method: "POST",
       cache: "force-cache",
     };
 
-    await fetchClient.get("", { headers, ...config });
+    await fetchClient.get("", { headers, ...config }, { test: "added" });
 
     // method has not been overridden
     expect(getBaseRequestConfig()).toStrictEqual({ method: "GET", cache: config.cache });
@@ -112,6 +120,7 @@ describe("FetchClient Tests", function () {
     expect(getRequestHeaderRecords()).toStrictEqual({
       accept: headers.Accept,
       "content-type": headers["Content-Type"],
+      test: "test",
     });
   });
 

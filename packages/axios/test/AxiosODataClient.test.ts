@@ -2,10 +2,6 @@ import axios, { AxiosResponse, CreateAxiosDefaults, AxiosRequestConfig as Origin
 
 import { AxiosClient, AxiosRequestConfig } from "../src";
 
-let axiosClient: AxiosClient;
-let requestConfig: OriginalRequestConfig | undefined;
-let simulateNoContent: boolean = false;
-
 const DEFAULT_URL = "TEST/hi";
 const JSON_VALUE = "application/json";
 const DEFAULT_HEADERS = { Accept: JSON_VALUE, "Content-Type": JSON_VALUE };
@@ -13,6 +9,10 @@ const DEFAULT_RESPONSE_HEADERS = { accept: JSON_VALUE, "content-type": JSON_VALU
 const SUCCESS_BODY = { Name: "Test" };
 
 describe("Axios HTTP Client Tests", function () {
+  let axiosClient: AxiosClient;
+  let requestConfig: OriginalRequestConfig | undefined;
+  let simulateNoContent: boolean = false;
+
   // @ts-ignore
   axios.create = jest.fn(({ headers, ...defaultConfig }: CreateAxiosDefaults) => ({
     request: ({ headers: reqHeaders, ...config }: OriginalRequestConfig): Promise<Partial<AxiosResponse>> => {
@@ -79,14 +79,22 @@ describe("Axios HTTP Client Tests", function () {
     });
   });
 
-  test("using config with overrides", async () => {
-    const headers = { Accept: "hey", "Content-Type": "Ho" };
+  test("using additional headers", async () => {
+    const headers = { hey: "Ho" };
+
+    await axiosClient.get("", undefined, headers);
+
+    expect(requestConfig?.headers).toStrictEqual({ ...DEFAULT_HEADERS, ...headers });
+  });
+
+  test("request config overrides everything", async () => {
+    const headers = { Accept: "hey", "Content-Type": "Ho", test: "test" };
     const config: AxiosRequestConfig = {
       // @ts-ignore: method is not exposed as it should not be overridden
       method: "POST",
     };
 
-    await axiosClient.get("", { headers, ...config });
+    await axiosClient.get("", { headers, ...config }, { test: "added" });
 
     // method has not been overridden
     expect(requestConfig?.method).toBe("GET");
