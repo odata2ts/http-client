@@ -8,6 +8,8 @@ import { JQueryClientError } from "./JQueryClientError";
 
 import jqXHR = JQuery.jqXHR;
 
+export const DEFAULT_ERROR_MESSAGE = "No error message!";
+
 export interface ClientOptions extends BaseHttpClientOptions {}
 
 export class JQueryClient extends BaseHttpClient<AjaxRequestConfig> {
@@ -65,12 +67,11 @@ export class JQueryClient extends BaseHttpClient<AjaxRequestConfig> {
           });
         },
         error: (jqXHR: JQuery.jqXHR, textStatus: string, thrownError: string) => {
-          const responseMessage = this.retrieveErrorMessage(jqXHR.responseJSON);
-          const errorMessage = responseMessage
-            ? "Server responded with error: " + responseMessage
-            : textStatus + " " + thrownError;
+          const responseMessage = this.retrieveErrorMessage(jqXHR.responseJSON());
+          const failMsg = responseMessage ?? thrownError ?? DEFAULT_ERROR_MESSAGE;
+          const errorMessage = responseMessage ? "Server responded with error: " + responseMessage : failMsg;
           const responseHeaders = this.mapHeaders(jqXHR);
-          reject(new JQueryClientError(errorMessage, jqXHR.status, responseHeaders, new Error(thrownError), jqXHR));
+          reject(new JQueryClientError(errorMessage, jqXHR.status, responseHeaders, new Error(failMsg), jqXHR));
         },
       });
     });

@@ -25,6 +25,7 @@ export class JqMock {
   private isSuccessResponse: boolean | undefined;
   private csrfToken: string | undefined;
   private expiredCsrfToken: boolean = false;
+  private errorMessage: string | undefined;
 
   /**
    * Marks the next request as success response
@@ -33,16 +34,18 @@ export class JqMock {
     this.isSuccessResponse = true;
     this.responseData = data;
     this.responseHeaders = headers;
+    this.errorMessage = undefined;
   }
 
   /**
    * Marks the next request as error response
    */
-  public errorResponse(httpCode: number, body: any, headers?: { [k: string]: string }) {
+  public errorResponse(httpCode: number, body: any, headers?: { [k: string]: string }, errorMsg?: string) {
     this.isSuccessResponse = false;
     this.responseData = body;
     this.responseHeaders = headers;
     this.responseStatus = httpCode;
+    this.errorMessage = errorMsg;
   }
 
   public simulateExpiredCsrfToken() {
@@ -80,14 +83,20 @@ export class JqMock {
       // @ts-ignore => too powerful typing of jquery here; also allows for arrays of functions
       this.requestConfig.success(this.responseData, mockXhr.statusText, mockXhr);
     } else {
-      const mockXhr = createMockXhr(this.responseStatus!, "err", this.responseData, this.responseHeaders);
+      const mockXhr = createMockXhr(
+        this.responseStatus!,
+        "some err status text",
+        this.responseData,
+        this.responseHeaders
+      );
       // @ts-ignore
-      this.requestConfig.error(mockXhr, mockXhr.statusText, "thrown error");
+      this.requestConfig.error(mockXhr, mockXhr.statusText, this.errorMessage);
     }
 
     this.isSuccessResponse = undefined;
     this.responseData = undefined;
     this.responseHeaders = undefined;
+    this.errorMessage = undefined;
   }
 
   public getRequestConfig() {
