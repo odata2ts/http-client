@@ -38,7 +38,7 @@ export class JQueryClient extends BaseHttpClient<AjaxRequestConfig> {
   }
 
   protected addHeaderToRequestConfig(headers: Record<string, string>, config?: AjaxRequestConfig): AjaxRequestConfig {
-    return mergeAjaxConfig(config, { headers });
+    return mergeAjaxConfig({ headers }, config);
   }
 
   protected executeRequest<ResponseModel>(

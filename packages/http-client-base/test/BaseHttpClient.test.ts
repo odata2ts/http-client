@@ -3,6 +3,7 @@ import { MockClientError, MockHttpClient, MockRequestConfig } from "./MockHttpCl
 describe("BaseHttpClient Tests", () => {
   const DEFAULT_URL = "http://test.testing.com/myService/theEntity";
   const DEFAULT_CONFIG: MockRequestConfig = { headers: { x: "a" }, x: "y" };
+  const ADDITIONAL_HEADERS = { "Content-Type": "ct" };
   const DEFAULT_DATA = { a: "b" };
 
   let mockClient: MockHttpClient;
@@ -34,6 +35,17 @@ describe("BaseHttpClient Tests", () => {
     expect(mockClient.lastUrl).toBe(DEFAULT_URL);
     expect(mockClient.lastData).toBeUndefined();
     expect(mockClient.lastConfig).toStrictEqual(DEFAULT_CONFIG);
+  });
+
+  test("GET with additional headers", async () => {
+    await mockClient.get(DEFAULT_URL, undefined, ADDITIONAL_HEADERS);
+    expect(mockClient.lastConfig).toStrictEqual({ headers: ADDITIONAL_HEADERS });
+
+    await mockClient.get(DEFAULT_URL, DEFAULT_CONFIG, ADDITIONAL_HEADERS);
+    expect(mockClient.lastConfig).toStrictEqual({
+      ...DEFAULT_CONFIG,
+      headers: { ...DEFAULT_CONFIG.headers, ...ADDITIONAL_HEADERS },
+    });
   });
 
   test("client error response", async () => {
@@ -126,6 +138,35 @@ describe("BaseHttpClient Tests", () => {
       ...DEFAULT_CONFIG,
       headers: { ...{ "X-Http-Method": "MERGE" }, ...DEFAULT_CONFIG.headers },
     });
+  });
+
+  test("MERGE: config wins over internally set headers", async () => {
+    const myHeaderConfig = { "X-Http-Method": "MyMerge" };
+    await mockClient.merge(DEFAULT_URL, DEFAULT_DATA, { headers: myHeaderConfig });
+
+    expect(mockClient.lastConfig).toStrictEqual({
+      headers: myHeaderConfig,
+    });
+  });
+
+  test("MERGE with additional headers", async () => {
+    const mergeHeader = { "X-Http-Method": "MERGE" };
+
+    // only additional headers
+    await mockClient.merge(DEFAULT_URL, DEFAULT_DATA, undefined, ADDITIONAL_HEADERS);
+    expect(mockClient.lastConfig).toStrictEqual({ headers: { ...mergeHeader, ...ADDITIONAL_HEADERS } });
+
+    // request config & additional headers get merged
+    await mockClient.merge(DEFAULT_URL, DEFAULT_DATA, DEFAULT_CONFIG, ADDITIONAL_HEADERS);
+    expect(mockClient.lastConfig).toStrictEqual({
+      ...DEFAULT_CONFIG,
+      headers: { "X-Http-Method": "MERGE", ...DEFAULT_CONFIG.headers, ...ADDITIONAL_HEADERS },
+    });
+
+    // request config wins over additional headers
+    const rc = { headers: { "Content-Type": "heyHo!!!" } };
+    await mockClient.merge(DEFAULT_URL, DEFAULT_DATA, rc, ADDITIONAL_HEADERS);
+    expect(mockClient.lastConfig).toStrictEqual({ headers: { ...mergeHeader, ...rc.headers } });
   });
 
   test("simple DELETE request", async () => {

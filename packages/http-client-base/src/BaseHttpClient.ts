@@ -18,7 +18,8 @@ export interface BaseHttpClientOptions {
 
 export const DEFAULT_CSRF_TOKEN_KEY = "x-csrf-token";
 const BIG_NUMBER_FORMAT = "application/json;IEEE754Compatible=true";
-export const BIG_NUMBERS_CONFIG = { Accept: BIG_NUMBER_FORMAT, "Content-Type": BIG_NUMBER_FORMAT };
+export const BIG_NUMBERS_HEADERS = { Accept: BIG_NUMBER_FORMAT, "Content-Type": BIG_NUMBER_FORMAT };
+export const MERGE_HEADERS = { "X-Http-Method": "MERGE" };
 
 const EDIT_METHODS = ["POST", "PUT", "PATCH", "DELETE"];
 const FAILURE_MISSING_CSRF_URL =
@@ -101,26 +102,35 @@ export abstract class BaseHttpClient<RequestConfigType> implements ODataHttpClie
    * @param url
    * @param data
    * @param requestConfig
+   * @param additionalHeaders
    * @private
    */
   private async sendRequest<ResponseModel>(
     method: HttpMethods,
     url: string,
     data: any,
-    requestConfig?: RequestConfigType
+    requestConfig?: RequestConfigType,
+    additionalHeaders?: Record<string, string>
   ): Promise<HttpResponseModel<ResponseModel>> {
     // noinspection SuspiciousTypeOfGuard
     if (typeof url !== "string") {
       throw new Error(FAILURE_MISSING_URL);
     }
 
-    let config = this.bigNumbersAsString ? this.addHeaderToRequestConfig(BIG_NUMBERS_CONFIG) : requestConfig;
+    // use big numbers
+    let config = this.bigNumbersAsString
+      ? this.addHeaderToRequestConfig(BIG_NUMBERS_HEADERS, requestConfig)
+      : requestConfig;
+    // use additional headers
+    if (additionalHeaders) {
+      config = this.addHeaderToRequestConfig(additionalHeaders, config);
+    }
 
     // setup automatic CSRF token handling
     if (this.baseOptions.useCsrfProtection && EDIT_METHODS.includes(method)) {
       const [tokenKey, tokenValue] = await this.setupSecurityToken();
       if (tokenValue) {
-        config = this.addHeaderToRequestConfig({ [tokenKey]: tokenValue }, requestConfig);
+        config = this.addHeaderToRequestConfig({ [tokenKey]: tokenValue });
       }
     }
 
@@ -145,44 +155,54 @@ export abstract class BaseHttpClient<RequestConfigType> implements ODataHttpClie
     }
   }
 
-  public get<ResponseModel>(url: string, requestConfig?: RequestConfigType): Promise<HttpResponseModel<ResponseModel>> {
-    return this.sendRequest<ResponseModel>(HttpMethods.Get, url, undefined, requestConfig);
+  public get<ResponseModel>(
+    url: string,
+    requestConfig?: RequestConfigType,
+    additionalHeaders?: Record<string, string>
+  ): Promise<HttpResponseModel<ResponseModel>> {
+    return this.sendRequest<ResponseModel>(HttpMethods.Get, url, undefined, requestConfig, additionalHeaders);
   }
   public post<ResponseModel>(
     url: string,
     data: any,
-    requestConfig?: RequestConfigType
+    requestConfig?: RequestConfigType,
+    additionalHeaders?: Record<string, string>
   ): Promise<HttpResponseModel<ResponseModel>> {
-    return this.sendRequest<ResponseModel>(HttpMethods.Post, url, data, requestConfig);
+    return this.sendRequest<ResponseModel>(HttpMethods.Post, url, data, requestConfig, additionalHeaders);
   }
   public put<ResponseModel>(
     url: string,
     data: any,
-    requestConfig?: RequestConfigType
+    requestConfig?: RequestConfigType,
+    additionalHeaders?: Record<string, string>
   ): Promise<HttpResponseModel<ResponseModel>> {
-    return this.sendRequest<ResponseModel>(HttpMethods.Put, url, data, requestConfig);
+    return this.sendRequest<ResponseModel>(HttpMethods.Put, url, data, requestConfig, additionalHeaders);
   }
   public patch<ResponseModel>(
     url: string,
     data: any,
-    requestConfig?: RequestConfigType
+    requestConfig?: RequestConfigType,
+    additionalHeaders?: Record<string, string>
   ): Promise<HttpResponseModel<ResponseModel>> {
-    return this.sendRequest<ResponseModel>(HttpMethods.Patch, url, data, requestConfig);
+    return this.sendRequest<ResponseModel>(HttpMethods.Patch, url, data, requestConfig, additionalHeaders);
   }
   public merge<ResponseModel>(
     url: string,
     data: any,
-    requestConfig?: RequestConfigType
+    requestConfig?: RequestConfigType,
+    additionalHeaders?: Record<string, string>
   ): Promise<HttpResponseModel<ResponseModel>> {
-    return this.sendRequest<ResponseModel>(
-      HttpMethods.Post,
-      url,
-      data,
-      this.addHeaderToRequestConfig({ "X-Http-Method": "MERGE" }, requestConfig)
-    );
+    return this.sendRequest<ResponseModel>(HttpMethods.Post, url, data, requestConfig, {
+      ...MERGE_HEADERS,
+      ...additionalHeaders,
+    });
   }
-  public delete(url: string, requestConfig?: RequestConfigType): Promise<HttpResponseModel<void>> {
-    return this.sendRequest<void>(HttpMethods.Delete, url, undefined, requestConfig);
+  public delete(
+    url: string,
+    requestConfig?: RequestConfigType,
+    additionalHeaders?: Record<string, string>
+  ): Promise<HttpResponseModel<void>> {
+    return this.sendRequest<void>(HttpMethods.Delete, url, undefined, requestConfig, additionalHeaders);
   }
 
   public retrieveBigNumbersAsString(enabled: boolean) {

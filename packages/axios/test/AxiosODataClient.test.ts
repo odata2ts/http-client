@@ -79,14 +79,22 @@ describe("Axios HTTP Client Tests", function () {
     });
   });
 
-  test("using config with overrides", async () => {
-    const headers = { Accept: "hey", "Content-Type": "Ho" };
+  test("using additional headers", async () => {
+    const headers = { hey: "Ho" };
+
+    await axiosClient.get("", undefined, headers);
+
+    expect(requestConfig?.headers).toStrictEqual({ ...DEFAULT_HEADERS, ...headers });
+  });
+
+  test("request config overrides everything", async () => {
+    const headers = { Accept: "hey", "Content-Type": "Ho", test: "test" };
     const config: AxiosRequestConfig = {
       // @ts-ignore: method is not exposed as it should not be overridden
       method: "POST",
     };
 
-    await axiosClient.get("", { headers, ...config });
+    await axiosClient.get("", { headers, ...config }, { test: "added" });
 
     // method has not been overridden
     expect(requestConfig?.method).toBe("GET");
