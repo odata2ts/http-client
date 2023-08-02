@@ -2,10 +2,6 @@ import axios, { AxiosResponse, CreateAxiosDefaults, AxiosRequestConfig as Origin
 
 import { AxiosClient, AxiosRequestConfig } from "../src";
 
-let axiosClient: AxiosClient;
-let requestConfig: OriginalRequestConfig | undefined;
-let simulateNoContent: boolean = false;
-
 const DEFAULT_URL = "TEST/hi";
 const JSON_VALUE = "application/json";
 const DEFAULT_HEADERS = { Accept: JSON_VALUE, "Content-Type": JSON_VALUE };
@@ -13,6 +9,10 @@ const DEFAULT_RESPONSE_HEADERS = { accept: JSON_VALUE, "content-type": JSON_VALU
 const SUCCESS_BODY = { Name: "Test" };
 
 describe("Axios HTTP Client Tests", function () {
+  let axiosClient: AxiosClient;
+  let requestConfig: OriginalRequestConfig | undefined;
+  let simulateNoContent: boolean = false;
+
   // @ts-ignore
   axios.create = jest.fn(({ headers, ...defaultConfig }: CreateAxiosDefaults) => ({
     request: ({ headers: reqHeaders, ...config }: OriginalRequestConfig): Promise<Partial<AxiosResponse>> => {

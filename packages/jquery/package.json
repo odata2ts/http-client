@@ -14,8 +14,9 @@
     "check-circular-deps": "madge ./src --extensions ts --circular",
     "clean": "rimraf lib coverage",
     "compile": "tsc",
+    "int-test": "jest ./int-test",
     "prepublish": "yarn build",
-    "test": "jest --passWithNoTests"
+    "test": "jest ./test"
   },
   "files": [
     "*.md",
@@ -25,8 +26,8 @@
   "keywords": [
     "http client",
     "jquery",
-    "ui5",
     "odata2ts",
+    "ui5",
     "ts",
     "typescript"
   ],
