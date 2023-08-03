@@ -3,13 +3,15 @@ import { ODataCollectionResponseV4, ODataModelResponseV4 } from "@odata2ts/odata
 import { FetchClient, FetchClientError } from "../src";
 
 describe("HTTP Communication Tests", function () {
-  const BASE_URL = "https://services.odata.org/TripPinRESTierService/(S(xxxsujx4iqjss1vkeighyks6))";
+  const BASE_URL = "https://services.odata.org/TripPinRESTierService/(S(xxxsujx4iqjss1vkeighyks7))";
+  const DEFAULT_HEADERS = { Accept: "application/json", "Content-Type": "application/json" };
 
-  const REAL_CLIENT = new FetchClient();
+  const REAL_CLIENT = new FetchClient({ headers: DEFAULT_HEADERS });
 
   test("Simple Get", async () => {
     const url = BASE_URL + "/People('russellwhyte')";
     const response = await REAL_CLIENT.get<ODataCollectionResponseV4<any>>(url);
+    const { date, ...headers } = response.headers;
     expect(response).toMatchObject({
       status: 200,
       statusText: "OK",
@@ -19,6 +21,19 @@ describe("HTTP Communication Tests", function () {
         "odata-version": "4.0",
         pragma: "no-cache",
       },
+    });
+    expect(headers).toStrictEqual({
+      "content-length": "445",
+      "content-type": "application/json; odata.metadata=minimal",
+      "cache-control": "no-cache",
+      "content-encoding": "gzip",
+      expires: "-1",
+      pragma: "no-cache",
+      "odata-version": "4.0",
+      server: "Microsoft-IIS/10.0",
+      vary: "Accept-Encoding",
+      "x-aspnet-version": "4.0.30319",
+      "x-powered-by": "ASP.NET",
     });
     expect(response.data).toMatchObject({
       FirstName: "Russell",
