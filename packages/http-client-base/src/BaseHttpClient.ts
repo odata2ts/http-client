@@ -17,9 +17,6 @@ export interface BaseHttpClientOptions {
 }
 
 export const DEFAULT_CSRF_TOKEN_KEY = "x-csrf-token";
-const BIG_NUMBER_FORMAT = "application/json;IEEE754Compatible=true";
-export const BIG_NUMBERS_HEADERS = { Accept: BIG_NUMBER_FORMAT, "Content-Type": BIG_NUMBER_FORMAT };
-export const MERGE_HEADERS = { "X-Http-Method": "MERGE" };
 
 const EDIT_METHODS = ["POST", "PUT", "PATCH", "DELETE"];
 const FAILURE_MISSING_CSRF_URL =
@@ -29,7 +26,6 @@ const FAILURE_MISSING_URL = "Value for URL must be provided!";
 export abstract class BaseHttpClient<RequestConfigType> implements ODataHttpClient<RequestConfigType> {
   private csrfToken: string | undefined;
   private csrfTokenKey = DEFAULT_CSRF_TOKEN_KEY;
-  private bigNumbersAsString: boolean = false;
 
   protected retrieveErrorMessage: ErrorMessageRetriever = retrieveErrorMessage;
 
@@ -118,9 +114,8 @@ export abstract class BaseHttpClient<RequestConfigType> implements ODataHttpClie
     }
 
     // use big numbers
-    let config = this.bigNumbersAsString
-      ? this.addHeaderToRequestConfig(BIG_NUMBERS_HEADERS, requestConfig)
-      : requestConfig;
+    let config = requestConfig;
+
     // use additional headers
     if (additionalHeaders) {
       config = this.addHeaderToRequestConfig(additionalHeaders, config);
@@ -186,26 +181,12 @@ export abstract class BaseHttpClient<RequestConfigType> implements ODataHttpClie
   ): Promise<HttpResponseModel<ResponseModel>> {
     return this.sendRequest<ResponseModel>(HttpMethods.Patch, url, data, requestConfig, additionalHeaders);
   }
-  public merge<ResponseModel>(
-    url: string,
-    data: any,
-    requestConfig?: RequestConfigType,
-    additionalHeaders?: Record<string, string>
-  ): Promise<HttpResponseModel<ResponseModel>> {
-    return this.sendRequest<ResponseModel>(HttpMethods.Post, url, data, requestConfig, {
-      ...MERGE_HEADERS,
-      ...additionalHeaders,
-    });
-  }
+
   public delete(
     url: string,
     requestConfig?: RequestConfigType,
     additionalHeaders?: Record<string, string>
   ): Promise<HttpResponseModel<void>> {
     return this.sendRequest<void>(HttpMethods.Delete, url, undefined, requestConfig, additionalHeaders);
-  }
-
-  public retrieveBigNumbersAsString(enabled: boolean) {
-    this.bigNumbersAsString = enabled;
   }
 }
