@@ -24,7 +24,7 @@ describe("Failure Handling Tests", function () {
   } = {};
 
   // @ts-ignore
-  axios.create = jest.fn(({ headers, ...defaultConfig }: CreateAxiosDefaults) => ({
+  axios.create = jest.fn(({ headers, ...defaultConfig }: CreateAxiosDefaults = {}) => ({
     request: ({ headers: reqHeaders, ...config }: OriginalRequestConfig): Promise<Partial<AxiosResponse>> => {
       requestConfig = {
         headers: {
