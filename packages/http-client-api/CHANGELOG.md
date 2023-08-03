@@ -3,6 +3,20 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.4.0](https://github.com/odata2ts/http-client/compare/@odata2ts/http-client-api@0.3.0...@odata2ts/http-client-api@0.4.0) (2023-08-03)
+
+### Code Refactoring
+
+* **api:** remove merge & retrieveBigNumbersAsString methods ([a99f89e](https://github.com/odata2ts/http-client/commit/a99f89ee7782733ba75543b3abd03a3060e5e7dc))
+
+### Features
+
+* **api:** additional headers for all operations ([#9](https://github.com/odata2ts/http-client/issues/9)) ([6379511](https://github.com/odata2ts/http-client/commit/637951126118aeb020d68ce16e48ea80e98987e1))
+
+### BREAKING CHANGES
+
+* **api:** removed remove merge & retrieveBigNumbersAsString methods; use the additionalHeaders option on the appropriate operations
+
 # [0.3.0](https://github.com/odata2ts/http-client/compare/@odata2ts/http-client-api@0.2.0...@odata2ts/http-client-api@0.3.0) (2023-07-26)
 
 ### Features

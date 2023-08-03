@@ -1,6 +1,6 @@
 {
   "name": "@odata2ts/http-client-jquery",
-  "version": "0.5.1",
+  "version": "0.6.0",
   "publishConfig": {
     "access": "public"
   },
@@ -35,7 +35,7 @@
     "jquery": ">1.0"
   },
   "dependencies": {
-    "@odata2ts/http-client-base": "^0.2.0"
+    "@odata2ts/http-client-base": "^0.3.0"
   },
   "devDependencies": {
     "@types/jest": "^27.4.1",

@@ -3,6 +3,20 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.6.0](https://github.com/odata2ts/http-client/compare/@odata2ts/http-client-jquery@0.5.1...@odata2ts/http-client-jquery@0.6.0) (2023-08-03)
+
+### Code Refactoring
+
+* **jquery:** remove default headers ([3106d97](https://github.com/odata2ts/http-client/commit/3106d9768765e7cc228097ed1270439d47ff0e0c))
+
+### Features
+
+* allow for additional headers for all operations ([#10](https://github.com/odata2ts/http-client/issues/10)) ([75eedd3](https://github.com/odata2ts/http-client/commit/75eedd3ebb8534188a5a644aee9e69e17f1f0c80))
+
+### BREAKING CHANGES
+
+* **jquery:** removed default accept & content-type headers as well as `dataType=json`; removed merge & retrieveBigNumbersAsString methods (base-lib); all of these settings can now be configured per operation via the `additionalHeaders` option.
+
 ## [0.5.1](https://github.com/odata2ts/http-client/compare/@odata2ts/http-client-jquery@0.5.0...@odata2ts/http-client-jquery@0.5.1) (2023-07-26)
 
 **Note:** Version bump only for package @odata2ts/http-client-jquery

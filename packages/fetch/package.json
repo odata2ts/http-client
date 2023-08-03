@@ -1,6 +1,6 @@
 {
   "name": "@odata2ts/http-client-fetch",
-  "version": "0.3.1",
+  "version": "0.4.0",
   "publishConfig": {
     "access": "public"
   },
@@ -31,7 +31,7 @@
     "odata2ts"
   ],
   "dependencies": {
-    "@odata2ts/http-client-base": "^0.2.0"
+    "@odata2ts/http-client-base": "^0.3.0"
   },
   "devDependencies": {
     "@odata2ts/odata-core": "^0.3.7",

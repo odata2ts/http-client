@@ -3,6 +3,20 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.9.0](https://github.com/odata2ts/http-client/compare/@odata2ts/http-client-axios@0.8.1...@odata2ts/http-client-axios@0.9.0) (2023-08-03)
+
+### Code Refactoring
+
+* **axios:** remove default headers ([7fcff0c](https://github.com/odata2ts/http-client/commit/7fcff0c8f1a0962abc60da84cde57e0469cc0bc2))
+
+### Features
+
+* allow for additional headers for all operations ([#10](https://github.com/odata2ts/http-client/issues/10)) ([75eedd3](https://github.com/odata2ts/http-client/commit/75eedd3ebb8534188a5a644aee9e69e17f1f0c80))
+
+### BREAKING CHANGES
+
+* **axios:** removed default accept & content-type headers; removed merge & retrieveBigNumbersAsString methods (base-lib); all of these settings can now be configured per operation via the `additionalHeaders` option.
+
 ## [0.8.1](https://github.com/odata2ts/http-client/compare/@odata2ts/http-client-axios@0.8.0...@odata2ts/http-client-axios@0.8.1) (2023-07-26)
 
 **Note:** Version bump only for package @odata2ts/http-client-axios

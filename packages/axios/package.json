@@ -1,6 +1,6 @@
 {
   "name": "@odata2ts/http-client-axios",
-  "version": "0.8.1",
+  "version": "0.9.0",
   "publishConfig": {
     "access": "public"
   },
@@ -34,7 +34,7 @@
     "axios": "^0.27.0 || ^1.0.0"
   },
   "dependencies": {
-    "@odata2ts/http-client-base": "^0.2.0"
+    "@odata2ts/http-client-base": "^0.3.0"
   },
   "devDependencies": {
     "@types/jest": "^27.4.1",
