@@ -19,7 +19,7 @@ function buildErrorMessage(prefix: string, error: any) {
 export class FetchClient extends BaseHttpClient<FetchRequestConfig> {
   protected readonly config: RequestInit;
 
-  constructor(config?: FetchRequestConfig, private clientOptions?: ClientOptions) {
+  constructor(config?: FetchRequestConfig, clientOptions?: ClientOptions) {
     super(clientOptions);
     this.config = getDefaultConfig(config);
   }

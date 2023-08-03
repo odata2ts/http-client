@@ -1,6 +1,6 @@
 const DEFAULT_CONFIG: RequestInit = {
-  headers: { Accept: "application/json", "Content-Type": "application/json" },
-  cache: "no-cache",
+  // headers: { Accept: "application/json", "Content-Type": "application/json" },
+  cache: "no-store",
 };
 
 /**
