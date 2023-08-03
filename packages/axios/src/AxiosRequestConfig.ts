@@ -9,14 +9,6 @@ export interface InternalRequestConfig extends Omit<OriginalRequestConfig, "head
   headers?: Record<string, string>;
 }
 
-const DEFAULT_CONFIG: InternalRequestConfig = {
-  headers: { Accept: "application/json", "Content-Type": "application/json" },
-};
-
-export function getDefaultConfig(config?: AxiosRequestConfig | undefined): CreateAxiosDefaults {
-  return mergeConfig(DEFAULT_CONFIG, config as InternalRequestConfig) as CreateAxiosDefaults;
-}
-
 export function mergeConfig(): undefined;
 export function mergeConfig(...configs: Array<InternalRequestConfig | undefined>): InternalRequestConfig;
 export function mergeConfig(...configs: Array<InternalRequestConfig | undefined>) {

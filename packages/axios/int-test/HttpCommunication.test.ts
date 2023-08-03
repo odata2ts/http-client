@@ -4,21 +4,33 @@ import { AxiosClient, AxiosClientError } from "../src";
 
 describe("HTTP Communication Tests", function () {
   const BASE_URL = "https://services.odata.org/TripPinRESTierService/(S(xxxsujx4iqjss1vkeighyks6))";
+  const DEFAULT_HEADERS = { Accept: "application/json", "Content-Type": "application/json" };
 
-  const REAL_CLIENT = new AxiosClient();
+  const REAL_CLIENT = new AxiosClient({ headers: DEFAULT_HEADERS });
 
   test("Simple Get", async () => {
     const url = BASE_URL + "/People('russellwhyte')";
     const response = await REAL_CLIENT.get<ODataCollectionResponseV4<any>>(url);
+    const { date, ...headers } = response.headers;
     expect(response).toMatchObject({
       status: 200,
       statusText: "OK",
-      headers: {
-        "cache-control": "no-cache",
-        "content-type": "application/json; odata.metadata=minimal",
-        "odata-version": "4.0",
-        pragma: "no-cache",
-      },
+    });
+    expect(headers).toStrictEqual({
+      "content-length": "445",
+      "content-type": "application/json; odata.metadata=minimal",
+      "cache-control": "no-cache",
+      // "content-encoding": "gzip",
+      expires: "-1",
+      pragma: "no-cache",
+      "odata-version": "4.0",
+      server: "Microsoft-IIS/10.0",
+      vary: "Accept-Encoding",
+      "x-aspnet-version": "4.0.30319",
+      "x-powered-by": "ASP.NET",
+
+      // axios specials
+      connection: "close",
     });
     expect(response.data).toMatchObject({
       FirstName: "Russell",

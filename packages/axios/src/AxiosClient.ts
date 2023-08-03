@@ -9,7 +9,7 @@ import axios, {
 } from "axios";
 
 import { AxiosClientError } from "./AxiosClientError";
-import { AxiosRequestConfig, getDefaultConfig, mergeConfig } from "./AxiosRequestConfig";
+import { AxiosRequestConfig, mergeConfig } from "./AxiosRequestConfig";
 
 export interface ClientOptions extends BaseHttpClientOptions {}
 
@@ -29,7 +29,7 @@ export class AxiosClient extends BaseHttpClient<AxiosRequestConfig> {
 
   constructor(config?: AxiosRequestConfig, private clientOptions?: ClientOptions) {
     super(clientOptions);
-    this.client = axios.create(getDefaultConfig(config));
+    this.client = axios.create(config);
   }
 
   protected addHeaderToRequestConfig(

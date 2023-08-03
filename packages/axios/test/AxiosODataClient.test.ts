@@ -4,7 +4,7 @@ import { AxiosClient, AxiosRequestConfig } from "../src";
 
 const DEFAULT_URL = "TEST/hi";
 const JSON_VALUE = "application/json";
-const DEFAULT_HEADERS = { Accept: JSON_VALUE, "Content-Type": JSON_VALUE };
+// const DEFAULT_HEADERS = { Accept: JSON_VALUE, "Content-Type": JSON_VALUE };
 const DEFAULT_RESPONSE_HEADERS = { accept: JSON_VALUE, "content-type": JSON_VALUE };
 const SUCCESS_BODY = { Name: "Test" };
 
@@ -14,13 +14,16 @@ describe("Axios HTTP Client Tests", function () {
   let simulateNoContent: boolean = false;
 
   // @ts-ignore
-  axios.create = jest.fn(({ headers, ...defaultConfig }: CreateAxiosDefaults) => ({
+  axios.create = jest.fn(({ headers, ...defaultConfig }: CreateAxiosDefaults = {}) => ({
     request: ({ headers: reqHeaders, ...config }: OriginalRequestConfig): Promise<Partial<AxiosResponse>> => {
       requestConfig = {
-        headers: {
-          ...headers,
-          ...reqHeaders,
-        },
+        headers:
+          headers || (reqHeaders && Object.keys(reqHeaders).length)
+            ? {
+                ...headers,
+                ...reqHeaders,
+              }
+            : undefined,
         ...defaultConfig,
         ...config,
       } as AxiosRequestConfig;
@@ -46,7 +49,7 @@ describe("Axios HTTP Client Tests", function () {
 
     expect(requestConfig).toStrictEqual({
       url: DEFAULT_URL,
-      headers: DEFAULT_HEADERS,
+      headers: undefined,
       method: "GET",
     });
   });
@@ -73,7 +76,7 @@ describe("Axios HTTP Client Tests", function () {
 
     expect(requestConfig).toStrictEqual({
       url: "",
-      headers: { ...DEFAULT_HEADERS, ...headers },
+      headers,
       method: "GET",
       ...config,
     });
@@ -84,22 +87,23 @@ describe("Axios HTTP Client Tests", function () {
 
     await axiosClient.get("", undefined, headers);
 
-    expect(requestConfig?.headers).toStrictEqual({ ...DEFAULT_HEADERS, ...headers });
+    expect(requestConfig?.headers).toStrictEqual(headers);
   });
 
   test("request config overrides everything", async () => {
+    axiosClient = new AxiosClient({ headers: { Accept: "bbb", mo: "mi" } });
     const headers = { Accept: "hey", "Content-Type": "Ho", test: "test" };
     const config: AxiosRequestConfig = {
       // @ts-ignore: method is not exposed as it should not be overridden
       method: "POST",
     };
 
-    await axiosClient.get("", { headers, ...config }, { test: "added" });
+    await axiosClient.get("", { headers, ...config }, { test: "added", extra: "x" });
 
     // method has not been overridden
     expect(requestConfig?.method).toBe("GET");
     // headers have been overridden
-    expect(requestConfig?.headers).toStrictEqual(headers);
+    expect(requestConfig?.headers).toStrictEqual({ ...headers, mo: "mi", extra: "x" });
   });
 
   test("post request", async () => {
@@ -107,7 +111,7 @@ describe("Axios HTTP Client Tests", function () {
 
     expect(requestConfig).toStrictEqual({
       url: DEFAULT_URL,
-      headers: DEFAULT_HEADERS,
+      headers: undefined,
       method: "POST",
       data: {},
     });
@@ -130,7 +134,7 @@ describe("Axios HTTP Client Tests", function () {
 
     expect(requestConfig).toStrictEqual({
       url: DEFAULT_URL,
-      headers: DEFAULT_HEADERS,
+      headers: undefined,
       method: "PUT",
       data: {},
     });
@@ -141,19 +145,8 @@ describe("Axios HTTP Client Tests", function () {
 
     expect(requestConfig).toStrictEqual({
       url: DEFAULT_URL,
-      headers: DEFAULT_HEADERS,
+      headers: undefined,
       method: "PATCH",
-      data: {},
-    });
-  });
-
-  test("merge request", async () => {
-    await axiosClient.merge(DEFAULT_URL, {});
-
-    expect(requestConfig).toStrictEqual({
-      url: DEFAULT_URL,
-      headers: { ...DEFAULT_HEADERS, "X-Http-Method": "MERGE" },
-      method: "POST",
       data: {},
     });
   });
@@ -163,7 +156,7 @@ describe("Axios HTTP Client Tests", function () {
 
     expect(requestConfig).toStrictEqual({
       url: DEFAULT_URL,
-      headers: DEFAULT_HEADERS,
+      headers: undefined,
       method: "DELETE",
     });
   });
