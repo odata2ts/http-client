@@ -119,56 +119,6 @@ describe("BaseHttpClient Tests", () => {
     expect(mockClient.lastConfig).toStrictEqual(DEFAULT_CONFIG);
   });
 
-  test("simple MERGE request", async () => {
-    await mockClient.merge(DEFAULT_URL, DEFAULT_DATA);
-
-    expect(mockClient.lastMethod).toBe("POST");
-    expect(mockClient.lastUrl).toBe(DEFAULT_URL);
-    expect(mockClient.lastData).toStrictEqual(DEFAULT_DATA);
-    expect(mockClient.lastConfig).toStrictEqual({ headers: { "X-Http-Method": "MERGE" } });
-  });
-
-  test("MERGE with config", async () => {
-    await mockClient.merge(DEFAULT_URL, DEFAULT_DATA, DEFAULT_CONFIG);
-
-    expect(mockClient.lastMethod).toBe("POST");
-    expect(mockClient.lastUrl).toBe(DEFAULT_URL);
-    expect(mockClient.lastData).toStrictEqual(DEFAULT_DATA);
-    expect(mockClient.lastConfig).toStrictEqual({
-      ...DEFAULT_CONFIG,
-      headers: { ...{ "X-Http-Method": "MERGE" }, ...DEFAULT_CONFIG.headers },
-    });
-  });
-
-  test("MERGE: config wins over internally set headers", async () => {
-    const myHeaderConfig = { "X-Http-Method": "MyMerge" };
-    await mockClient.merge(DEFAULT_URL, DEFAULT_DATA, { headers: myHeaderConfig });
-
-    expect(mockClient.lastConfig).toStrictEqual({
-      headers: myHeaderConfig,
-    });
-  });
-
-  test("MERGE with additional headers", async () => {
-    const mergeHeader = { "X-Http-Method": "MERGE" };
-
-    // only additional headers
-    await mockClient.merge(DEFAULT_URL, DEFAULT_DATA, undefined, ADDITIONAL_HEADERS);
-    expect(mockClient.lastConfig).toStrictEqual({ headers: { ...mergeHeader, ...ADDITIONAL_HEADERS } });
-
-    // request config & additional headers get merged
-    await mockClient.merge(DEFAULT_URL, DEFAULT_DATA, DEFAULT_CONFIG, ADDITIONAL_HEADERS);
-    expect(mockClient.lastConfig).toStrictEqual({
-      ...DEFAULT_CONFIG,
-      headers: { "X-Http-Method": "MERGE", ...DEFAULT_CONFIG.headers, ...ADDITIONAL_HEADERS },
-    });
-
-    // request config wins over additional headers
-    const rc = { headers: { "Content-Type": "heyHo!!!" } };
-    await mockClient.merge(DEFAULT_URL, DEFAULT_DATA, rc, ADDITIONAL_HEADERS);
-    expect(mockClient.lastConfig).toStrictEqual({ headers: { ...mergeHeader, ...rc.headers } });
-  });
-
   test("simple DELETE request", async () => {
     await mockClient.delete(DEFAULT_URL);
 
@@ -205,20 +155,5 @@ describe("BaseHttpClient Tests", () => {
     mockClient.setErrorMessageRetriever((responseData: any) => message + responseData);
 
     expect(mockClient.exposedErrorMessageRetriever("hi")).toBe(message + "hi");
-  });
-
-  test("retrieve big numbers as string", async () => {
-    mockClient.retrieveBigNumbersAsString(true);
-    await mockClient.get(DEFAULT_URL);
-
-    expect(mockClient.lastConfig?.headers).toStrictEqual({
-      Accept: "application/json;IEEE754Compatible=true",
-      "Content-Type": "application/json;IEEE754Compatible=true",
-    });
-
-    mockClient.retrieveBigNumbersAsString(false);
-    await mockClient.get(DEFAULT_URL);
-
-    expect(mockClient.lastConfig?.headers).toBeUndefined();
   });
 });
