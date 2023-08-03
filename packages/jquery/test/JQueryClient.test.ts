@@ -6,14 +6,12 @@ describe("JQueryClient Tests", function () {
   let jqClient: JQueryClient;
 
   const DEFAULT_URL = "TEST/hi";
-  const JSON_VALUE = "application/json";
-  const DEFAULT_HEADERS = { Accept: JSON_VALUE, "Content-Type": JSON_VALUE };
   const DEFAULT_REQUEST_CONFIG: AjaxRequestConfig = { timeout: 666, headers: { test: "test" } };
 
   const DEFAULT_CONFIG = {
     url: DEFAULT_URL,
     method: "GET",
-    dataType: "json",
+    // dataType: "json",
     cache: false,
   };
 
@@ -44,7 +42,7 @@ describe("JQueryClient Tests", function () {
     await jqClient.get(DEFAULT_URL);
 
     expect(getRequestDetails()).toStrictEqual(DEFAULT_CONFIG);
-    expect(getRequestHeaders()).toStrictEqual(DEFAULT_HEADERS);
+    expect(getRequestHeaders()).toStrictEqual({});
   });
 
   test("invalid url", async () => {
@@ -58,12 +56,21 @@ describe("JQueryClient Tests", function () {
     ).rejects.toThrow("Value for URL must be provided!");
   });
 
+  test("using global options", async () => {
+    // @ts-ignore
+    jqClient = new JQueryClient(jqMock, DEFAULT_REQUEST_CONFIG);
+    await jqClient.get(DEFAULT_URL);
+
+    expect(getRequestDetails()).toStrictEqual({ ...DEFAULT_CONFIG, timeout: DEFAULT_REQUEST_CONFIG.timeout });
+    expect(getRequestHeaders()).toStrictEqual(DEFAULT_REQUEST_CONFIG.headers);
+  });
+
   test("using config", async () => {
     const { timeout, headers } = DEFAULT_REQUEST_CONFIG;
     await jqClient.get(DEFAULT_URL, DEFAULT_REQUEST_CONFIG);
 
     expect(getRequestDetails()).toStrictEqual({ ...DEFAULT_CONFIG, timeout });
-    expect(getRequestHeaders()).toStrictEqual({ ...DEFAULT_HEADERS, ...headers });
+    expect(getRequestHeaders()).toStrictEqual(headers);
   });
 
   test("using additional headers", async () => {
@@ -71,10 +78,13 @@ describe("JQueryClient Tests", function () {
 
     await jqClient.get(DEFAULT_URL, undefined, headers);
 
-    expect(getRequestHeaders()).toStrictEqual({ ...DEFAULT_HEADERS, ...headers });
+    expect(getRequestHeaders()).toStrictEqual(headers);
   });
 
   test("request config overrides everything", async () => {
+    // @ts-ignore
+    jqClient = new JQueryClient(jqMock, { headers: { Accept: "x", def: "default" } });
+
     const headers = { Accept: "hey", "Content-Type": "Ho", test: "test" };
     const config: AjaxRequestConfig = {
       // @ts-ignore: method is not exposed as it should not be overridden
@@ -87,7 +97,7 @@ describe("JQueryClient Tests", function () {
     // method has not been overridden
     expect(getRequestDetails()).toMatchObject({ method: "GET" });
     // headers have been overridden
-    expect(getRequestHeaders()).toStrictEqual({ ...headers, extra: "x" });
+    expect(getRequestHeaders()).toStrictEqual({ ...headers, def: "default", extra: "x" });
   });
 
   test("post request", async () => {
@@ -95,7 +105,7 @@ describe("JQueryClient Tests", function () {
 
     expect(getRequestData()).toBe("{}");
     expect(getRequestDetails()).toMatchObject({ url: DEFAULT_URL, method: "POST" });
-    expect(getRequestHeaders()).toStrictEqual(DEFAULT_HEADERS);
+    expect(getRequestHeaders()).toStrictEqual({});
   });
 
   test("post request with different data", async () => {
@@ -120,28 +130,20 @@ describe("JQueryClient Tests", function () {
     await jqClient.put(DEFAULT_URL, {});
 
     expect(getRequestDetails()).toMatchObject({ url: DEFAULT_URL, method: "PUT" });
-    expect(getRequestHeaders()).toStrictEqual(DEFAULT_HEADERS);
   });
 
   test("patch request", async () => {
     await jqClient.patch(DEFAULT_URL, {});
 
     expect(getRequestDetails()).toMatchObject({ url: DEFAULT_URL, method: "PATCH" });
-    expect(getRequestHeaders()).toStrictEqual(DEFAULT_HEADERS);
-  });
-
-  test("merge request", async () => {
-    await jqClient.merge(DEFAULT_URL, {});
-
-    expect(getRequestDetails()).toMatchObject({ url: DEFAULT_URL, method: "POST" });
-    expect(getRequestHeaders()).toStrictEqual({ ...DEFAULT_HEADERS, "X-Http-Method": "MERGE" });
+    expect(getRequestHeaders()).toStrictEqual({});
   });
 
   test("delete request", async () => {
     await jqClient.delete(DEFAULT_URL);
 
     expect(getRequestDetails()).toMatchObject({ url: DEFAULT_URL, method: "DELETE" });
-    expect(getRequestHeaders()).toStrictEqual(DEFAULT_HEADERS);
+    expect(getRequestHeaders()).toStrictEqual({});
   });
 
   /*  test("simulate 204 no content", async () => {

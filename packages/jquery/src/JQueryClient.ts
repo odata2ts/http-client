@@ -43,7 +43,7 @@ export class JQueryClient extends BaseHttpClient<AjaxRequestConfig> {
     return mergeAjaxConfig({ headers }, config);
   }
 
-  protected executeRequest<ResponseModel>(
+  protected async executeRequest<ResponseModel>(
     method: HttpMethods,
     url: string,
     data: any,
@@ -67,9 +67,9 @@ export class JQueryClient extends BaseHttpClient<AjaxRequestConfig> {
           });
         },
         error: (jqXHR: JQuery.jqXHR, textStatus: string, thrownError: string) => {
-          const responseMessage = this.retrieveErrorMessage(jqXHR.responseJSON());
+          const responseMessage = this.retrieveErrorMessage(jqXHR?.responseJSON);
           const failMsg = responseMessage ?? thrownError ?? DEFAULT_ERROR_MESSAGE;
-          const errorMessage = responseMessage ? "Server responded with error: " + responseMessage : failMsg;
+          const errorMessage = responseMessage ? "OData server responded with error: " + responseMessage : failMsg;
           const responseHeaders = this.mapHeaders(jqXHR);
           reject(new JQueryClientError(errorMessage, jqXHR.status, responseHeaders, new Error(failMsg), jqXHR));
         },
