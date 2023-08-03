@@ -13,7 +13,7 @@ function createMockXhr(status: number, statusText: string, data: any, headers: {
     statusText,
     getResponseHeader: (name: string) => (headers ? headers[name] : undefined),
     getAllResponseHeaders: () => respHeaders,
-    responseJSON: () => data,
+    responseJSON: data,
   };
 }
 

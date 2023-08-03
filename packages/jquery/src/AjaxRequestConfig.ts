@@ -2,8 +2,7 @@ const DEFAULT_CONFIG: JQuery.AjaxSettings = {
   // we never want caching
   cache: false,
   // we always want JSON
-  dataType: "json",
-  headers: { Accept: "application/json", "Content-Type": "application/json" },
+  // dataType: "json",
 };
 
 /**
