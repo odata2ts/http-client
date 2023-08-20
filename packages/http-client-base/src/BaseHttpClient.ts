@@ -1,4 +1,4 @@
-import { HttpResponseModel, ODataClientError, ODataHttpClient } from "@odata2ts/http-client-api";
+import { ODataClientError, ODataHttpClient, ODataResponse } from "@odata2ts/http-client-api";
 
 import { ErrorMessageRetriever, retrieveErrorMessage } from "./ErrorMessageRetriever";
 import { HttpMethods } from "./HttpMethods";
@@ -14,6 +14,10 @@ export interface BaseHttpClientOptions {
    * However, it should be a fast response and usually the root URL to the OData service is a good choice.
    */
   csrfTokenFetchUrl?: string;
+}
+
+export interface InternalBaseHttpClientOptions {
+  dataType: "json" | "blob" | "stream";
 }
 
 export const DEFAULT_CSRF_TOKEN_KEY = "x-csrf-token";
@@ -57,13 +61,15 @@ export abstract class BaseHttpClient<RequestConfigType> implements ODataHttpClie
    * @param url
    * @param data
    * @param config
+   * @param internalOptions
    */
   protected abstract executeRequest<ResponseModel>(
     method: HttpMethods,
     url: string,
     data: any,
+    internalOptions: InternalBaseHttpClientOptions,
     config?: RequestConfigType
-  ): Promise<HttpResponseModel<ResponseModel>>;
+  ): ODataResponse<ResponseModel>;
 
   public getCsrfTokenKey() {
     return this.csrfTokenKey;
@@ -99,6 +105,7 @@ export abstract class BaseHttpClient<RequestConfigType> implements ODataHttpClie
    * @param data
    * @param requestConfig
    * @param additionalHeaders
+   * @param internalOptions
    * @private
    */
   private async sendRequest<ResponseModel>(
@@ -106,14 +113,14 @@ export abstract class BaseHttpClient<RequestConfigType> implements ODataHttpClie
     url: string,
     data: any,
     requestConfig?: RequestConfigType,
-    additionalHeaders?: Record<string, string>
-  ): Promise<HttpResponseModel<ResponseModel>> {
+    additionalHeaders?: Record<string, string>,
+    internalOptions: InternalBaseHttpClientOptions = { dataType: "json" }
+  ): ODataResponse<ResponseModel> {
     // noinspection SuspiciousTypeOfGuard
     if (typeof url !== "string") {
       throw new Error(FAILURE_MISSING_URL);
     }
 
-    // use big numbers
     let config = requestConfig;
 
     // use additional headers
@@ -130,7 +137,7 @@ export abstract class BaseHttpClient<RequestConfigType> implements ODataHttpClie
     }
 
     try {
-      return await this.executeRequest<ResponseModel>(method, url, data, config);
+      return await this.executeRequest<ResponseModel>(method, url, data, internalOptions, config);
     } catch (e) {
       const clientError = e as ODataClientError;
 
@@ -143,7 +150,7 @@ export abstract class BaseHttpClient<RequestConfigType> implements ODataHttpClie
       ) {
         // token has expired: reset csrf token & perform the original request again
         this.csrfToken = undefined;
-        return this.sendRequest<ResponseModel>(method, url, data, requestConfig);
+        return this.sendRequest<ResponseModel>(method, url, data, requestConfig, additionalHeaders, internalOptions);
       }
 
       throw e;
@@ -154,7 +161,7 @@ export abstract class BaseHttpClient<RequestConfigType> implements ODataHttpClie
     url: string,
     requestConfig?: RequestConfigType,
     additionalHeaders?: Record<string, string>
-  ): Promise<HttpResponseModel<ResponseModel>> {
+  ): ODataResponse<ResponseModel> {
     return this.sendRequest<ResponseModel>(HttpMethods.Get, url, undefined, requestConfig, additionalHeaders);
   }
   public post<ResponseModel>(
@@ -162,7 +169,7 @@ export abstract class BaseHttpClient<RequestConfigType> implements ODataHttpClie
     data: any,
     requestConfig?: RequestConfigType,
     additionalHeaders?: Record<string, string>
-  ): Promise<HttpResponseModel<ResponseModel>> {
+  ): ODataResponse<ResponseModel> {
     return this.sendRequest<ResponseModel>(HttpMethods.Post, url, data, requestConfig, additionalHeaders);
   }
   public put<ResponseModel>(
@@ -170,7 +177,7 @@ export abstract class BaseHttpClient<RequestConfigType> implements ODataHttpClie
     data: any,
     requestConfig?: RequestConfigType,
     additionalHeaders?: Record<string, string>
-  ): Promise<HttpResponseModel<ResponseModel>> {
+  ): ODataResponse<ResponseModel> {
     return this.sendRequest<ResponseModel>(HttpMethods.Put, url, data, requestConfig, additionalHeaders);
   }
   public patch<ResponseModel>(
@@ -178,7 +185,7 @@ export abstract class BaseHttpClient<RequestConfigType> implements ODataHttpClie
     data: any,
     requestConfig?: RequestConfigType,
     additionalHeaders?: Record<string, string>
-  ): Promise<HttpResponseModel<ResponseModel>> {
+  ): ODataResponse<ResponseModel> {
     return this.sendRequest<ResponseModel>(HttpMethods.Patch, url, data, requestConfig, additionalHeaders);
   }
 
@@ -186,7 +193,34 @@ export abstract class BaseHttpClient<RequestConfigType> implements ODataHttpClie
     url: string,
     requestConfig?: RequestConfigType,
     additionalHeaders?: Record<string, string>
-  ): Promise<HttpResponseModel<void>> {
+  ): ODataResponse<void> {
     return this.sendRequest<void>(HttpMethods.Delete, url, undefined, requestConfig, additionalHeaders);
+  }
+
+  public getBlob(
+    url: string,
+    requestConfig?: RequestConfigType,
+    additionalHeaders?: Record<string, string>
+  ): ODataResponse<Blob> {
+    return this.sendRequest(HttpMethods.Get, url, undefined, requestConfig, additionalHeaders, { dataType: "blob" });
+  }
+
+  public getStream(
+    url: string,
+    requestConfig?: RequestConfigType,
+    additionalHeaders?: Record<string, string>
+  ): ODataResponse<ReadableStream> {
+    return this.sendRequest(HttpMethods.Get, url, undefined, requestConfig, additionalHeaders, { dataType: "stream" });
+  }
+
+  public updateBlob(
+    url: string,
+    data: Blob,
+    mimeType: string,
+    requestConfig?: RequestConfigType,
+    additionalHeaders?: Record<string, string>
+  ): ODataResponse<void | Blob> {
+    const headers = { ...additionalHeaders, Accept: mimeType };
+    return this.sendRequest(HttpMethods.Put, url, data, requestConfig, headers, { dataType: "blob" });
   }
 }

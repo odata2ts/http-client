@@ -1,8 +1,10 @@
+import { HttpMethods } from "../src";
 import { MockClientError, MockHttpClient, MockRequestConfig } from "./MockHttpClient";
 
 describe("BaseHttpClient Tests", () => {
   const DEFAULT_URL = "http://test.testing.com/myService/theEntity";
-  const DEFAULT_CONFIG: MockRequestConfig = { headers: { x: "a" }, x: "y" };
+  const DEFAULT_CONFIG: MockRequestConfig = { dataType: "json" };
+  const newConfig: MockRequestConfig = { ...DEFAULT_CONFIG, headers: { x: "a" }, x: "y" };
   const ADDITIONAL_HEADERS = { "Content-Type": "ct" };
   const DEFAULT_DATA = { a: "b" };
 
@@ -18,7 +20,7 @@ describe("BaseHttpClient Tests", () => {
     expect(mockClient.lastMethod).toBe("GET");
     expect(mockClient.lastUrl).toBe(DEFAULT_URL);
     expect(mockClient.lastData).toBeUndefined();
-    expect(mockClient.lastConfig).toBeUndefined();
+    expect(mockClient.lastConfig).toStrictEqual(DEFAULT_CONFIG);
   });
 
   test("fail with missing url", async () => {
@@ -29,22 +31,22 @@ describe("BaseHttpClient Tests", () => {
   });
 
   test("GET with config", async () => {
-    await mockClient.get(DEFAULT_URL, DEFAULT_CONFIG);
+    await mockClient.get(DEFAULT_URL, newConfig);
 
-    expect(mockClient.lastMethod).toBe("GET");
+    expect(mockClient.lastMethod).toBe(HttpMethods.Get);
     expect(mockClient.lastUrl).toBe(DEFAULT_URL);
     expect(mockClient.lastData).toBeUndefined();
-    expect(mockClient.lastConfig).toStrictEqual(DEFAULT_CONFIG);
+    expect(mockClient.lastConfig).toStrictEqual(newConfig);
   });
 
   test("GET with additional headers", async () => {
     await mockClient.get(DEFAULT_URL, undefined, ADDITIONAL_HEADERS);
-    expect(mockClient.lastConfig).toStrictEqual({ headers: ADDITIONAL_HEADERS });
+    expect(mockClient.lastConfig).toStrictEqual({ ...DEFAULT_CONFIG, headers: ADDITIONAL_HEADERS });
 
-    await mockClient.get(DEFAULT_URL, DEFAULT_CONFIG, ADDITIONAL_HEADERS);
+    await mockClient.get(DEFAULT_URL, newConfig, ADDITIONAL_HEADERS);
     expect(mockClient.lastConfig).toStrictEqual({
-      ...DEFAULT_CONFIG,
-      headers: { ...DEFAULT_CONFIG.headers, ...ADDITIONAL_HEADERS },
+      ...newConfig,
+      headers: { ...newConfig.headers, ...ADDITIONAL_HEADERS },
     });
   });
 
@@ -66,21 +68,23 @@ describe("BaseHttpClient Tests", () => {
     expect(mockClient.lastMethod).toBe("POST");
     expect(mockClient.lastUrl).toBe(DEFAULT_URL);
     expect(mockClient.lastData).toStrictEqual(DEFAULT_DATA);
-    expect(mockClient.lastConfig).toBeUndefined();
+    expect(mockClient.lastConfig).toStrictEqual(DEFAULT_CONFIG);
   });
 
   test("POST with config", async () => {
-    await mockClient.post(DEFAULT_URL, DEFAULT_DATA, DEFAULT_CONFIG);
+    await mockClient.post(DEFAULT_URL, DEFAULT_DATA, newConfig);
 
+    expect(mockClient.lastMethod).toBe(HttpMethods.Post);
     expect(mockClient.lastData).toStrictEqual(DEFAULT_DATA);
-    expect(mockClient.lastConfig).toStrictEqual(DEFAULT_CONFIG);
+    expect(mockClient.lastConfig).toStrictEqual(newConfig);
   });
 
   test("POST with no data", async () => {
     await mockClient.post(DEFAULT_URL, undefined);
     expect(mockClient.lastData).toBeUndefined();
     await mockClient.post(DEFAULT_URL, null);
-    expect(mockClient.lastConfig).toBeUndefined();
+    expect(mockClient.lastData).toBeNull();
+    expect(mockClient.lastConfig).toStrictEqual(DEFAULT_CONFIG);
   });
 
   test("simple PUT request", async () => {
@@ -89,16 +93,16 @@ describe("BaseHttpClient Tests", () => {
     expect(mockClient.lastMethod).toBe("PUT");
     expect(mockClient.lastUrl).toBe(DEFAULT_URL);
     expect(mockClient.lastData).toStrictEqual(DEFAULT_DATA);
-    expect(mockClient.lastConfig).toBeUndefined();
+    expect(mockClient.lastConfig).toStrictEqual(DEFAULT_CONFIG);
   });
 
   test("PUT with config", async () => {
-    await mockClient.put(DEFAULT_URL, DEFAULT_DATA, DEFAULT_CONFIG);
+    await mockClient.put(DEFAULT_URL, DEFAULT_DATA, newConfig);
 
-    expect(mockClient.lastMethod).toBe("PUT");
+    expect(mockClient.lastMethod).toBe(HttpMethods.Put);
     expect(mockClient.lastUrl).toBe(DEFAULT_URL);
     expect(mockClient.lastData).toStrictEqual(DEFAULT_DATA);
-    expect(mockClient.lastConfig).toStrictEqual(DEFAULT_CONFIG);
+    expect(mockClient.lastConfig).toStrictEqual(newConfig);
   });
 
   test("simple PATCH request", async () => {
@@ -107,16 +111,16 @@ describe("BaseHttpClient Tests", () => {
     expect(mockClient.lastMethod).toBe("PATCH");
     expect(mockClient.lastUrl).toBe(DEFAULT_URL);
     expect(mockClient.lastData).toStrictEqual(DEFAULT_DATA);
-    expect(mockClient.lastConfig).toBeUndefined();
+    expect(mockClient.lastConfig).toStrictEqual(DEFAULT_CONFIG);
   });
 
   test("PATCH with config", async () => {
-    await mockClient.patch(DEFAULT_URL, DEFAULT_DATA, DEFAULT_CONFIG);
+    await mockClient.patch(DEFAULT_URL, DEFAULT_DATA, newConfig);
 
-    expect(mockClient.lastMethod).toBe("PATCH");
+    expect(mockClient.lastMethod).toBe(HttpMethods.Patch);
     expect(mockClient.lastUrl).toBe(DEFAULT_URL);
     expect(mockClient.lastData).toStrictEqual(DEFAULT_DATA);
-    expect(mockClient.lastConfig).toStrictEqual(DEFAULT_CONFIG);
+    expect(mockClient.lastConfig).toStrictEqual(newConfig);
   });
 
   test("simple DELETE request", async () => {
@@ -125,16 +129,95 @@ describe("BaseHttpClient Tests", () => {
     expect(mockClient.lastMethod).toBe("DELETE");
     expect(mockClient.lastUrl).toBe(DEFAULT_URL);
     expect(mockClient.lastData).toBeUndefined();
-    expect(mockClient.lastConfig).toBeUndefined();
+    expect(mockClient.lastConfig).toStrictEqual(DEFAULT_CONFIG);
   });
 
   test("DELETE with config", async () => {
-    await mockClient.delete(DEFAULT_URL, DEFAULT_CONFIG);
+    await mockClient.delete(DEFAULT_URL, newConfig);
+
+    expect(mockClient.lastMethod).toBe(HttpMethods.Delete);
+    expect(mockClient.lastUrl).toBe(DEFAULT_URL);
+    expect(mockClient.lastData).toBeUndefined();
+    expect(mockClient.lastConfig).toStrictEqual(newConfig);
+  });
+
+  test("get blob request", async () => {
+    await mockClient.getBlob(DEFAULT_URL);
+
+    expect(mockClient.lastMethod).toBe("GET");
+    expect(mockClient.lastUrl).toBe(DEFAULT_URL);
+    expect(mockClient.lastData).toBeUndefined();
+    expect(mockClient.lastConfig).toStrictEqual({ dataType: "blob" });
+  });
+
+  test("get blob request with config and headers", async () => {
+    await mockClient.getBlob(DEFAULT_URL, newConfig, ADDITIONAL_HEADERS);
+
+    expect(mockClient.lastMethod).toBe(HttpMethods.Get);
+    expect(mockClient.lastUrl).toBe(DEFAULT_URL);
+    expect(mockClient.lastData).toBeUndefined();
+    expect(mockClient.lastConfig).toStrictEqual({
+      ...newConfig,
+      headers: { ...newConfig.headers, ...ADDITIONAL_HEADERS },
+      dataType: "blob",
+    });
+  });
+
+  test("get stream request", async () => {
+    await mockClient.getStream(DEFAULT_URL);
+
+    expect(mockClient.lastMethod).toBe("GET");
+    expect(mockClient.lastUrl).toBe(DEFAULT_URL);
+    expect(mockClient.lastData).toBeUndefined();
+    expect(mockClient.lastConfig).toStrictEqual({ dataType: "stream" });
+  });
+
+  test("get stream request with config and headers", async () => {
+    await mockClient.getStream(DEFAULT_URL, newConfig, ADDITIONAL_HEADERS);
+
+    expect(mockClient.lastMethod).toBe(HttpMethods.Get);
+    expect(mockClient.lastUrl).toBe(DEFAULT_URL);
+    expect(mockClient.lastData).toBeUndefined();
+    expect(mockClient.lastConfig).toStrictEqual({
+      ...newConfig,
+      headers: { ...newConfig.headers, ...ADDITIONAL_HEADERS },
+      dataType: "stream",
+    });
+  });
+
+  test("update blob request", async () => {
+    const data = new Blob(["a", "b"]);
+    const mimeType = "image/png";
+    await mockClient.updateBlob(DEFAULT_URL, data, mimeType);
+
+    expect(mockClient.lastMethod).toBe("PUT");
+    expect(mockClient.lastUrl).toBe(DEFAULT_URL);
+    expect(mockClient.lastData).toBe(data);
+    expect(mockClient.lastConfig).toStrictEqual({ dataType: "blob", headers: { Accept: mimeType } });
+  });
+
+  test("update blob request with config and headers", async () => {
+    const data = new Blob(["a", "b"]);
+    const mimeType = "image/png";
+    await mockClient.updateBlob(DEFAULT_URL, data, mimeType, newConfig, ADDITIONAL_HEADERS);
+
+    expect(mockClient.lastMethod).toBe("PUT");
+    expect(mockClient.lastUrl).toBe(DEFAULT_URL);
+    expect(mockClient.lastData).toBe(data);
+    expect(mockClient.lastConfig).toStrictEqual({
+      ...newConfig,
+      headers: { ...newConfig.headers, ...ADDITIONAL_HEADERS, Accept: mimeType },
+      dataType: "blob",
+    });
+  });
+
+  test("DELETE with config", async () => {
+    await mockClient.delete(DEFAULT_URL, newConfig);
 
     expect(mockClient.lastMethod).toBe("DELETE");
     expect(mockClient.lastUrl).toBe(DEFAULT_URL);
     expect(mockClient.lastData).toBeUndefined();
-    expect(mockClient.lastConfig).toStrictEqual(DEFAULT_CONFIG);
+    expect(mockClient.lastConfig).toStrictEqual(newConfig);
   });
 
   test("retrieveErrorMessage", async () => {

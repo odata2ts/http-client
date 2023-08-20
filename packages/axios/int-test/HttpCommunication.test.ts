@@ -8,6 +8,8 @@ describe("HTTP Communication Tests", function () {
 
   const REAL_CLIENT = new AxiosClient({ headers: DEFAULT_HEADERS });
 
+  test("download", async () => {});
+
   test("Simple Get", async () => {
     const url = BASE_URL + "/People('russellwhyte')";
     const response = await REAL_CLIENT.get<ODataCollectionResponseV4<any>>(url);

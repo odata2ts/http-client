@@ -1,3 +1,5 @@
+import fs from "fs/promises";
+
 import { ODataCollectionResponseV4, ODataModelResponseV4 } from "@odata2ts/odata-core";
 import jQuery from "jquery";
 import { JSDOM } from "jsdom";
@@ -56,6 +58,23 @@ describe("HTTP Communication Tests", function () {
       expect(error.stack).toMatch(expectedErrorMsg);
       expect(error.stack).toMatch(error.name);
     }
+  });
+
+  test("Get Blob", async () => {
+    const response = await REAL_CLIENT.getBlob(
+      "https://lh3.googleusercontent.com/iXmJ9aWblkGDpg-_jpcqaY10KmA8HthjZ7F15U7mJ9PQK6vZEStMlathz1FfQQWV5XeeF-A1tZ0UpDjx3q6vEm2BWZn5k1btVSuBk9ad=s660"
+    );
+    expect(response).toMatchObject({
+      status: 200,
+      statusText: "OK",
+    });
+    expect(response.headers).toMatchObject({
+      "content-length": "52246",
+      "content-type": "image/jpeg",
+    });
+
+    const imgBuffer = await fs.readFile("./int-test/test.jpg");
+    expect(response.data.size).toBe(imgBuffer.byteLength);
   });
 
   const entitySetUrl = BASE_URL + "/People";

@@ -1,7 +1,12 @@
 /// <reference path="../../../node_modules/@types/jquery/JQueryStatic.d.ts" />
 
 import { HttpResponseModel } from "@odata2ts/http-client-api";
-import { BaseHttpClient, BaseHttpClientOptions, HttpMethods } from "@odata2ts/http-client-base";
+import {
+  BaseHttpClient,
+  BaseHttpClientOptions,
+  HttpMethods,
+  InternalBaseHttpClientOptions,
+} from "@odata2ts/http-client-base";
 
 import { AjaxRequestConfig, getDefaultConfig, mergeAjaxConfig } from "./AjaxRequestConfig";
 import { JQueryClientError } from "./JQueryClientError";
@@ -47,12 +52,19 @@ export class JQueryClient extends BaseHttpClient<AjaxRequestConfig> {
     method: HttpMethods,
     url: string,
     data: any,
+    internalOptions: InternalBaseHttpClientOptions,
     requestConfig?: JQuery.AjaxSettings
   ): Promise<HttpResponseModel<ResponseModel>> {
     const mergedConfig = mergeAjaxConfig(this.config, requestConfig);
     mergedConfig.method = method;
     mergedConfig.url = url;
     mergedConfig.data = JSON.stringify(data);
+
+    if (internalOptions.dataType === "blob") {
+      mergedConfig.xhrFields = { responseType: "blob" };
+    } else if (internalOptions.dataType === "stream") {
+      throw new Error("Streaming is not supported by the JqueryClient!");
+    }
 
     // the actual request
     return new Promise((resolve, reject) => {
@@ -68,7 +80,7 @@ export class JQueryClient extends BaseHttpClient<AjaxRequestConfig> {
         },
         error: (jqXHR: JQuery.jqXHR, textStatus: string, thrownError: string) => {
           const responseMessage = this.retrieveErrorMessage(jqXHR?.responseJSON);
-          const failMsg = responseMessage ?? thrownError ?? DEFAULT_ERROR_MESSAGE;
+          const failMsg = responseMessage || thrownError || DEFAULT_ERROR_MESSAGE;
           const errorMessage = responseMessage ? "OData server responded with error: " + responseMessage : failMsg;
           const responseHeaders = this.mapHeaders(jqXHR);
           reject(new JQueryClientError(errorMessage, jqXHR.status, responseHeaders, new Error(failMsg), jqXHR));

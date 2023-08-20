@@ -168,4 +168,39 @@ describe("Axios HTTP Client Tests", function () {
     expect(response.status).toBe(204);
     expect(response.data).toBeUndefined();
   });
+
+  test("get blob request", async () => {
+    await axiosClient.getBlob(DEFAULT_URL);
+
+    expect(requestConfig).toStrictEqual({
+      url: DEFAULT_URL,
+      headers: undefined,
+      responseType: "blob",
+      method: "GET",
+    });
+  });
+
+  test("update blob request", async () => {
+    const data = new Blob(["a"]);
+    await axiosClient.updateBlob(DEFAULT_URL, data, "image/jpg");
+
+    expect(requestConfig).toStrictEqual({
+      url: DEFAULT_URL,
+      headers: { Accept: "image/jpg" },
+      method: "PUT",
+      responseType: "blob",
+      data,
+    });
+  });
+
+  test("stream request not supported", async () => {
+    await axiosClient.getStream(DEFAULT_URL);
+
+    expect(requestConfig).toStrictEqual({
+      url: DEFAULT_URL,
+      headers: undefined,
+      method: "GET",
+      responseType: "stream",
+    });
+  });
 });

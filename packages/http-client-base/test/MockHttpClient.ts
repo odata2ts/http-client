@@ -2,6 +2,7 @@ import crypto from "crypto";
 
 import { HttpResponseModel, ODataClientError } from "@odata2ts/http-client-api";
 
+import { InternalBaseHttpClientOptions } from "../lib/BaseHttpClient";
 import { BaseHttpClient, BaseHttpClientOptions, HttpMethods } from "../src";
 
 export class MockClientError extends Error implements ODataClientError {
@@ -19,6 +20,7 @@ export class MockClientError extends Error implements ODataClientError {
 
 export interface MockRequestConfig {
   headers?: Record<string, string>;
+  dataType?: string;
   x?: string;
 }
 
@@ -47,16 +49,17 @@ export class MockHttpClient extends BaseHttpClient<MockRequestConfig> {
     return mergedConfig;
   }
 
-  executeRequest<ResponseModel>(
+  protected executeRequest<ResponseModel>(
     method: HttpMethods,
     url: string,
     data: any,
-    config: MockRequestConfig | undefined
+    { dataType }: InternalBaseHttpClientOptions,
+    config: MockRequestConfig = {}
   ): Promise<HttpResponseModel<ResponseModel>> {
     this.lastMethod = method;
     this.lastUrl = url;
     this.lastData = data;
-    this.lastConfig = config;
+    this.lastConfig = { ...config, dataType };
 
     const responseHeaders: Record<string, string> = {};
 

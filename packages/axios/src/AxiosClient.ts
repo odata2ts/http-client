@@ -1,5 +1,10 @@
-import { HttpResponseModel } from "@odata2ts/http-client-api";
-import { BaseHttpClient, BaseHttpClientOptions, HttpMethods } from "@odata2ts/http-client-base";
+import { ODataResponse } from "@odata2ts/http-client-api";
+import {
+  BaseHttpClient,
+  BaseHttpClientOptions,
+  HttpMethods,
+  InternalBaseHttpClientOptions,
+} from "@odata2ts/http-client-base";
 import axios, {
   AxiosError,
   AxiosInstance,
@@ -43,12 +48,17 @@ export class AxiosClient extends BaseHttpClient<AxiosRequestConfig> {
     method: HttpMethods,
     url: string,
     data: any,
+    internalOptions: InternalBaseHttpClientOptions,
     requestConfig: AxiosRequestConfig | undefined = {}
-  ): Promise<HttpResponseModel<ResponseModel>> {
+  ): ODataResponse<ResponseModel> {
     // add URL and HTTP method to the request config
     const config: OriginalRequestConfig = mergeConfig(requestConfig, { url, method });
     if (typeof data !== "undefined") {
       config.data = data;
+    }
+
+    if (internalOptions.dataType !== "json") {
+      config.responseType = internalOptions.dataType;
     }
 
     try {

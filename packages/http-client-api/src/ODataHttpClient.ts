@@ -67,4 +67,46 @@ export interface ODataHttpClient<RequestConfig = any> {
    * @param additionalHeaders
    */
   delete(url: string, requestConfig?: RequestConfig, additionalHeaders?: Record<string, string>): ODataResponse<void>;
+
+  /**
+   * Get binary data (Edm.Stream) as Blob.
+   *
+   * @param url
+   * @param requestConfig
+   * @param additionalHeaders
+   */
+  getBlob(url: string, requestConfig?: RequestConfig, additionalHeaders?: Record<string, string>): ODataResponse<Blob>;
+
+  /**
+   * Get binary data (Edm.Stream) as ReadableStream.
+   *
+   * Cannot be supported by HTTP clients based on XmlHttpRequest, e.g. axios.
+   * Should throw an error in this case.
+   *
+   * @param url
+   * @param requestConfig
+   * @param additionalHeaders
+   */
+  getStream(
+    url: string,
+    requestConfig?: RequestConfig,
+    additionalHeaders?: Record<string, string>
+  ): ODataResponse<ReadableStream>;
+
+  /**
+   * Updates binary data (Edm.Stream).
+   *
+   * @param url
+   * @param data
+   * @param mimeType
+   * @param requestConfig
+   * @param additionalHeaders
+   */
+  updateBlob(
+    url: string,
+    data: Blob,
+    mimeType: string,
+    requestConfig?: RequestConfig,
+    additionalHeaders?: Record<string, string>
+  ): ODataResponse<void | Blob>;
 }

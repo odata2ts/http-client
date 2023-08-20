@@ -8,6 +8,8 @@ describe("FetchClient Tests", function () {
 
   const DEFAULT_URL = "TEST/hi";
   const DEFAULT_REQUEST_CONFIG = { method: "GET", cache: "no-store" };
+  const DEFAULT_BLOB = new Blob(["a", "b"]);
+  const DEFAULT_STREAM = "aba";
 
   // Mocking fetch
   // @ts-ignore: more simplistic parameters and returning different stuff
@@ -24,7 +26,9 @@ describe("FetchClient Tests", function () {
       statusText: "OK",
       headers: new Headers(),
       ok: true,
+      body: DEFAULT_STREAM,
       json: () => Promise.resolve(jsonResult),
+      blob: () => Promise.resolve(DEFAULT_BLOB),
     });
   });
 
@@ -169,5 +173,34 @@ describe("FetchClient Tests", function () {
 
     expect(response.status).toBe(204);
     expect(response.data).toBeUndefined();
+  });
+
+  test("get blob request", async () => {
+    const response = await fetchClient.getBlob(DEFAULT_URL);
+
+    expect(response.status).toBe(200);
+    expect(requestUrl).toBe(DEFAULT_URL);
+    expect(response.data).toBe(DEFAULT_BLOB);
+    expect(getBaseRequestConfig()).toStrictEqual(DEFAULT_REQUEST_CONFIG);
+    expect(getRequestHeaderRecords()).toStrictEqual({});
+  });
+
+  test("update blob request", async () => {
+    const response = await fetchClient.updateBlob(DEFAULT_URL, DEFAULT_BLOB, "image/jpg");
+
+    expect(response.status).toBe(200);
+    expect(requestUrl).toBe(DEFAULT_URL);
+    expect(getBaseRequestConfig()).toStrictEqual({ ...DEFAULT_REQUEST_CONFIG, method: "PUT", body: DEFAULT_BLOB });
+    expect(getRequestHeaderRecords()).toStrictEqual({ accept: "image/jpg" });
+  });
+
+  test("get stream request", async () => {
+    const response = await fetchClient.getStream(DEFAULT_URL);
+
+    expect(response.status).toBe(200);
+    expect(requestUrl).toBe(DEFAULT_URL);
+    expect(response.data).toBe(DEFAULT_STREAM);
+    expect(getBaseRequestConfig()).toStrictEqual(DEFAULT_REQUEST_CONFIG);
+    expect(getRequestHeaderRecords()).toStrictEqual({});
   });
 });
