@@ -220,7 +220,7 @@ export abstract class BaseHttpClient<RequestConfigType> implements ODataHttpClie
     requestConfig?: RequestConfigType,
     additionalHeaders?: Record<string, string>
   ): ODataResponse<void | Blob> {
-    const headers = { ...additionalHeaders, Accept: mimeType };
+    const headers = { ...additionalHeaders, Accept: mimeType, "Content-Type": mimeType };
     return this.sendRequest(HttpMethods.Put, url, data, requestConfig, headers, { dataType: "blob" });
   }
 }
