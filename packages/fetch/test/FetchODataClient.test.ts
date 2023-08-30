@@ -170,4 +170,29 @@ describe("FetchClient Tests", function () {
     expect(response.status).toBe(204);
     expect(response.data).toBeUndefined();
   });
+
+  test("using params in request config", async () => {
+    const params = { hey: "Ho", a: 111, list: ["a", "b"] };
+
+    await fetchClient.get("test", { params });
+
+    expect(getBaseRequestConfig()).toStrictEqual(DEFAULT_REQUEST_CONFIG);
+    expect(requestUrl).toStrictEqual("test?hey=Ho&a=111&list=a%2Cb");
+
+    await fetchClient.get("test?x=y", { params });
+    expect(requestUrl).toStrictEqual("test?x=y&hey=Ho&a=111&list=a%2Cb");
+  });
+
+  test("using global params", async () => {
+    const params = { hey: "Ho", a: 111, list: ["a", "b"] };
+    fetchClient = new FetchClient({ params });
+
+    await fetchClient.get("test");
+
+    expect(getBaseRequestConfig()).toStrictEqual(DEFAULT_REQUEST_CONFIG);
+    expect(requestUrl).toStrictEqual("test?hey=Ho&a=111&list=a%2Cb");
+
+    await fetchClient.get("test?x=y");
+    expect(requestUrl).toStrictEqual("test?x=y&hey=Ho&a=111&list=a%2Cb");
+  });
 });

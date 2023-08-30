@@ -9,9 +9,13 @@ const DEFAULT_CONFIG: RequestInit = {
 export interface FetchRequestConfig
   extends Pick<RequestInit, "credentials" | "cache" | "mode" | "redirect" | "referrerPolicy"> {
   headers?: Record<string, string> | Headers;
+  /**
+   * Add query params.
+   */
+  params?: Record<string, string | number | boolean | Array<string | number | boolean>>;
 }
 
-export interface InternalFetchConfig extends Omit<RequestInit, "headers"> {
+export interface InternalFetchConfig extends Omit<RequestInit, "headers">, Pick<FetchRequestConfig, "params"> {
   headers: Headers;
 }
 
