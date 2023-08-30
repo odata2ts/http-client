@@ -1,3 +1,5 @@
+import { FetchClient } from "@odata2ts/http-client-fetch";
+
 import { AjaxRequestConfig, JQueryClient } from "../src";
 import { JqMock } from "./JQueryMock";
 
@@ -153,4 +155,29 @@ describe("JQueryClient Tests", function () {
     expect(response.status).toBe(204);
     expect(response.data).toBeUndefined();
   });*/
+
+  test("using params in request config", async () => {
+    const params = { hey: "Ho", a: 111, list: ["a", "b"] };
+
+    await jqClient.get("test", { params });
+
+    expect(getRequestDetails().url).toBe("test?hey=Ho&a=111&list=a%2Cb");
+
+    jqMock.successResponse();
+    await jqClient.get("test?x=y", { params });
+    expect(getRequestDetails().url).toStrictEqual("test?x=y&hey=Ho&a=111&list=a%2Cb");
+  });
+
+  test("using global params", async () => {
+    const params = { hey: "Ho", a: 111, list: ["a", "b"] };
+    jqClient = new JQueryClient(jqMock as unknown as JQueryStatic, { params });
+
+    await jqClient.get("test");
+
+    expect(getRequestDetails().url).toStrictEqual("test?hey=Ho&a=111&list=a%2Cb");
+
+    jqMock.successResponse();
+    await jqClient.get("test?x=y");
+    expect(getRequestDetails().url).toStrictEqual("test?x=y&hey=Ho&a=111&list=a%2Cb");
+  });
 });
