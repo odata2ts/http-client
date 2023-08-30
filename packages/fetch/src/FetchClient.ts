@@ -37,16 +37,25 @@ export class FetchClient extends BaseHttpClient<FetchRequestConfig> {
     data: any,
     requestConfig: FetchRequestConfig | undefined = {}
   ): Promise<HttpResponseModel<ResponseModel>> {
-    const config = mergeFetchConfig(this.config, requestConfig);
+    const { params, ...config } = mergeFetchConfig(this.config, requestConfig);
     config.method = method;
     if (typeof data !== "undefined") {
       config.body = JSON.stringify(data);
+    }
+    const urlParams =
+      params && Object.values(params).length
+        ? // @ts-ignore
+          new URLSearchParams(params).toString()
+        : "";
+    let finalUrl = url;
+    if (urlParams) {
+      finalUrl += (url.match(/\?/) ? "&" : "?") + urlParams;
     }
 
     // the actual request
     let response: Response;
     try {
-      response = await fetch(url, config);
+      response = await fetch(finalUrl, config);
     } catch (fetchError) {
       throw new FetchClientError(
         buildErrorMessage(FETCH_FAILURE_MESSAGE, fetchError),
