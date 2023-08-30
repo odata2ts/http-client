@@ -42,14 +42,12 @@ export class FetchClient extends BaseHttpClient<FetchRequestConfig> {
     if (typeof data !== "undefined") {
       config.body = JSON.stringify(data);
     }
-    const urlParams =
-      params && Object.values(params).length
-        ? // @ts-ignore
-          new URLSearchParams(params).toString()
-        : "";
     let finalUrl = url;
-    if (urlParams) {
-      finalUrl += (url.match(/\?/) ? "&" : "?") + urlParams;
+    if (params && Object.values(params).length) {
+      finalUrl +=
+        (url.match(/\?/) ? "&" : "?") +
+        // @ts-ignore
+        new URLSearchParams(params).toString();
     }
 
     // the actual request
