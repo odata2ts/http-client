@@ -44,16 +44,23 @@ export class FetchClient extends BaseHttpClient<FetchRequestConfig> {
     internalOptions: InternalBaseHttpClientOptions,
     requestConfig: FetchRequestConfig = {}
   ): ODataResponse<ResponseModel> {
-    const config = mergeFetchConfig(this.config, requestConfig);
+    const { params, ...config } = mergeFetchConfig(this.config, requestConfig);
     config.method = method;
     if (typeof data !== "undefined") {
       config.body = internalOptions.dataType === "json" ? JSON.stringify(data) : data;
+    }
+    let finalUrl = url;
+    if (params && Object.values(params).length) {
+      finalUrl +=
+        (url.match(/\?/) ? "&" : "?") +
+        // @ts-ignore
+        new URLSearchParams(params).toString();
     }
 
     // the actual request
     let response: Response;
     try {
-      response = await fetch(url, config);
+      response = await fetch(finalUrl, config);
     } catch (fetchError) {
       throw new FetchClientError(
         buildErrorMessage(FETCH_FAILURE_MESSAGE, fetchError),

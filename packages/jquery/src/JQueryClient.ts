@@ -55,10 +55,16 @@ export class JQueryClient extends BaseHttpClient<AjaxRequestConfig> {
     internalOptions: InternalBaseHttpClientOptions,
     requestConfig?: JQuery.AjaxSettings
   ): Promise<HttpResponseModel<ResponseModel>> {
-    const mergedConfig = mergeAjaxConfig(this.config, requestConfig);
+    const { params, ...mergedConfig } = mergeAjaxConfig(this.config, requestConfig);
     mergedConfig.method = method;
-    mergedConfig.url = url;
     mergedConfig.data = JSON.stringify(data);
+    mergedConfig.url = url;
+    if (params && Object.values(params).length) {
+      mergedConfig.url +=
+        (url.match(/\?/) ? "&" : "?") +
+        // @ts-ignore
+        new URLSearchParams(params).toString();
+    }
 
     if (internalOptions.dataType === "blob") {
       mergedConfig.xhrFields = { responseType: "blob" };
