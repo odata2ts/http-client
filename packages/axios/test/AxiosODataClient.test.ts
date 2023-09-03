@@ -182,11 +182,12 @@ describe("Axios HTTP Client Tests", function () {
 
   test("update blob request", async () => {
     const data = new Blob(["a"]);
-    await axiosClient.updateBlob(DEFAULT_URL, data, "image/jpg");
+    const mimeType = "image/jpg";
+    await axiosClient.updateBlob(DEFAULT_URL, data, mimeType);
 
     expect(requestConfig).toStrictEqual({
       url: DEFAULT_URL,
-      headers: { Accept: "image/jpg" },
+      headers: { Accept: mimeType, "content-type": mimeType },
       method: "PUT",
       responseType: "blob",
       data,

@@ -211,12 +211,13 @@ describe("FetchClient Tests", function () {
   });
 
   test("update blob request", async () => {
-    const response = await fetchClient.updateBlob(DEFAULT_URL, DEFAULT_BLOB, "image/jpg");
+    const mimeType = "image/jpg";
+    const response = await fetchClient.updateBlob(DEFAULT_URL, DEFAULT_BLOB, mimeType);
 
     expect(response.status).toBe(200);
     expect(requestUrl).toBe(DEFAULT_URL);
     expect(getBaseRequestConfig()).toStrictEqual({ ...DEFAULT_REQUEST_CONFIG, method: "PUT", body: DEFAULT_BLOB });
-    expect(getRequestHeaderRecords()).toStrictEqual({ accept: "image/jpg" });
+    expect(getRequestHeaderRecords()).toStrictEqual({ accept: mimeType, "content-type": mimeType });
   });
 
   test("get stream request", async () => {
@@ -228,5 +229,4 @@ describe("FetchClient Tests", function () {
     expect(getBaseRequestConfig()).toStrictEqual(DEFAULT_REQUEST_CONFIG);
     expect(getRequestHeaderRecords()).toStrictEqual({});
   });
-
 });

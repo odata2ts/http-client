@@ -7,6 +7,7 @@ describe("BaseHttpClient Tests", () => {
   const newConfig: MockRequestConfig = { ...DEFAULT_CONFIG, headers: { x: "a" }, x: "y" };
   const ADDITIONAL_HEADERS = { "Content-Type": "ct" };
   const DEFAULT_DATA = { a: "b" };
+  const DEFAULT_BLOB_HEADERS = { "Content-Type": "image/png", Accept: "image/png" };
 
   let mockClient: MockHttpClient;
 
@@ -193,7 +194,10 @@ describe("BaseHttpClient Tests", () => {
     expect(mockClient.lastMethod).toBe("PUT");
     expect(mockClient.lastUrl).toBe(DEFAULT_URL);
     expect(mockClient.lastData).toBe(data);
-    expect(mockClient.lastConfig).toStrictEqual({ dataType: "blob", headers: { Accept: mimeType } });
+    expect(mockClient.lastConfig).toStrictEqual({
+      dataType: "blob",
+      headers: DEFAULT_BLOB_HEADERS,
+    });
   });
 
   test("update blob request with config and headers", async () => {
@@ -206,7 +210,7 @@ describe("BaseHttpClient Tests", () => {
     expect(mockClient.lastData).toBe(data);
     expect(mockClient.lastConfig).toStrictEqual({
       ...newConfig,
-      headers: { ...newConfig.headers, ...ADDITIONAL_HEADERS, Accept: mimeType },
+      headers: { ...newConfig.headers, ...ADDITIONAL_HEADERS, ...DEFAULT_BLOB_HEADERS },
       dataType: "blob",
     });
   });

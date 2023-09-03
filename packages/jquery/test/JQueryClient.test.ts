@@ -187,10 +187,11 @@ describe("JQueryClient Tests", function () {
   });
 
   test("update blob request", async () => {
-    await jqClient.updateBlob(DEFAULT_URL, new Blob(), "image/jpg");
+    const mimeType = "image/jpg";
+    await jqClient.updateBlob(DEFAULT_URL, new Blob(), mimeType);
 
     expect(getRequestDetails()).toMatchObject({ url: DEFAULT_URL, method: "PUT", xhrFields: { responseType: "blob" } });
-    expect(getRequestHeaders()).toStrictEqual({ Accept: "image/jpg" });
+    expect(getRequestHeaders()).toStrictEqual({ Accept: mimeType, "Content-Type": mimeType });
   });
 
   test("stream request not supported", async () => {
