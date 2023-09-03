@@ -72,7 +72,12 @@ export class FetchClient extends BaseHttpClient<FetchRequestConfig> {
 
     // error response
     if (!response.ok) {
-      let responseData = await this.getResponseBody(response, internalOptions, false);
+      let responseData;
+      try {
+        responseData = await this.getResponseBody(response, internalOptions);
+      } catch (e) {
+        responseData = undefined;
+      }
       const errMsg = this.retrieveErrorMessage(responseData);
 
       throw new FetchClientError(
@@ -84,7 +89,18 @@ export class FetchClient extends BaseHttpClient<FetchRequestConfig> {
       );
     }
 
-    const responseData = await this.getResponseBody(response, internalOptions, true);
+    let responseData;
+    try {
+      responseData = await this.getResponseBody(response, internalOptions);
+    } catch (error) {
+      const msg = internalOptions.dataType === "blob" ? BLOB_RETRIEVAL_FAILURE_MESSAGE : JSON_RETRIEVAL_FAILURE_MESSAGE;
+      throw new FetchClientError(
+        buildErrorMessage(msg, error),
+        response.status,
+        this.mapHeaders(response.headers),
+        error as Error
+      );
+    }
 
     return {
       status: response.status,
@@ -94,31 +110,20 @@ export class FetchClient extends BaseHttpClient<FetchRequestConfig> {
     };
   }
 
-  protected async getResponseBody(response: Response, options: InternalBaseHttpClientOptions, isFailureFatal: boolean) {
+  protected async getResponseBody(response: Response, options: InternalBaseHttpClientOptions) {
     if (response.status === 204) {
       return undefined;
     }
-    try {
-      switch (options.dataType) {
-        case "json":
-          return response.json();
-        case "blob":
-          return response.blob();
-        case "stream":
-          return response.body;
-      }
-    } catch (error) {
-      if (isFailureFatal) {
-        const msg = options.dataType === "blob" ? BLOB_RETRIEVAL_FAILURE_MESSAGE : JSON_RETRIEVAL_FAILURE_MESSAGE;
-        throw new FetchClientError(
-          buildErrorMessage(msg, error),
-          response.status,
-          this.mapHeaders(response.headers),
-          error as Error
-        );
-      }
-      return undefined;
+    switch (options.dataType) {
+      case "json":
+        return response.json();
+      case "blob":
+        return response.blob();
+      case "stream":
+        return response.body;
     }
+
+    return undefined;
   }
 
   protected mapHeaders(headers: Headers): Record<string, string> {
