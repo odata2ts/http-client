@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.7.0](https://github.com/odata2ts/http-client/compare/@odata2ts/http-client-jquery@0.6.0...@odata2ts/http-client-jquery@0.7.0) (2023-09-05)
+
+### Features
+
+* **jquery:** allow for query params ([afd13a8](https://github.com/odata2ts/http-client/commit/afd13a862dc07485c0f619a3e39521f7ce6fc65e))
+
 # [0.6.0](https://github.com/odata2ts/http-client/compare/@odata2ts/http-client-jquery@0.5.1...@odata2ts/http-client-jquery@0.6.0) (2023-08-03)
 
 ### Code Refactoring
