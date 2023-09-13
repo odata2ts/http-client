@@ -9,7 +9,7 @@ function mergeConfigWithHeaders(config: MockRequestConfig, headers: Record<strin
 
 const DEFAULT_URL = "http://test.testing.com/myService/theEntity";
 const DEFAULT_CONFIG: MockRequestConfig = { headers: { x: "a" }, x: "y" };
-const INTERNAL_CONFIG = { headers: { "Content-Type": "ct" } };
+const ADDITIONAL_HEADERS = { "Content-Type": "ct" };
 const DEFAULT_DATA = { a: "b" };
 const JSON_VALUE = "application/json";
 const DEFAULT_GET_HEADERS = { Accept: JSON_VALUE };
@@ -48,12 +48,12 @@ describe("BaseHttpClient Tests", () => {
   });
 
   test("GET with additional headers", async () => {
-    await mockClient.get(DEFAULT_URL, undefined, INTERNAL_CONFIG);
-    expect(mockClient.lastConfig).toStrictEqual(mergeConfigWithHeaders(INTERNAL_CONFIG, DEFAULT_GET_HEADERS));
+    await mockClient.get(DEFAULT_URL, undefined, ADDITIONAL_HEADERS);
+    expect(mockClient.lastConfig).toStrictEqual({ headers: { ...DEFAULT_GET_HEADERS, ...ADDITIONAL_HEADERS } });
 
-    await mockClient.get(DEFAULT_URL, DEFAULT_CONFIG, INTERNAL_CONFIG);
+    await mockClient.get(DEFAULT_URL, DEFAULT_CONFIG, ADDITIONAL_HEADERS);
     expect(mockClient.lastConfig).toStrictEqual(
-      mergeConfigWithHeaders(mergeConfigWithHeaders(DEFAULT_CONFIG, DEFAULT_GET_HEADERS), INTERNAL_CONFIG.headers)
+      mergeConfigWithHeaders(mergeConfigWithHeaders(DEFAULT_CONFIG, DEFAULT_GET_HEADERS), ADDITIONAL_HEADERS)
     );
   });
 

@@ -29,11 +29,13 @@ const FAILURE_MISSING_CSRF_URL =
 const FAILURE_MISSING_URL = "Value for URL must be provided!";
 const JSON_VALUE = "application/json";
 
-function addJsonHeaders(config: InternalHttpClientConfig, setContentType: boolean = true) {
-  config.headers = {
-    Accept: JSON_VALUE,
-    ...(setContentType ? { "Content-Type": JSON_VALUE } : undefined),
-    ...config.headers,
+function getInternalConfig(headers?: Record<string, string>, setContentType: boolean = true) {
+  return {
+    headers: {
+      Accept: JSON_VALUE,
+      ...(setContentType ? { "Content-Type": JSON_VALUE } : undefined),
+      ...headers,
+    },
   };
 }
 
@@ -89,9 +91,9 @@ export abstract class BaseHttpClient<RequestConfigType> implements ODataHttpClie
 
   protected async fetchSecurityToken(): Promise<string | undefined> {
     const fetchUrl = this.baseOptions!.csrfTokenFetchUrl!;
-    const response = await this.get(fetchUrl, undefined, {
+    const response = await this.sendRequest(HttpMethods.Get, fetchUrl, undefined, undefined, {
       noBodyEvaluation: true,
-      headers: { [this.csrfTokenKey]: "Fetch", Accept: "application/json" },
+      headers: { [this.csrfTokenKey]: "Fetch", Accept: JSON_VALUE },
     });
 
     return response.headers[this.csrfTokenKey];
@@ -154,47 +156,67 @@ export abstract class BaseHttpClient<RequestConfigType> implements ODataHttpClie
   public get<ResponseModel>(
     url: string,
     requestConfig?: RequestConfigType,
-    config: InternalHttpClientConfig = {}
+    additionalHeaders?: Record<string, string>
   ): Promise<HttpResponseModel<ResponseModel>> {
-    addJsonHeaders(config, false);
-    return this.sendRequest<ResponseModel>(HttpMethods.Get, url, undefined, requestConfig, config);
+    return this.sendRequest<ResponseModel>(
+      HttpMethods.Get,
+      url,
+      undefined,
+      requestConfig,
+      getInternalConfig(additionalHeaders, false)
+    );
   }
 
   public post<ResponseModel>(
     url: string,
     data: any,
     requestConfig?: RequestConfigType,
-    config: InternalHttpClientConfig = {}
+    additionalHeaders?: Record<string, string>
   ): Promise<HttpResponseModel<ResponseModel>> {
-    addJsonHeaders(config);
-    return this.sendRequest<ResponseModel>(HttpMethods.Post, url, data, requestConfig, config);
+    return this.sendRequest<ResponseModel>(
+      HttpMethods.Post,
+      url,
+      data,
+      requestConfig,
+      getInternalConfig(additionalHeaders)
+    );
   }
 
   public put<ResponseModel>(
     url: string,
     data: any,
     requestConfig?: RequestConfigType,
-    config: InternalHttpClientConfig = {}
+    additionalHeaders?: Record<string, string>
   ): Promise<HttpResponseModel<ResponseModel>> {
-    addJsonHeaders(config);
-    return this.sendRequest<ResponseModel>(HttpMethods.Put, url, data, requestConfig, config);
+    return this.sendRequest<ResponseModel>(
+      HttpMethods.Put,
+      url,
+      data,
+      requestConfig,
+      getInternalConfig(additionalHeaders)
+    );
   }
 
   public patch<ResponseModel>(
     url: string,
     data: any,
     requestConfig?: RequestConfigType,
-    config: InternalHttpClientConfig = {}
+    additionalHeaders?: Record<string, string>
   ): Promise<HttpResponseModel<ResponseModel>> {
-    addJsonHeaders(config);
-    return this.sendRequest<ResponseModel>(HttpMethods.Patch, url, data, requestConfig, config);
+    return this.sendRequest<ResponseModel>(
+      HttpMethods.Patch,
+      url,
+      data,
+      requestConfig,
+      getInternalConfig(additionalHeaders)
+    );
   }
 
   public delete(
     url: string,
     requestConfig?: RequestConfigType,
-    config: InternalHttpClientConfig = {}
+    additionalHeaders?: Record<string, string>
   ): Promise<HttpResponseModel<void>> {
-    return this.sendRequest<void>(HttpMethods.Delete, url, undefined, requestConfig, config);
+    return this.sendRequest<void>(HttpMethods.Delete, url, undefined, requestConfig, { headers: additionalHeaders });
   }
 }

@@ -100,7 +100,7 @@ describe("FetchClient Tests", function () {
   test("using additional headers", async () => {
     const headers = { hey: "Ho" };
 
-    await fetchClient.get("", undefined, { headers });
+    await fetchClient.get("", undefined, headers);
 
     expect(getRequestHeaderRecords()).toStrictEqual({ ...DEFAULT_GET_HEADERS, ...headers });
   });
@@ -113,7 +113,7 @@ describe("FetchClient Tests", function () {
       cache: "force-cache",
     };
 
-    await fetchClient.get("", { headers, ...config }, { headers: { test: "added" } });
+    await fetchClient.get("", { headers, ...config }, { test: "added" });
 
     // method has not been overridden
     expect(getBaseRequestConfig()).toStrictEqual({ method: "GET", cache: config.cache });
