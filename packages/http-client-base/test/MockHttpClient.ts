@@ -1,8 +1,8 @@
 import crypto from "crypto";
 
-import { HttpResponseModel, InternalHttpClientConfig, ODataClientError } from "@odata2ts/http-client-api";
+import { HttpResponseModel, ODataClientError, ODataHttpClient } from "@odata2ts/http-client-api";
 
-import { BaseHttpClient, BaseHttpClientOptions, HttpMethods } from "../src";
+import { BaseHttpClient, BaseHttpClientOptions, HttpMethods, InternalHttpClientConfig } from "../src";
 
 export class MockClientError extends Error implements ODataClientError {
   constructor(
@@ -22,7 +22,7 @@ export interface MockRequestConfig {
   x?: string;
 }
 
-export class MockHttpClient extends BaseHttpClient<MockRequestConfig> {
+export class MockHttpClient extends BaseHttpClient<MockRequestConfig> implements ODataHttpClient<MockRequestConfig> {
   public generatedCsrfToken?: string;
   public lastMethod?: HttpMethods;
   public lastUrl?: string;
@@ -52,7 +52,7 @@ export class MockHttpClient extends BaseHttpClient<MockRequestConfig> {
       if (!mergedConfig) {
         mergedConfig = {};
       }
-      mergedConfig.headers = { ...mergedConfig.headers, ...internalConfig?.headers };
+      mergedConfig.headers = { ...mergedConfig.headers, ...internalConfig.headers };
     }
     this.lastMethod = method;
     this.lastUrl = url;

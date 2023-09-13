@@ -1,5 +1,10 @@
-import { HttpResponseModel, InternalHttpClientConfig } from "@odata2ts/http-client-api";
-import { BaseHttpClient, BaseHttpClientOptions, HttpMethods } from "@odata2ts/http-client-base";
+import { HttpResponseModel, ODataHttpClient } from "@odata2ts/http-client-api";
+import {
+  BaseHttpClient,
+  BaseHttpClientOptions,
+  HttpMethods,
+  InternalHttpClientConfig,
+} from "@odata2ts/http-client-base";
 
 import { FetchClientError } from "./FetchClientError";
 import { FetchRequestConfig, getDefaultConfig, mergeFetchConfig } from "./FetchRequestConfig";
@@ -16,7 +21,7 @@ function buildErrorMessage(prefix: string, error: any) {
   return prefix + (msg || DEFAULT_ERROR_MESSAGE);
 }
 
-export class FetchClient extends BaseHttpClient<FetchRequestConfig> {
+export class FetchClient extends BaseHttpClient<FetchRequestConfig> implements ODataHttpClient<FetchRequestConfig> {
   protected readonly config: RequestInit;
 
   constructor(config?: FetchRequestConfig, clientOptions?: ClientOptions) {

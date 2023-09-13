@@ -1,9 +1,4 @@
-import {
-  HttpResponseModel,
-  InternalHttpClientConfig,
-  ODataClientError,
-  ODataHttpClient,
-} from "@odata2ts/http-client-api";
+import { HttpResponseModel, ODataClientError } from "@odata2ts/http-client-api";
 
 import { ErrorMessageRetriever, retrieveErrorMessage } from "./ErrorMessageRetriever";
 import { HttpMethods } from "./HttpMethods";
@@ -19,6 +14,17 @@ export interface BaseHttpClientOptions {
    * However, it should be a fast response and usually the root URL to the OData service is a good choice.
    */
   csrfTokenFetchUrl?: string;
+}
+
+export interface InternalHttpClientConfig {
+  /**
+   * Additional headers set internally by services or HttpClient implementation.
+   */
+  headers?: Record<string, string>;
+  /**
+   * Very special option needed for FetchClient to not evaluate the response body in certain situations.
+   */
+  noBodyEvaluation?: boolean;
 }
 
 export const DEFAULT_CSRF_TOKEN_KEY = "x-csrf-token";
@@ -39,7 +45,7 @@ function getInternalConfig(headers?: Record<string, string>, setContentType: boo
   };
 }
 
-export abstract class BaseHttpClient<RequestConfigType> implements ODataHttpClient<RequestConfigType> {
+export abstract class BaseHttpClient<RequestConfigType> {
   private csrfToken: string | undefined;
   private csrfTokenKey = DEFAULT_CSRF_TOKEN_KEY;
 

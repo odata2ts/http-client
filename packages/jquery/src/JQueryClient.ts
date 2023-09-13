@@ -1,7 +1,12 @@
 /// <reference path="../../../node_modules/@types/jquery/JQueryStatic.d.ts" />
 
-import { HttpResponseModel, InternalHttpClientConfig } from "@odata2ts/http-client-api";
-import { BaseHttpClient, BaseHttpClientOptions, HttpMethods } from "@odata2ts/http-client-base";
+import { HttpResponseModel, ODataHttpClient } from "@odata2ts/http-client-api";
+import {
+  BaseHttpClient,
+  BaseHttpClientOptions,
+  HttpMethods,
+  InternalHttpClientConfig,
+} from "@odata2ts/http-client-base";
 
 import { AjaxRequestConfig, getDefaultConfig, mergeAjaxConfig } from "./AjaxRequestConfig";
 import { JQueryClientError } from "./JQueryClientError";
@@ -12,7 +17,7 @@ export const DEFAULT_ERROR_MESSAGE = "No error message!";
 
 export interface ClientOptions extends BaseHttpClientOptions {}
 
-export class JQueryClient extends BaseHttpClient<AjaxRequestConfig> {
+export class JQueryClient extends BaseHttpClient<AjaxRequestConfig> implements ODataHttpClient<AjaxRequestConfig> {
   private readonly client: JQueryStatic;
   private readonly config: JQuery.AjaxSettings;
 

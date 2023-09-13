@@ -1,5 +1,10 @@
-import { HttpResponseModel, InternalHttpClientConfig } from "@odata2ts/http-client-api";
-import { BaseHttpClient, BaseHttpClientOptions, HttpMethods } from "@odata2ts/http-client-base";
+import { HttpResponseModel, ODataHttpClient } from "@odata2ts/http-client-api";
+import {
+  BaseHttpClient,
+  BaseHttpClientOptions,
+  HttpMethods,
+  InternalHttpClientConfig,
+} from "@odata2ts/http-client-base";
 import axios, {
   AxiosError,
   AxiosInstance,
@@ -24,7 +29,7 @@ function buildErrorMessage(prefix: string, error: any) {
   return prefix + (msg || DEFAULT_ERROR_MESSAGE);
 }
 
-export class AxiosClient extends BaseHttpClient<AxiosRequestConfig> {
+export class AxiosClient extends BaseHttpClient<AxiosRequestConfig> implements ODataHttpClient<AxiosRequestConfig> {
   protected readonly client: AxiosInstance;
 
   constructor(config?: AxiosRequestConfig, clientOptions?: ClientOptions) {
