@@ -23,10 +23,19 @@ export interface BaseHttpClientOptions {
 
 export const DEFAULT_CSRF_TOKEN_KEY = "x-csrf-token";
 
-const EDIT_METHODS = ["POST", "PUT", "PATCH", "DELETE"];
+const EDIT_METHODS = [HttpMethods.Post, HttpMethods.Put, HttpMethods.Patch, HttpMethods.Delete];
 const FAILURE_MISSING_CSRF_URL =
   "When automatic CSRF token handling is activated, the URL must be supplied via attribute [csrfTokenFetchUrl]!";
 const FAILURE_MISSING_URL = "Value for URL must be provided!";
+const JSON_VALUE = "application/json";
+
+function addJsonHeaders(config: InternalHttpClientConfig, setContentType: boolean = true) {
+  config.headers = {
+    Accept: JSON_VALUE,
+    ...(setContentType ? { "Content-Type": JSON_VALUE } : undefined),
+    ...config.headers,
+  };
+}
 
 export abstract class BaseHttpClient<RequestConfigType> implements ODataHttpClient<RequestConfigType> {
   private csrfToken: string | undefined;
@@ -145,8 +154,9 @@ export abstract class BaseHttpClient<RequestConfigType> implements ODataHttpClie
   public get<ResponseModel>(
     url: string,
     requestConfig?: RequestConfigType,
-    config?: InternalHttpClientConfig
+    config: InternalHttpClientConfig = {}
   ): Promise<HttpResponseModel<ResponseModel>> {
+    addJsonHeaders(config, false);
     return this.sendRequest<ResponseModel>(HttpMethods.Get, url, undefined, requestConfig, config);
   }
 
@@ -154,8 +164,9 @@ export abstract class BaseHttpClient<RequestConfigType> implements ODataHttpClie
     url: string,
     data: any,
     requestConfig?: RequestConfigType,
-    config?: InternalHttpClientConfig
+    config: InternalHttpClientConfig = {}
   ): Promise<HttpResponseModel<ResponseModel>> {
+    addJsonHeaders(config);
     return this.sendRequest<ResponseModel>(HttpMethods.Post, url, data, requestConfig, config);
   }
 
@@ -163,8 +174,9 @@ export abstract class BaseHttpClient<RequestConfigType> implements ODataHttpClie
     url: string,
     data: any,
     requestConfig?: RequestConfigType,
-    config?: InternalHttpClientConfig
+    config: InternalHttpClientConfig = {}
   ): Promise<HttpResponseModel<ResponseModel>> {
+    addJsonHeaders(config);
     return this.sendRequest<ResponseModel>(HttpMethods.Put, url, data, requestConfig, config);
   }
 
@@ -172,15 +184,16 @@ export abstract class BaseHttpClient<RequestConfigType> implements ODataHttpClie
     url: string,
     data: any,
     requestConfig?: RequestConfigType,
-    config?: InternalHttpClientConfig
+    config: InternalHttpClientConfig = {}
   ): Promise<HttpResponseModel<ResponseModel>> {
+    addJsonHeaders(config);
     return this.sendRequest<ResponseModel>(HttpMethods.Patch, url, data, requestConfig, config);
   }
 
   public delete(
     url: string,
     requestConfig?: RequestConfigType,
-    config?: InternalHttpClientConfig
+    config: InternalHttpClientConfig = {}
   ): Promise<HttpResponseModel<void>> {
     return this.sendRequest<void>(HttpMethods.Delete, url, undefined, requestConfig, config);
   }
