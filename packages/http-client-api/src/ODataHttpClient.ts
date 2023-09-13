@@ -7,6 +7,17 @@ export type ODataHttpClientConfig<ClientType extends ODataHttpClient> = ClientTy
   ? Config
   : never;
 
+export interface InternalHttpClientConfig {
+  /**
+   * Additional headers set internally by services or HttpClient implementation.
+   */
+  headers?: Record<string, string>;
+  /**
+   * Very special option needed for FetchClient to not evaluate the response body in certain situations.
+   */
+  noBodyEvaluation?: boolean;
+}
+
 export interface ODataHttpClient<RequestConfig = any> {
   /**
    * Create a model or collection entry.
@@ -14,19 +25,19 @@ export interface ODataHttpClient<RequestConfig = any> {
    * @param url
    * @param data
    * @param requestConfig
-   * @param additionalHeaders
+   * @param config
    */
   post<ResponseModel>(
     url: string,
     data: any,
     requestConfig?: RequestConfig,
-    additionalHeaders?: Record<string, string>
+    config?: InternalHttpClientConfig
   ): ODataResponse<ResponseModel>;
 
   get<ResponseModel>(
     url: string,
     requestConfig?: RequestConfig,
-    additionalHeaders?: Record<string, string>
+    config?: InternalHttpClientConfig
   ): ODataResponse<ResponseModel>;
 
   /**
@@ -35,13 +46,13 @@ export interface ODataHttpClient<RequestConfig = any> {
    * @param url
    * @param data
    * @param requestConfig
-   * @param additionalHeaders
+   * @param config
    */
   put<ResponseModel>(
     url: string,
     data: any,
     requestConfig?: RequestConfig,
-    additionalHeaders?: Record<string, string>
+    config?: InternalHttpClientConfig
   ): ODataResponse<ResponseModel>;
 
   /**
@@ -50,13 +61,13 @@ export interface ODataHttpClient<RequestConfig = any> {
    * @param url
    * @param data
    * @param requestConfig
-   * @param additionalHeaders
+   * @param config
    */
   patch<ResponseModel>(
     url: string,
     data: any,
     requestConfig?: RequestConfig,
-    additionalHeaders?: Record<string, string>
+    config?: InternalHttpClientConfig
   ): ODataResponse<ResponseModel>;
 
   /**
@@ -64,7 +75,7 @@ export interface ODataHttpClient<RequestConfig = any> {
    *
    * @param url
    * @param requestConfig
-   * @param additionalHeaders
+   * @param config
    */
-  delete(url: string, requestConfig?: RequestConfig, additionalHeaders?: Record<string, string>): ODataResponse<void>;
+  delete(url: string, requestConfig?: RequestConfig, config?: InternalHttpClientConfig): ODataResponse<void>;
 }

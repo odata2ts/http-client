@@ -1,6 +1,6 @@
 import crypto from "crypto";
 
-import { HttpResponseModel, ODataClientError } from "@odata2ts/http-client-api";
+import { HttpResponseModel, InternalHttpClientConfig, ODataClientError } from "@odata2ts/http-client-api";
 
 import { BaseHttpClient, BaseHttpClientOptions, HttpMethods } from "../src";
 
@@ -40,28 +40,29 @@ export class MockHttpClient extends BaseHttpClient<MockRequestConfig> {
     return this.retrieveErrorMessage(errorResponse);
   }
 
-  addHeaderToRequestConfig(headers: Record<string, string>, config: MockRequestConfig | undefined): MockRequestConfig {
-    const mergedConfig: MockRequestConfig = config ? { ...config } : {};
-    mergedConfig.headers = { ...headers, ...mergedConfig.headers };
-
-    return mergedConfig;
-  }
-
   executeRequest<ResponseModel>(
     method: HttpMethods,
     url: string,
     data: any,
-    config: MockRequestConfig | undefined
+    config: MockRequestConfig | undefined,
+    internalConfig?: InternalHttpClientConfig
   ): Promise<HttpResponseModel<ResponseModel>> {
+    let mergedConfig: MockRequestConfig | undefined = config ? { ...config } : undefined;
+    if (internalConfig?.headers) {
+      if (!mergedConfig) {
+        mergedConfig = {};
+      }
+      mergedConfig.headers = { ...mergedConfig.headers, ...internalConfig?.headers };
+    }
     this.lastMethod = method;
     this.lastUrl = url;
     this.lastData = data;
-    this.lastConfig = config;
+    this.lastConfig = mergedConfig;
 
     const responseHeaders: Record<string, string> = {};
 
     // CSRF token request => custom response
-    if (config?.headers && config.headers[this.getCsrfTokenKey()] === "Fetch") {
+    if (mergedConfig?.headers && mergedConfig.headers[this.getCsrfTokenKey()] === "Fetch") {
       this.generatedCsrfToken = crypto.randomBytes(4).toString("hex");
       responseHeaders[this.getCsrfTokenKey()] = this.generatedCsrfToken;
     }

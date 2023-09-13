@@ -1,13 +1,16 @@
 import { FetchClient, FetchRequestConfig } from "../src";
 
+const DEFAULT_URL = "TEST/hi";
+const DEFAULT_REQUEST_CONFIG = { method: "GET", cache: "no-store" };
+const JSON_VALUE = "application/json";
+const DEFAULT_GET_HEADERS = { accept: JSON_VALUE };
+const DEFAULT_EDIT_HEADERS = { ...DEFAULT_GET_HEADERS, "content-type": JSON_VALUE };
+
 describe("FetchClient Tests", function () {
   let fetchClient: FetchClient;
   let requestUrl: string | undefined;
   let requestConfig: RequestInit | undefined;
   let simulateNoContent: boolean = false;
-
-  const DEFAULT_URL = "TEST/hi";
-  const DEFAULT_REQUEST_CONFIG = { method: "GET", cache: "no-store" };
 
   // Mocking fetch
   // @ts-ignore: more simplistic parameters and returning different stuff
@@ -65,7 +68,7 @@ describe("FetchClient Tests", function () {
 
     expect(requestUrl).toBe(DEFAULT_URL);
     expect(getBaseRequestConfig()).toStrictEqual(DEFAULT_REQUEST_CONFIG);
-    expect(getRequestHeaderRecords()).toStrictEqual({});
+    expect(getRequestHeaderRecords()).toStrictEqual(DEFAULT_GET_HEADERS);
   });
 
   test("invalid url", async () => {
@@ -91,15 +94,15 @@ describe("FetchClient Tests", function () {
     await fetchClient.get("", { headers, ...config });
 
     expect(getBaseRequestConfig()).toStrictEqual({ ...DEFAULT_REQUEST_CONFIG, ...config });
-    expect(getRequestHeaderRecords()).toStrictEqual(headers);
+    expect(getRequestHeaderRecords()).toStrictEqual({ ...DEFAULT_GET_HEADERS, ...headers });
   });
 
   test("using additional headers", async () => {
     const headers = { hey: "Ho" };
 
-    await fetchClient.get("", undefined, headers);
+    await fetchClient.get("", undefined, { headers });
 
-    expect(getRequestHeaderRecords()).toStrictEqual(headers);
+    expect(getRequestHeaderRecords()).toStrictEqual({ ...DEFAULT_GET_HEADERS, ...headers });
   });
 
   test("request config overrides everything", async () => {
@@ -110,7 +113,7 @@ describe("FetchClient Tests", function () {
       cache: "force-cache",
     };
 
-    await fetchClient.get("", { headers, ...config }, { test: "added" });
+    await fetchClient.get("", { headers, ...config }, { headers: { test: "added" } });
 
     // method has not been overridden
     expect(getBaseRequestConfig()).toStrictEqual({ method: "GET", cache: config.cache });
@@ -127,7 +130,7 @@ describe("FetchClient Tests", function () {
 
     expect(requestUrl).toBe(DEFAULT_URL);
     expect(getBaseRequestConfig()).toStrictEqual(getDefaultBaseConfigForMethod("POST"));
-    expect(getRequestHeaderRecords()).toStrictEqual({});
+    expect(getRequestHeaderRecords()).toStrictEqual(DEFAULT_EDIT_HEADERS);
   });
 
   test("post request with different data", async () => {
@@ -147,6 +150,8 @@ describe("FetchClient Tests", function () {
 
     expect(requestUrl).toBe(DEFAULT_URL);
     expect(getBaseRequestConfig()).toStrictEqual(getDefaultBaseConfigForMethod("PUT"));
+    expect(getRequestHeaderRecords()).toStrictEqual(DEFAULT_EDIT_HEADERS);
+    expect(getRequestHeaderRecords()).toStrictEqual(DEFAULT_EDIT_HEADERS);
   });
 
   test("patch request", async () => {
@@ -154,6 +159,7 @@ describe("FetchClient Tests", function () {
 
     expect(requestUrl).toBe(DEFAULT_URL);
     expect(getBaseRequestConfig()).toStrictEqual(getDefaultBaseConfigForMethod("PATCH"));
+    expect(getRequestHeaderRecords()).toStrictEqual(DEFAULT_EDIT_HEADERS);
   });
 
   test("delete request", async () => {
@@ -161,6 +167,7 @@ describe("FetchClient Tests", function () {
 
     expect(requestUrl).toBe(DEFAULT_URL);
     expect(getBaseRequestConfig()).toStrictEqual({ ...DEFAULT_REQUEST_CONFIG, method: "DELETE" });
+    expect(getRequestHeaderRecords()).toStrictEqual({});
   });
 
   test("simulate 204 no content", async () => {

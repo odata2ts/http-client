@@ -1,14 +1,15 @@
-import { FetchClient } from "@odata2ts/http-client-fetch";
-
 import { AjaxRequestConfig, JQueryClient } from "../src";
 import { JqMock } from "./JQueryMock";
+
+const DEFAULT_URL = "TEST/hi";
+const DEFAULT_REQUEST_CONFIG: AjaxRequestConfig = { timeout: 666, headers: { test: "test" } };
+const JSON_VALUE = "application/json";
+const DEFAULT_GET_HEADERS = { Accept: JSON_VALUE };
+const DEFAULT_EDIT_HEADERS = { ...DEFAULT_GET_HEADERS, "Content-Type": JSON_VALUE };
 
 describe("JQueryClient Tests", function () {
   let jqMock: JqMock;
   let jqClient: JQueryClient;
-
-  const DEFAULT_URL = "TEST/hi";
-  const DEFAULT_REQUEST_CONFIG: AjaxRequestConfig = { timeout: 666, headers: { test: "test" } };
 
   const DEFAULT_CONFIG = {
     url: DEFAULT_URL,
@@ -44,7 +45,7 @@ describe("JQueryClient Tests", function () {
     await jqClient.get(DEFAULT_URL);
 
     expect(getRequestDetails()).toStrictEqual(DEFAULT_CONFIG);
-    expect(getRequestHeaders()).toStrictEqual({});
+    expect(getRequestHeaders()).toStrictEqual(DEFAULT_GET_HEADERS);
   });
 
   test("invalid url", async () => {
@@ -64,7 +65,7 @@ describe("JQueryClient Tests", function () {
     await jqClient.get(DEFAULT_URL);
 
     expect(getRequestDetails()).toStrictEqual({ ...DEFAULT_CONFIG, timeout: DEFAULT_REQUEST_CONFIG.timeout });
-    expect(getRequestHeaders()).toStrictEqual(DEFAULT_REQUEST_CONFIG.headers);
+    expect(getRequestHeaders()).toStrictEqual({ ...DEFAULT_GET_HEADERS, ...DEFAULT_REQUEST_CONFIG.headers });
   });
 
   test("using config", async () => {
@@ -72,15 +73,15 @@ describe("JQueryClient Tests", function () {
     await jqClient.get(DEFAULT_URL, DEFAULT_REQUEST_CONFIG);
 
     expect(getRequestDetails()).toStrictEqual({ ...DEFAULT_CONFIG, timeout });
-    expect(getRequestHeaders()).toStrictEqual(headers);
+    expect(getRequestHeaders()).toStrictEqual({ ...DEFAULT_GET_HEADERS, ...headers });
   });
 
   test("using additional headers", async () => {
     const headers = { hey: "Ho", "Content-Type": "tester" };
 
-    await jqClient.get(DEFAULT_URL, undefined, headers);
+    await jqClient.get(DEFAULT_URL, undefined, { headers });
 
-    expect(getRequestHeaders()).toStrictEqual(headers);
+    expect(getRequestHeaders()).toStrictEqual({ ...DEFAULT_GET_HEADERS, ...headers });
   });
 
   test("request config overrides everything", async () => {
@@ -94,7 +95,7 @@ describe("JQueryClient Tests", function () {
       headers,
     };
 
-    await jqClient.get("", config, { test: "added", extra: "x" });
+    await jqClient.get("", config, { headers: { test: "added", extra: "x" } });
 
     // method has not been overridden
     expect(getRequestDetails()).toMatchObject({ method: "GET" });
@@ -107,7 +108,7 @@ describe("JQueryClient Tests", function () {
 
     expect(getRequestData()).toBe("{}");
     expect(getRequestDetails()).toMatchObject({ url: DEFAULT_URL, method: "POST" });
-    expect(getRequestHeaders()).toStrictEqual({});
+    expect(getRequestHeaders()).toStrictEqual(DEFAULT_EDIT_HEADERS);
   });
 
   test("post request with different data", async () => {
@@ -138,7 +139,7 @@ describe("JQueryClient Tests", function () {
     await jqClient.patch(DEFAULT_URL, {});
 
     expect(getRequestDetails()).toMatchObject({ url: DEFAULT_URL, method: "PATCH" });
-    expect(getRequestHeaders()).toStrictEqual({});
+    expect(getRequestHeaders()).toStrictEqual(DEFAULT_EDIT_HEADERS);
   });
 
   test("delete request", async () => {
