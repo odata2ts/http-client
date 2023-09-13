@@ -3,6 +3,22 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.5.0](https://github.com/odata2ts/http-client/compare/@odata2ts/http-client-api@0.4.0...@odata2ts/http-client-api@0.5.0) (2023-09-13)
+
+### Code Refactoring
+
+* expand additionalHeaders param to internalConfig ([#15](https://github.com/odata2ts/http-client/issues/15)) ([7fe1d73](https://github.com/odata2ts/http-client/commit/7fe1d73a7436f64b84a060bd1dbf9e121ef901ce))
+
+### BREAKING CHANGES
+
+* additional headers are now part of the config parameter
+
+* fix: don't lose configuration when CSRF token is active
+
+* add new option which prevents FetchClient from evaluating response body (not needed for fetching csrf tokens & makes trouble with SAP's mockServer)
+
+* fix: add headers for content-type and accept for main methods
+
 # [0.4.0](https://github.com/odata2ts/http-client/compare/@odata2ts/http-client-api@0.3.0...@odata2ts/http-client-api@0.4.0) (2023-08-03)
 
 ### Code Refactoring
