@@ -1,6 +1,6 @@
 /// <reference path="../../../node_modules/@types/jquery/JQueryStatic.d.ts" />
 
-import { HttpResponseModel } from "@odata2ts/http-client-api";
+import { HttpResponseModel, InternalHttpClientConfig } from "@odata2ts/http-client-api";
 import { BaseHttpClient, BaseHttpClientOptions, HttpMethods } from "@odata2ts/http-client-base";
 
 import { AjaxRequestConfig, getDefaultConfig, mergeAjaxConfig } from "./AjaxRequestConfig";
@@ -16,7 +16,7 @@ export class JQueryClient extends BaseHttpClient<AjaxRequestConfig> {
   private readonly client: JQueryStatic;
   private readonly config: JQuery.AjaxSettings;
 
-  constructor(jquery: JQueryStatic, config?: AjaxRequestConfig, private clientOptions?: ClientOptions) {
+  constructor(jquery: JQueryStatic, config?: AjaxRequestConfig, clientOptions?: ClientOptions) {
     super(clientOptions);
     this.client = jquery;
     this.config = getDefaultConfig(config);
@@ -39,17 +39,15 @@ export class JQueryClient extends BaseHttpClient<AjaxRequestConfig> {
       }, {});
   }
 
-  protected addHeaderToRequestConfig(headers: Record<string, string>, config?: AjaxRequestConfig): AjaxRequestConfig {
-    return mergeAjaxConfig({ headers }, config);
-  }
-
   protected async executeRequest<ResponseModel>(
     method: HttpMethods,
     url: string,
     data: any,
-    requestConfig?: JQuery.AjaxSettings
+    requestConfig?: JQuery.AjaxSettings,
+    internalConfig: InternalHttpClientConfig = {}
   ): Promise<HttpResponseModel<ResponseModel>> {
-    const { params, ...mergedConfig } = mergeAjaxConfig(this.config, requestConfig);
+    const withInternalConfig = mergeAjaxConfig({ headers: internalConfig.headers }, requestConfig);
+    const { params, ...mergedConfig } = mergeAjaxConfig(this.config, withInternalConfig);
     mergedConfig.method = method;
     mergedConfig.data = JSON.stringify(data);
     mergedConfig.url = url;

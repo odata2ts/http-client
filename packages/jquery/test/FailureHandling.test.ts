@@ -1,5 +1,4 @@
-import { AjaxRequestConfig, JQueryClient, JQueryClientError } from "../src";
-import { DEFAULT_ERROR_MESSAGE } from "../src/JQueryClient";
+import { DEFAULT_ERROR_MESSAGE, JQueryClient, JQueryClientError } from "../src";
 import { JqMock } from "./JQueryMock";
 
 describe("JQueryClient Failure Handling Tests", function () {
@@ -7,33 +6,7 @@ describe("JQueryClient Failure Handling Tests", function () {
   let jqClient: JQueryClient;
 
   const DEFAULT_URL = "TEST/hi";
-  const JSON_VALUE = "application/json";
-  const DEFAULT_HEADERS = { Accept: JSON_VALUE, "Content-Type": JSON_VALUE };
-  const DEFAULT_REQUEST_CONFIG: AjaxRequestConfig = { timeout: 666, headers: { test: "test" } };
   const RESPONSE_HEADERS = { "content-type": "application/json" };
-
-  const DEFAULT_CONFIG = {
-    url: DEFAULT_URL,
-    method: "GET",
-    dataType: "json",
-    cache: false,
-  };
-
-  const getRequestData = () => {
-    return jqMock.getRequestConfig()?.data;
-  };
-
-  const getRequestHeaders = () => {
-    return jqMock.getRequestConfig()?.headers;
-  };
-
-  /**
-   * request config without headers
-   */
-  const getRequestDetails = () => {
-    const { data, headers, success, error, ...result } = jqMock.getRequestConfig() || {};
-    return result;
-  };
 
   function createFailureMsg(message: string, isV2: boolean = false) {
     return { error: { message: isV2 ? { value: message } : message } };

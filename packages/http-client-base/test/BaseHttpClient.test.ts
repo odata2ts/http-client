@@ -3,7 +3,7 @@ import { MockClientError, MockHttpClient, MockRequestConfig } from "./MockHttpCl
 describe("BaseHttpClient Tests", () => {
   const DEFAULT_URL = "http://test.testing.com/myService/theEntity";
   const DEFAULT_CONFIG: MockRequestConfig = { headers: { x: "a" }, x: "y" };
-  const ADDITIONAL_HEADERS = { "Content-Type": "ct" };
+  const INTERNAL_CONFIG = { headers: { "Content-Type": "ct" } };
   const DEFAULT_DATA = { a: "b" };
 
   let mockClient: MockHttpClient;
@@ -38,13 +38,13 @@ describe("BaseHttpClient Tests", () => {
   });
 
   test("GET with additional headers", async () => {
-    await mockClient.get(DEFAULT_URL, undefined, ADDITIONAL_HEADERS);
-    expect(mockClient.lastConfig).toStrictEqual({ headers: ADDITIONAL_HEADERS });
+    await mockClient.get(DEFAULT_URL, undefined, INTERNAL_CONFIG);
+    expect(mockClient.lastConfig).toStrictEqual({ headers: INTERNAL_CONFIG.headers });
 
-    await mockClient.get(DEFAULT_URL, DEFAULT_CONFIG, ADDITIONAL_HEADERS);
+    await mockClient.get(DEFAULT_URL, DEFAULT_CONFIG, INTERNAL_CONFIG);
     expect(mockClient.lastConfig).toStrictEqual({
       ...DEFAULT_CONFIG,
-      headers: { ...DEFAULT_CONFIG.headers, ...ADDITIONAL_HEADERS },
+      headers: { ...DEFAULT_CONFIG.headers, ...INTERNAL_CONFIG.headers },
     });
   });
 

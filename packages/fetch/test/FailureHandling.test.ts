@@ -1,4 +1,4 @@
-import { DEFAULT_ERROR_MESSAGE, FetchClient, FetchClientError, FetchRequestConfig } from "../src";
+import { DEFAULT_ERROR_MESSAGE, FetchClient, FetchClientError } from "../src";
 
 describe("Failure Handling Tests", function () {
   const RESPONSE_HEADERS = { "content-type": "application/json" };

@@ -25,7 +25,7 @@ Extend the class `BaseHttpClient` to simplify your HttpClient implementation.
 You need to implement two abstract methods:
 
 ```ts
-import { BaseHttpClient, BaseHttpClientOptions } from "@odata2ts/http-client-base";
+import { BaseHttpClient, BaseHttpClientOptions, InternalHttpClientConfig } from "@odata2ts/http-client-base";
 
 export interface MyRequestConfig {}
 
@@ -33,19 +33,13 @@ export class MyHttpClient extends BaseHttpClient<MyRequestConfig> {
     constructor(clientOptions: BaseHttpClientOptions) {
         super(clientOptions);
     }
-
-    protected addHeaderToRequestConfig(
-        headers: Record<string, string>,
-        config: BaseHttpClient | undefined
-    ): MyRequestConfig {
-        // your implementation
-    }
-
+    
     protected async executeRequest<ResponseModel>(
         method: HttpMethods,
         url: string,
         data: any,
-        requestConfig: AxiosRequestConfig | undefined = {}
+        requestConfig: AxiosRequestConfig | undefined = {},
+        internalConfig?: InternalHttpClientConfig
     ): Promise<HttpResponseModel<ResponseModel>> {
         // your implementation
     }

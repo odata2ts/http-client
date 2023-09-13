@@ -1,5 +1,3 @@
-import { FetchClient } from "@odata2ts/http-client-fetch";
-
 import { AjaxRequestConfig, JQueryClient } from "../src";
 import { JqMock } from "./JQueryMock";
 
@@ -78,7 +76,7 @@ describe("JQueryClient Tests", function () {
   test("using additional headers", async () => {
     const headers = { hey: "Ho", "Content-Type": "tester" };
 
-    await jqClient.get(DEFAULT_URL, undefined, headers);
+    await jqClient.get(DEFAULT_URL, undefined, { headers });
 
     expect(getRequestHeaders()).toStrictEqual(headers);
   });
@@ -94,7 +92,7 @@ describe("JQueryClient Tests", function () {
       headers,
     };
 
-    await jqClient.get("", config, { test: "added", extra: "x" });
+    await jqClient.get("", config, { headers: { test: "added", extra: "x" } });
 
     // method has not been overridden
     expect(getRequestDetails()).toMatchObject({ method: "GET" });

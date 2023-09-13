@@ -1,4 +1,4 @@
-import { HttpResponseModel } from "@odata2ts/http-client-api";
+import { HttpResponseModel, InternalHttpClientConfig } from "@odata2ts/http-client-api";
 import { BaseHttpClient, BaseHttpClientOptions, HttpMethods } from "@odata2ts/http-client-base";
 
 import { FetchClientError } from "./FetchClientError";
@@ -24,20 +24,15 @@ export class FetchClient extends BaseHttpClient<FetchRequestConfig> {
     this.config = getDefaultConfig(config);
   }
 
-  protected addHeaderToRequestConfig(
-    headers: Record<string, string>,
-    config: FetchRequestConfig | undefined
-  ): FetchRequestConfig {
-    return mergeFetchConfig({ headers }, config);
-  }
-
   protected async executeRequest<ResponseModel>(
     method: HttpMethods,
     url: string,
     data: any,
-    requestConfig: FetchRequestConfig | undefined = {}
+    requestConfig: FetchRequestConfig | undefined = {},
+    internalConfig: InternalHttpClientConfig = {}
   ): Promise<HttpResponseModel<ResponseModel>> {
-    const { params, ...config } = mergeFetchConfig(this.config, requestConfig);
+    const { headers, noBodyEvaluation } = internalConfig;
+    const { params, ...config } = mergeFetchConfig(this.config, { headers }, requestConfig);
     config.method = method;
     if (typeof data !== "undefined") {
       config.body = JSON.stringify(data);
@@ -77,7 +72,7 @@ export class FetchClient extends BaseHttpClient<FetchRequestConfig> {
       );
     }
 
-    const responseData = await this.getResponseBody(response, true);
+    const responseData = noBodyEvaluation ? undefined : await this.getResponseBody(response, true);
 
     return {
       status: response.status,

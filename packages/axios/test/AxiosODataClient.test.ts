@@ -85,7 +85,7 @@ describe("Axios HTTP Client Tests", function () {
   test("using additional headers", async () => {
     const headers = { hey: "Ho" };
 
-    await axiosClient.get("", undefined, headers);
+    await axiosClient.get("", undefined, { headers });
 
     expect(requestConfig?.headers).toStrictEqual(headers);
   });
@@ -98,7 +98,7 @@ describe("Axios HTTP Client Tests", function () {
       method: "POST",
     };
 
-    await axiosClient.get("", { headers, ...config }, { test: "added", extra: "x" });
+    await axiosClient.get("", { headers, ...config }, { headers: { test: "added", extra: "x" } });
 
     // method has not been overridden
     expect(requestConfig?.method).toBe("GET");

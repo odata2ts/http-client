@@ -1,4 +1,9 @@
-import { HttpResponseModel, ODataClientError, ODataHttpClient } from "@odata2ts/http-client-api";
+import {
+  HttpResponseModel,
+  InternalHttpClientConfig,
+  ODataClientError,
+  ODataHttpClient,
+} from "@odata2ts/http-client-api";
 
 import { ErrorMessageRetriever, retrieveErrorMessage } from "./ErrorMessageRetriever";
 import { HttpMethods } from "./HttpMethods";
@@ -36,19 +41,6 @@ export abstract class BaseHttpClient<RequestConfigType> implements ODataHttpClie
   }
 
   /**
-   * Use the given headers to either create an entire new request config or merge them into the given
-   * request config.
-   *
-   * @param headers
-   * @param config
-   * @returns request configuration
-   */
-  protected abstract addHeaderToRequestConfig(
-    headers: Record<string, string>,
-    config?: RequestConfigType
-  ): RequestConfigType;
-
-  /**
    * Main function to implement by any extending http client.
    * As it name suggests, the request gets executed in this method.
    * Additionally, failures should be handled and errors of type <code>HttpClientError</code> should be thrown.
@@ -57,12 +49,14 @@ export abstract class BaseHttpClient<RequestConfigType> implements ODataHttpClie
    * @param url
    * @param data
    * @param config
+   * @param internalConfig
    */
   protected abstract executeRequest<ResponseModel>(
     method: HttpMethods,
     url: string,
     data: any,
-    config?: RequestConfigType
+    config?: RequestConfigType,
+    internalConfig?: InternalHttpClientConfig
   ): Promise<HttpResponseModel<ResponseModel>>;
 
   public getCsrfTokenKey() {
@@ -86,7 +80,10 @@ export abstract class BaseHttpClient<RequestConfigType> implements ODataHttpClie
 
   protected async fetchSecurityToken(): Promise<string | undefined> {
     const fetchUrl = this.baseOptions!.csrfTokenFetchUrl!;
-    const response = await this.get(fetchUrl, this.addHeaderToRequestConfig({ [this.csrfTokenKey]: "Fetch" }));
+    const response = await this.get(fetchUrl, undefined, {
+      noBodyEvaluation: true,
+      headers: { [this.csrfTokenKey]: "Fetch", Accept: "application/json" },
+    });
 
     return response.headers[this.csrfTokenKey];
   }
@@ -98,7 +95,7 @@ export abstract class BaseHttpClient<RequestConfigType> implements ODataHttpClie
    * @param url
    * @param data
    * @param requestConfig
-   * @param additionalHeaders
+   * @param internalConfig
    * @private
    */
   private async sendRequest<ResponseModel>(
@@ -106,31 +103,26 @@ export abstract class BaseHttpClient<RequestConfigType> implements ODataHttpClie
     url: string,
     data: any,
     requestConfig?: RequestConfigType,
-    additionalHeaders?: Record<string, string>
+    internalConfig: InternalHttpClientConfig = {}
   ): Promise<HttpResponseModel<ResponseModel>> {
     // noinspection SuspiciousTypeOfGuard
     if (typeof url !== "string") {
       throw new Error(FAILURE_MISSING_URL);
     }
 
-    // use big numbers
-    let config = requestConfig;
-
-    // use additional headers
-    if (additionalHeaders) {
-      config = this.addHeaderToRequestConfig(additionalHeaders, config);
-    }
-
     // setup automatic CSRF token handling
     if (this.baseOptions.useCsrfProtection && EDIT_METHODS.includes(method)) {
       const [tokenKey, tokenValue] = await this.setupSecurityToken();
       if (tokenValue) {
-        config = this.addHeaderToRequestConfig({ [tokenKey]: tokenValue });
+        if (!internalConfig.headers) {
+          internalConfig.headers = {};
+        }
+        internalConfig.headers[tokenKey] = tokenValue;
       }
     }
 
     try {
-      return await this.executeRequest<ResponseModel>(method, url, data, config);
+      return await this.executeRequest<ResponseModel>(method, url, data, requestConfig, internalConfig);
     } catch (e) {
       const clientError = e as ODataClientError;
 
@@ -153,40 +145,43 @@ export abstract class BaseHttpClient<RequestConfigType> implements ODataHttpClie
   public get<ResponseModel>(
     url: string,
     requestConfig?: RequestConfigType,
-    additionalHeaders?: Record<string, string>
+    config?: InternalHttpClientConfig
   ): Promise<HttpResponseModel<ResponseModel>> {
-    return this.sendRequest<ResponseModel>(HttpMethods.Get, url, undefined, requestConfig, additionalHeaders);
+    return this.sendRequest<ResponseModel>(HttpMethods.Get, url, undefined, requestConfig, config);
   }
+
   public post<ResponseModel>(
     url: string,
     data: any,
     requestConfig?: RequestConfigType,
-    additionalHeaders?: Record<string, string>
+    config?: InternalHttpClientConfig
   ): Promise<HttpResponseModel<ResponseModel>> {
-    return this.sendRequest<ResponseModel>(HttpMethods.Post, url, data, requestConfig, additionalHeaders);
+    return this.sendRequest<ResponseModel>(HttpMethods.Post, url, data, requestConfig, config);
   }
+
   public put<ResponseModel>(
     url: string,
     data: any,
     requestConfig?: RequestConfigType,
-    additionalHeaders?: Record<string, string>
+    config?: InternalHttpClientConfig
   ): Promise<HttpResponseModel<ResponseModel>> {
-    return this.sendRequest<ResponseModel>(HttpMethods.Put, url, data, requestConfig, additionalHeaders);
+    return this.sendRequest<ResponseModel>(HttpMethods.Put, url, data, requestConfig, config);
   }
+
   public patch<ResponseModel>(
     url: string,
     data: any,
     requestConfig?: RequestConfigType,
-    additionalHeaders?: Record<string, string>
+    config?: InternalHttpClientConfig
   ): Promise<HttpResponseModel<ResponseModel>> {
-    return this.sendRequest<ResponseModel>(HttpMethods.Patch, url, data, requestConfig, additionalHeaders);
+    return this.sendRequest<ResponseModel>(HttpMethods.Patch, url, data, requestConfig, config);
   }
 
   public delete(
     url: string,
     requestConfig?: RequestConfigType,
-    additionalHeaders?: Record<string, string>
+    config?: InternalHttpClientConfig
   ): Promise<HttpResponseModel<void>> {
-    return this.sendRequest<void>(HttpMethods.Delete, url, undefined, requestConfig, additionalHeaders);
+    return this.sendRequest<void>(HttpMethods.Delete, url, undefined, requestConfig, config);
   }
 }
