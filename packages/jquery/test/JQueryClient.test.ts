@@ -79,7 +79,7 @@ describe("JQueryClient Tests", function () {
   test("using additional headers", async () => {
     const headers = { hey: "Ho", "Content-Type": "tester" };
 
-    await jqClient.get(DEFAULT_URL, undefined, { headers });
+    await jqClient.get(DEFAULT_URL, undefined, headers);
 
     expect(getRequestHeaders()).toStrictEqual({ ...DEFAULT_GET_HEADERS, ...headers });
   });
@@ -95,7 +95,7 @@ describe("JQueryClient Tests", function () {
       headers,
     };
 
-    await jqClient.get("", config, { headers: { test: "added", extra: "x" } });
+    await jqClient.get("", config, { test: "added", extra: "x" });
 
     // method has not been overridden
     expect(getRequestDetails()).toMatchObject({ method: "GET" });
