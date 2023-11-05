@@ -1,4 +1,5 @@
 import fs from "fs/promises";
+import path from "path";
 
 import { ODataCollectionResponseV4, ODataModelResponseV4 } from "@odata2ts/odata-core";
 import jQuery from "jquery";
@@ -73,7 +74,7 @@ describe("HTTP Communication Tests", function () {
       "content-type": "image/jpeg",
     });
 
-    const imgBuffer = await fs.readFile("./int-test/test.jpg");
+    const imgBuffer = await fs.readFile(path.join(__dirname, "test.jpg"));
     expect(response.data.size).toBe(imgBuffer.byteLength);
   });
 
