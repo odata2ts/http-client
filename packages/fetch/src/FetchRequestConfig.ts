@@ -37,7 +37,7 @@ export function mergeFetchConfig(...configs: Array<RequestInit | undefined>) {
         const collectedHeaders = collector.headers as Headers;
 
         // headers as Headers object
-        if (headers && headers instanceof Headers) {
+        if (headers && headers instanceof Headers && headers.forEach) {
           headers.forEach((val, key) => collectedHeaders.set(key, val));
         }
         // headers as plain Record<string,string>
