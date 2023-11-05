@@ -4,7 +4,8 @@ import { AxiosClient, AxiosRequestConfig } from "../src";
 
 const DEFAULT_URL = "TEST/hi";
 const JSON_VALUE = "application/json";
-// const DEFAULT_HEADERS = { Accept: JSON_VALUE, "Content-Type": JSON_VALUE };
+const DEFAULT_GET_HEADERS = { Accept: JSON_VALUE };
+const DEFAULT_EDIT_HEADERS = { ...DEFAULT_GET_HEADERS, "Content-Type": JSON_VALUE };
 const DEFAULT_RESPONSE_HEADERS = { accept: JSON_VALUE, "content-type": JSON_VALUE };
 const SUCCESS_BODY = { Name: "Test" };
 
@@ -49,7 +50,7 @@ describe("Axios HTTP Client Tests", function () {
 
     expect(requestConfig).toStrictEqual({
       url: DEFAULT_URL,
-      headers: undefined,
+      headers: DEFAULT_GET_HEADERS,
       method: "GET",
     });
   });
@@ -76,7 +77,7 @@ describe("Axios HTTP Client Tests", function () {
 
     expect(requestConfig).toStrictEqual({
       url: "",
-      headers,
+      headers: { ...DEFAULT_GET_HEADERS, ...headers },
       method: "GET",
       ...config,
     });
@@ -87,7 +88,7 @@ describe("Axios HTTP Client Tests", function () {
 
     await axiosClient.get("", undefined, headers);
 
-    expect(requestConfig?.headers).toStrictEqual(headers);
+    expect(requestConfig?.headers).toStrictEqual({ ...DEFAULT_GET_HEADERS, ...headers });
   });
 
   test("request config overrides everything", async () => {
@@ -111,7 +112,7 @@ describe("Axios HTTP Client Tests", function () {
 
     expect(requestConfig).toStrictEqual({
       url: DEFAULT_URL,
-      headers: undefined,
+      headers: DEFAULT_EDIT_HEADERS,
       method: "POST",
       data: {},
     });
@@ -134,7 +135,7 @@ describe("Axios HTTP Client Tests", function () {
 
     expect(requestConfig).toStrictEqual({
       url: DEFAULT_URL,
-      headers: undefined,
+      headers: DEFAULT_EDIT_HEADERS,
       method: "PUT",
       data: {},
     });
@@ -145,7 +146,7 @@ describe("Axios HTTP Client Tests", function () {
 
     expect(requestConfig).toStrictEqual({
       url: DEFAULT_URL,
-      headers: undefined,
+      headers: DEFAULT_EDIT_HEADERS,
       method: "PATCH",
       data: {},
     });

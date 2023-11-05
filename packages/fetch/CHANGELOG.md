@@ -3,6 +3,40 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.6.2](https://github.com/odata2ts/http-client/compare/@odata2ts/http-client-fetch@0.6.1...@odata2ts/http-client-fetch@0.6.2) (2023-09-13)
+
+**Note:** Version bump only for package @odata2ts/http-client-fetch
+
+## [0.6.1](https://github.com/odata2ts/http-client/compare/@odata2ts/http-client-fetch@0.6.0...@odata2ts/http-client-fetch@0.6.1) (2023-09-13)
+
+**Note:** Version bump only for package @odata2ts/http-client-fetch
+
+# [0.6.0](https://github.com/odata2ts/http-client/compare/@odata2ts/http-client-fetch@0.4.0...@odata2ts/http-client-fetch@0.6.0) (2023-09-13)
+
+### Code Refactoring
+
+* expand additionalHeaders param to internalConfig ([#15](https://github.com/odata2ts/http-client/issues/15)) ([7fe1d73](https://github.com/odata2ts/http-client/commit/7fe1d73a7436f64b84a060bd1dbf9e121ef901ce))
+
+### Features
+
+* **fetch:** allow for query params ([#13](https://github.com/odata2ts/http-client/issues/13)) ([1507ed1](https://github.com/odata2ts/http-client/commit/1507ed13c2020de051827db516ae1fc9c7f4b0ac))
+
+### BREAKING CHANGES
+
+* additional headers are now part of the config parameter
+
+* fix: don't lose configuration when CSRF token is active
+
+* add new option which prevents FetchClient from evaluating response body (not needed for fetching csrf tokens & makes trouble with SAP's mockServer)
+
+* fix: add headers for content-type and accept for main methods
+
+# [0.5.0](https://github.com/odata2ts/http-client/compare/@odata2ts/http-client-fetch@0.4.0...@odata2ts/http-client-fetch@0.5.0) (2023-09-05)
+
+### Features
+
+* **fetch:** allow for query params ([#13](https://github.com/odata2ts/http-client/issues/13)) ([1507ed1](https://github.com/odata2ts/http-client/commit/1507ed13c2020de051827db516ae1fc9c7f4b0ac))
+
 # [0.4.0](https://github.com/odata2ts/http-client/compare/@odata2ts/http-client-fetch@0.3.1...@odata2ts/http-client-fetch@0.4.0) (2023-08-03)
 
 ### Code Refactoring
@@ -32,6 +66,7 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 ### Features
 
 * switch to http-client-api ([52d1b86](https://github.com/odata2ts/http-client/commit/52d1b868ee82dbaf45486da6b22fdcf4c773dfb8))
+
 * switch to http-client-api ([5a6da23](https://github.com/odata2ts/http-client/commit/5a6da23053b3ea5adb866bb7e30b469f1b8ed260))
 
 # 0.1.0 (2023-05-29)

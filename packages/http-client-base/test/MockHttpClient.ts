@@ -1,9 +1,8 @@
 import crypto from "crypto";
 
-import { HttpResponseModel, ODataClientError } from "@odata2ts/http-client-api";
+import { HttpResponseModel, ODataClientError, ODataHttpClient } from "@odata2ts/http-client-api";
 
-import { InternalBaseHttpClientOptions } from "../lib/BaseHttpClient";
-import { BaseHttpClient, BaseHttpClientOptions, HttpMethods } from "../src";
+import { BaseHttpClient, BaseHttpClientOptions, HttpMethods, InternalHttpClientConfig } from "../src";
 
 export class MockClientError extends Error implements ODataClientError {
   constructor(
@@ -24,7 +23,7 @@ export interface MockRequestConfig {
   x?: string;
 }
 
-export class MockHttpClient extends BaseHttpClient<MockRequestConfig> {
+export class MockHttpClient extends BaseHttpClient<MockRequestConfig> implements ODataHttpClient<MockRequestConfig> {
   public generatedCsrfToken?: string;
   public lastMethod?: HttpMethods;
   public lastUrl?: string;
@@ -42,29 +41,26 @@ export class MockHttpClient extends BaseHttpClient<MockRequestConfig> {
     return this.retrieveErrorMessage(errorResponse);
   }
 
-  addHeaderToRequestConfig(headers: Record<string, string>, config: MockRequestConfig | undefined): MockRequestConfig {
-    const mergedConfig: MockRequestConfig = config ? { ...config } : {};
-    mergedConfig.headers = { ...headers, ...mergedConfig.headers };
-
-    return mergedConfig;
-  }
-
-  protected executeRequest<ResponseModel>(
+  executeRequest<ResponseModel>(
     method: HttpMethods,
     url: string,
     data: any,
-    { dataType }: InternalBaseHttpClientOptions,
-    config: MockRequestConfig = {}
+    config: MockRequestConfig | undefined,
+    internalConfig?: InternalHttpClientConfig
   ): Promise<HttpResponseModel<ResponseModel>> {
+    let mergedConfig: MockRequestConfig = config ? { ...config } : { };
+    if (internalConfig?.headers) {
+      mergedConfig.headers = { ...mergedConfig.headers, ...internalConfig.headers };
+    }
     this.lastMethod = method;
     this.lastUrl = url;
     this.lastData = data;
-    this.lastConfig = { ...config, dataType };
+    this.lastConfig = mergedConfig;
 
     const responseHeaders: Record<string, string> = {};
 
     // CSRF token request => custom response
-    if (config?.headers && config.headers[this.getCsrfTokenKey()] === "Fetch") {
+    if (mergedConfig?.headers && mergedConfig.headers[this.getCsrfTokenKey()] === "Fetch") {
       this.generatedCsrfToken = crypto.randomBytes(4).toString("hex");
       responseHeaders[this.getCsrfTokenKey()] = this.generatedCsrfToken;
     }

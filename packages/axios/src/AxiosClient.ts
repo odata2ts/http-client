@@ -1,9 +1,9 @@
-import { ODataResponse } from "@odata2ts/http-client-api";
+import{ HttpResponseModel, ODataHttpClient, ODataResponse } from "@odata2ts/http-client-api";
 import {
   BaseHttpClient,
   BaseHttpClientOptions,
   HttpMethods,
-  InternalBaseHttpClientOptions,
+  InternalHttpClientConfig,
 } from "@odata2ts/http-client-base";
 import axios, {
   AxiosError,
@@ -29,30 +29,24 @@ function buildErrorMessage(prefix: string, error: any) {
   return prefix + (msg || DEFAULT_ERROR_MESSAGE);
 }
 
-export class AxiosClient extends BaseHttpClient<AxiosRequestConfig> {
+export class AxiosClient extends BaseHttpClient<AxiosRequestConfig> implements ODataHttpClient<AxiosRequestConfig> {
   protected readonly client: AxiosInstance;
 
-  constructor(config?: AxiosRequestConfig, private clientOptions?: ClientOptions) {
+  constructor(config?: AxiosRequestConfig, clientOptions?: ClientOptions) {
     super(clientOptions);
     this.client = axios.create(config);
-  }
-
-  protected addHeaderToRequestConfig(
-    headers: Record<string, string>,
-    config: AxiosRequestConfig | undefined
-  ): AxiosRequestConfig {
-    return mergeConfig({ headers }, config);
   }
 
   protected async executeRequest<ResponseModel>(
     method: HttpMethods,
     url: string,
     data: any,
-    internalOptions: InternalBaseHttpClientOptions,
-    requestConfig: AxiosRequestConfig | undefined = {}
-  ): ODataResponse<ResponseModel> {
-    // add URL and HTTP method to the request config
-    const config: OriginalRequestConfig = mergeConfig(requestConfig, { url, method });
+    requestConfig: AxiosRequestConfig | undefined = {},
+    internalConfig: InternalHttpClientConfig = {}
+  ): Promise<HttpResponseModel<ResponseModel>> {
+    // add URL, HTTP method and additional headers to the request config
+    const { headers } = internalConfig;
+    const config: OriginalRequestConfig = mergeConfig({ headers }, requestConfig, { url, method });
     if (typeof data !== "undefined") {
       config.data = data;
     }

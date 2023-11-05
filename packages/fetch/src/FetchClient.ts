@@ -1,9 +1,9 @@
-import { ODataResponse } from "@odata2ts/http-client-api";
+import { HttpResponseModel, ODataHttpClient } from "@odata2ts/http-client-api";
 import {
   BaseHttpClient,
   BaseHttpClientOptions,
   HttpMethods,
-  InternalBaseHttpClientOptions,
+  InternalHttpClientConfig,
 } from "@odata2ts/http-client-base";
 
 import { FetchClientError } from "./FetchClientError";
@@ -22,7 +22,7 @@ function buildErrorMessage(prefix: string, error: any) {
   return prefix + (msg || DEFAULT_ERROR_MESSAGE);
 }
 
-export class FetchClient extends BaseHttpClient<FetchRequestConfig> {
+export class FetchClient extends BaseHttpClient<FetchRequestConfig> implements ODataHttpClient<FetchRequestConfig> {
   protected readonly config: RequestInit;
 
   constructor(config?: FetchRequestConfig, clientOptions?: ClientOptions) {
@@ -30,24 +30,18 @@ export class FetchClient extends BaseHttpClient<FetchRequestConfig> {
     this.config = getDefaultConfig(config);
   }
 
-  protected addHeaderToRequestConfig(
-    headers: Record<string, string>,
-    config: FetchRequestConfig | undefined
-  ): FetchRequestConfig {
-    return mergeFetchConfig({ headers }, config);
-  }
-
   protected async executeRequest<ResponseModel>(
     method: HttpMethods,
     url: string,
     data: any,
-    internalOptions: InternalBaseHttpClientOptions,
-    requestConfig: FetchRequestConfig = {}
-  ): ODataResponse<ResponseModel> {
-    const { params, ...config } = mergeFetchConfig(this.config, requestConfig);
+    requestConfig: FetchRequestConfig | undefined = {},
+    internalConfig: InternalHttpClientConfig = {}
+  ): Promise<HttpResponseModel<ResponseModel>> {
+    const { headers, noBodyEvaluation } = internalConfig;
+    const { params, ...config } = mergeFetchConfig(this.config, { headers }, requestConfig);
     config.method = method;
     if (typeof data !== "undefined") {
-      config.body = internalOptions.dataType === "json" ? JSON.stringify(data) : data;
+      config.body = internalConfig.dataType === "json" ? JSON.stringify(data) : data;
     }
     let finalUrl = url;
     if (params && Object.values(params).length) {
@@ -91,9 +85,9 @@ export class FetchClient extends BaseHttpClient<FetchRequestConfig> {
 
     let responseData;
     try {
-      responseData = await this.getResponseBody(response, internalOptions);
+      responseData = noBodyEvaluation ? undefined : await await this.getResponseBody(response, internalConfig);
     } catch (error) {
-      const msg = internalOptions.dataType === "blob" ? BLOB_RETRIEVAL_FAILURE_MESSAGE : JSON_RETRIEVAL_FAILURE_MESSAGE;
+      const msg = internalConfig.dataType === "blob" ? BLOB_RETRIEVAL_FAILURE_MESSAGE : JSON_RETRIEVAL_FAILURE_MESSAGE;
       throw new FetchClientError(
         buildErrorMessage(msg, error),
         response.status,
@@ -110,7 +104,7 @@ export class FetchClient extends BaseHttpClient<FetchRequestConfig> {
     };
   }
 
-  protected async getResponseBody(response: Response, options: InternalBaseHttpClientOptions) {
+  protected async getResponseBody(response: Response, options: InternalHttpClientConfig) {
     if (response.status === 204) {
       return undefined;
     }

@@ -1,11 +1,11 @@
 /// <reference path="../../../node_modules/@types/jquery/JQueryStatic.d.ts" />
 
-import { HttpResponseModel } from "@odata2ts/http-client-api";
+import { HttpResponseModel, ODataHttpClient } from "@odata2ts/http-client-api";
 import {
   BaseHttpClient,
   BaseHttpClientOptions,
   HttpMethods,
-  InternalBaseHttpClientOptions,
+  InternalHttpClientConfig,
 } from "@odata2ts/http-client-base";
 
 import { AjaxRequestConfig, getDefaultConfig, mergeAjaxConfig } from "./AjaxRequestConfig";
@@ -17,11 +17,11 @@ export const DEFAULT_ERROR_MESSAGE = "No error message!";
 
 export interface ClientOptions extends BaseHttpClientOptions {}
 
-export class JQueryClient extends BaseHttpClient<AjaxRequestConfig> {
+export class JQueryClient extends BaseHttpClient<AjaxRequestConfig> implements ODataHttpClient<AjaxRequestConfig> {
   private readonly client: JQueryStatic;
   private readonly config: JQuery.AjaxSettings;
 
-  constructor(jquery: JQueryStatic, config?: AjaxRequestConfig, private clientOptions?: ClientOptions) {
+  constructor(jquery: JQueryStatic, config?: AjaxRequestConfig, clientOptions?: ClientOptions) {
     super(clientOptions);
     this.client = jquery;
     this.config = getDefaultConfig(config);
@@ -44,18 +44,15 @@ export class JQueryClient extends BaseHttpClient<AjaxRequestConfig> {
       }, {});
   }
 
-  protected addHeaderToRequestConfig(headers: Record<string, string>, config?: AjaxRequestConfig): AjaxRequestConfig {
-    return mergeAjaxConfig({ headers }, config);
-  }
-
   protected async executeRequest<ResponseModel>(
     method: HttpMethods,
     url: string,
     data: any,
-    internalOptions: InternalBaseHttpClientOptions,
-    requestConfig?: JQuery.AjaxSettings
+    requestConfig?: JQuery.AjaxSettings,
+    internalConfig: InternalHttpClientConfig = {}
   ): Promise<HttpResponseModel<ResponseModel>> {
-    const { params, ...mergedConfig } = mergeAjaxConfig(this.config, requestConfig);
+    const withInternalConfig = mergeAjaxConfig({ headers: internalConfig.headers }, requestConfig);
+    const { params, ...mergedConfig } = mergeAjaxConfig(this.config, withInternalConfig);
     mergedConfig.method = method;
     mergedConfig.data = JSON.stringify(data);
     mergedConfig.url = url;
@@ -66,9 +63,9 @@ export class JQueryClient extends BaseHttpClient<AjaxRequestConfig> {
         new URLSearchParams(params).toString();
     }
 
-    if (internalOptions.dataType === "blob") {
+    if (internalConfig.dataType === "blob") {
       mergedConfig.xhrFields = { responseType: "blob" };
-    } else if (internalOptions.dataType === "stream") {
+    } else if (internalConfig.dataType === "stream") {
       throw new Error("Streaming is not supported by the JqueryClient!");
     }
 
