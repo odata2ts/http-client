@@ -68,7 +68,7 @@ export class FetchClient extends BaseHttpClient<FetchRequestConfig> implements O
     if (!response.ok) {
       let responseData;
       try {
-        responseData = await this.getResponseBody(response, internalOptions);
+        responseData = await this.getResponseBody(response, internalConfig);
       } catch (e) {
         responseData = undefined;
       }
@@ -85,7 +85,7 @@ export class FetchClient extends BaseHttpClient<FetchRequestConfig> implements O
 
     let responseData;
     try {
-      responseData = noBodyEvaluation ? undefined : await await this.getResponseBody(response, internalConfig);
+      responseData = noBodyEvaluation ? undefined : await this.getResponseBody(response, internalConfig);
     } catch (error) {
       const msg = internalConfig.dataType === "blob" ? BLOB_RETRIEVAL_FAILURE_MESSAGE : JSON_RETRIEVAL_FAILURE_MESSAGE;
       throw new FetchClientError(

@@ -17,7 +17,7 @@ export interface BaseHttpClientOptions {
 }
 
 export interface InternalHttpClientConfig {
-  dataType: "json" | "blob" | "stream";
+  dataType?: "json" | "blob" | "stream";
   /**
    * Additional headers set internally by services or HttpClient implementation.
    */
@@ -36,13 +36,17 @@ const FAILURE_MISSING_CSRF_URL =
 const FAILURE_MISSING_URL = "Value for URL must be provided!";
 const JSON_VALUE = "application/json";
 
-function getInternalConfig(headers?: Record<string, string>, setContentType: boolean = true) {
+function getInternalConfigWithJsonHeaders(
+  headers?: Record<string, string>,
+  setContentType: boolean = true
+): InternalHttpClientConfig {
   return {
     headers: {
       Accept: JSON_VALUE,
       ...(setContentType ? { "Content-Type": JSON_VALUE } : undefined),
       ...headers,
     },
+    dataType: "json",
   };
 }
 
@@ -63,11 +67,11 @@ export abstract class BaseHttpClient<RequestConfigType> {
    * As it name suggests, the request gets executed in this method.
    * Additionally, failures should be handled and errors of type <code>HttpClientError</code> should be thrown.
    *
-   * @param method
-   * @param url
-   * @param data
-   * @param config
-   * @param internalConfig
+   * @param method the http method to use
+   * @param url the URL to use
+   * @param data data for the request body if any
+   * @param config request configuration from end user which should override default settings
+   * @param internalConfig request configuration from base client including additional headers which should override end user configurations
    */
   protected abstract executeRequest<ResponseModel>(
     method: HttpMethods,
@@ -140,7 +144,13 @@ export abstract class BaseHttpClient<RequestConfigType> {
     }
 
     try {
-      return await this.executeRequest<ResponseModel>(method, url, data, requestConfig, internalConfig);
+      return await this.executeRequest<ResponseModel>(
+        method,
+        url,
+        data,
+        requestConfig,
+        Object.keys(internalConfig).length ? internalConfig : undefined
+      );
     } catch (e) {
       const clientError = e as ODataClientError;
 
@@ -170,7 +180,7 @@ export abstract class BaseHttpClient<RequestConfigType> {
       url,
       undefined,
       requestConfig,
-      getInternalConfig(additionalHeaders, false)
+      getInternalConfigWithJsonHeaders(additionalHeaders, false)
     );
   }
 
@@ -185,7 +195,7 @@ export abstract class BaseHttpClient<RequestConfigType> {
       url,
       data,
       requestConfig,
-      getInternalConfig(additionalHeaders)
+      getInternalConfigWithJsonHeaders(additionalHeaders)
     );
   }
 
@@ -200,7 +210,7 @@ export abstract class BaseHttpClient<RequestConfigType> {
       url,
       data,
       requestConfig,
-      getInternalConfig(additionalHeaders)
+      getInternalConfigWithJsonHeaders(additionalHeaders)
     );
   }
 
@@ -215,8 +225,12 @@ export abstract class BaseHttpClient<RequestConfigType> {
       url,
       data,
       requestConfig,
-      getInternalConfig(additionalHeaders)
+      getInternalConfigWithJsonHeaders(additionalHeaders)
     );
+  }
+
+  private getAdditionalHeaders(additionalHeaders?: Record<string, string>) {
+    return additionalHeaders ? { headers: additionalHeaders } : undefined;
   }
 
   public delete(
@@ -224,7 +238,13 @@ export abstract class BaseHttpClient<RequestConfigType> {
     requestConfig?: RequestConfigType,
     additionalHeaders?: Record<string, string>
   ): Promise<HttpResponseModel<void>> {
-    return this.sendRequest<void>(HttpMethods.Delete, url, undefined, requestConfig, { headers: additionalHeaders });
+    return this.sendRequest<void>(
+      HttpMethods.Delete,
+      url,
+      undefined,
+      requestConfig,
+      this.getAdditionalHeaders(additionalHeaders)
+    );
   }
 
   public getBlob(
@@ -232,7 +252,10 @@ export abstract class BaseHttpClient<RequestConfigType> {
     requestConfig?: RequestConfigType,
     additionalHeaders?: Record<string, string>
   ): ODataResponse<Blob> {
-    return this.sendRequest(HttpMethods.Get, url, undefined, requestConfig, additionalHeaders, { dataType: "blob" });
+    return this.sendRequest(HttpMethods.Get, url, undefined, requestConfig, {
+      ...this.getAdditionalHeaders(additionalHeaders),
+      dataType: "blob",
+    });
   }
 
   public getStream(
@@ -240,7 +263,10 @@ export abstract class BaseHttpClient<RequestConfigType> {
     requestConfig?: RequestConfigType,
     additionalHeaders?: Record<string, string>
   ): ODataResponse<ReadableStream> {
-    return this.sendRequest(HttpMethods.Get, url, undefined, requestConfig, additionalHeaders, { dataType: "stream" });
+    return this.sendRequest(HttpMethods.Get, url, undefined, requestConfig, {
+      ...this.getAdditionalHeaders(additionalHeaders),
+      dataType: "stream",
+    });
   }
 
   public updateBlob(
@@ -250,7 +276,9 @@ export abstract class BaseHttpClient<RequestConfigType> {
     requestConfig?: RequestConfigType,
     additionalHeaders?: Record<string, string>
   ): ODataResponse<void | Blob> {
-    const headers = { ...additionalHeaders, Accept: mimeType, "Content-Type": mimeType };
-    return this.sendRequest(HttpMethods.Put, url, data, requestConfig, headers, { dataType: "blob" });
+    return this.sendRequest(HttpMethods.Put, url, data, requestConfig, {
+      headers: { ...additionalHeaders, Accept: mimeType, "Content-Type": mimeType },
+      dataType: "blob",
+    });
   }
 }

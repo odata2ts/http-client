@@ -1,4 +1,4 @@
-import{ HttpResponseModel, ODataHttpClient, ODataResponse } from "@odata2ts/http-client-api";
+import { HttpResponseModel, ODataHttpClient, ODataResponse } from "@odata2ts/http-client-api";
 import {
   BaseHttpClient,
   BaseHttpClientOptions,
@@ -51,8 +51,8 @@ export class AxiosClient extends BaseHttpClient<AxiosRequestConfig> implements O
       config.data = data;
     }
 
-    if (internalOptions.dataType !== "json") {
-      config.responseType = internalOptions.dataType;
+    if (internalConfig.dataType && internalConfig.dataType !== "json") {
+      config.responseType = internalConfig.dataType;
     }
 
     try {
