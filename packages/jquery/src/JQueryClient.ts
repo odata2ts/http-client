@@ -1,4 +1,4 @@
-/// <reference path="../../../node_modules/@types/jquery/JQueryStatic.d.ts" />
+/// <reference path="../../../node_modules/@types/jquery/jquerystatic.d.ts" />
 
 import { HttpResponseModel, ODataHttpClient } from "@odata2ts/http-client-api";
 import {
