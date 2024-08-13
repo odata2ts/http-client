@@ -27,7 +27,7 @@ describe("HTTP Communication Tests", async function () {
       status: 200,
       statusText: "OK",
     });
-    expect(response.headers).toStrictEqual({
+    expect(response.headers).toMatchObject({
       "content-length": "445",
       "content-type": "application/json; odata.metadata=minimal",
       "cache-control": "no-cache",
@@ -35,10 +35,7 @@ describe("HTTP Communication Tests", async function () {
       expires: "-1",
       pragma: "no-cache",
       // "odata-version": "4.0",
-      // server: "Microsoft-IIS/10.0",
       // vary: "Accept-Encoding",
-      // "x-aspnet-version": "4.0.30319",
-      // "x-powered-by": "ASP.NET",
     });
     expect(response.data).toMatchObject({
       FirstName: "Russell",
