@@ -3,6 +3,20 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.6.0](https://github.com/odata2ts/http-client/compare/@odata2ts/http-client-api@0.5.1...@odata2ts/http-client-api@0.6.0) (2024-08-13)
+
+### Code Refactoring
+
+* switch to vitest & ESM ([#18](https://github.com/odata2ts/http-client/issues/18)) ([748558f](https://github.com/odata2ts/http-client/commit/748558f1e3f699085ade1058b1459c843f60994f))
+
+### Features
+
+* blob and stream support ([#12](https://github.com/odata2ts/http-client/issues/12)) ([ae6f062](https://github.com/odata2ts/http-client/commit/ae6f062371a0ad11707fa3f9edff9571998edb5b))
+
+### BREAKING CHANGES
+
+* switch to ESM tends to break stuff
+
 ## [0.5.1](https://github.com/odata2ts/http-client/compare/@odata2ts/http-client-api@0.5.0...@odata2ts/http-client-api@0.5.1) (2023-09-13)
 
 **Note:** Version bump only for package @odata2ts/http-client-api

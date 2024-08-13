@@ -1,6 +1,6 @@
 {
   "name": "@odata2ts/http-client-api",
-  "version": "0.5.1",
+  "version": "0.6.0",
   "description": "Specifies the contract between HTTP clients and odata2ts",
   "keywords": [
     "http client",
