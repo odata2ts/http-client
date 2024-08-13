@@ -1,4 +1,5 @@
 import { ODataCollectionResponseV4, ODataModelResponseV4 } from "@odata2ts/odata-core";
+import { describe, expect, test } from "vitest";
 
 import { FetchClient, FetchClientError } from "../src";
 

@@ -1,3 +1,5 @@
+import { describe, expect, test } from "vitest";
+
 import { getDefaultConfig, mergeFetchConfig } from "../src/FetchRequestConfig";
 
 describe("FetchRequestConfig Tests", function () {

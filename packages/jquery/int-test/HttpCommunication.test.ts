@@ -1,18 +1,25 @@
+// @vitest-environment jsdom
+
 import fs from "fs/promises";
 import path from "path";
 
 import { ODataCollectionResponseV4, ODataModelResponseV4 } from "@odata2ts/odata-core";
-import jQuery from "jquery";
-import { JSDOM } from "jsdom";
+import jquery from "jquery";
+import { beforeAll, describe, expect, test } from "vitest";
 
 import { JQueryClient, JQueryClientError } from "../src";
 
-describe("HTTP Communication Tests", function () {
+describe("HTTP Communication Tests", async function () {
   const BASE_URL = "https://services.odata.org/TripPinRESTierService/(S(xxxsujx4iqjss1vkeighyks8))";
   const DEFAULT_HEADERS = { Accept: "application/json", "Content-Type": "application/json" };
+  let REAL_CLIENT: JQueryClient;
 
-  const $ = jQuery(new JSDOM().window) as unknown as JQueryStatic;
-  const REAL_CLIENT = new JQueryClient($, { headers: DEFAULT_HEADERS });
+  beforeAll(async (): Promise<void> => {
+    expect(jquery, "JQuery not defined!").toBeDefined();
+    expect(jquery.ajax, "JQuery's ajax module is not initialized!").toBeDefined();
+
+    REAL_CLIENT = new JQueryClient(jquery, { headers: DEFAULT_HEADERS });
+  });
 
   test("Simple Get", async () => {
     const response = await REAL_CLIENT.get<ODataCollectionResponseV4<any>>(BASE_URL + "/People('russellwhyte')");

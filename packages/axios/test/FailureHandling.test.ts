@@ -5,6 +5,7 @@ import axios, {
   InternalAxiosRequestConfig,
   AxiosRequestConfig as OriginalRequestConfig,
 } from "axios";
+import { beforeEach, describe, expect, test, vi } from "vitest";
 
 import { AxiosClientError, AxiosRequestConfig, DEFAULT_ERROR_MESSAGE } from "../src";
 import { AxiosClient } from "../src";
@@ -24,7 +25,7 @@ describe("Failure Handling Tests", function () {
   } = {};
 
   // @ts-ignore
-  axios.create = jest.fn(({ headers, ...defaultConfig }: CreateAxiosDefaults = {}) => ({
+  axios.create = vi.fn(({ headers, ...defaultConfig }: CreateAxiosDefaults = {}) => ({
     request: ({ headers: reqHeaders, ...config }: OriginalRequestConfig): Promise<Partial<AxiosResponse>> => {
       requestConfig = {
         headers: {

@@ -1,3 +1,5 @@
+import { beforeEach, describe, expect, test, vi } from "vitest";
+
 import { FetchClient, FetchRequestConfig } from "../src";
 
 const DEFAULT_URL = "TEST/hi";
@@ -16,7 +18,7 @@ describe("FetchClient Tests", function () {
 
   // Mocking fetch
   // @ts-ignore: more simplistic parameters and returning different stuff
-  global.fetch = jest.fn((url: string, config?: RequestInit | undefined): Promise<MockResponse> => {
+  global.fetch = vi.fn((url: string, config?: RequestInit | undefined): Promise<MockResponse> => {
     // store last request url
     requestUrl = url;
     // store last request config

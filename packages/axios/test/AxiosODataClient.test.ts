@@ -1,4 +1,5 @@
 import axios, { AxiosResponse, CreateAxiosDefaults, AxiosRequestConfig as OriginalRequestConfig } from "axios";
+import { beforeEach, describe, expect, test, vi } from "vitest";
 
 import { AxiosClient, AxiosRequestConfig } from "../src";
 
@@ -15,7 +16,7 @@ describe("Axios HTTP Client Tests", function () {
   let simulateNoContent: boolean = false;
 
   // @ts-ignore
-  axios.create = jest.fn(({ headers, ...defaultConfig }: CreateAxiosDefaults = {}) => ({
+  axios.create = vi.fn(({ headers, ...defaultConfig }: CreateAxiosDefaults = {}) => ({
     request: ({ headers: reqHeaders, ...config }: OriginalRequestConfig): Promise<Partial<AxiosResponse>> => {
       requestConfig = {
         headers:

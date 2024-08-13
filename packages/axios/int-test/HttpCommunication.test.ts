@@ -1,4 +1,5 @@
 import { ODataCollectionResponseV4, ODataModelResponseV4 } from "@odata2ts/odata-core";
+import { describe, expect, test } from "vitest";
 
 import { AxiosClient, AxiosClientError } from "../src";
 
@@ -6,7 +7,7 @@ describe("HTTP Communication Tests", function () {
   const BASE_URL = "https://services.odata.org/TripPinRESTierService/(S(xxxsujx4iqjss1vkeighyks6))";
   const DEFAULT_HEADERS = { Accept: "application/json", "Content-Type": "application/json" };
 
-  const REAL_CLIENT = new AxiosClient({ headers: DEFAULT_HEADERS });
+  let REAL_CLIENT = new AxiosClient({ headers: DEFAULT_HEADERS });
 
   test("download", async () => {});
 

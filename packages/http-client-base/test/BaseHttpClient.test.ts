@@ -1,3 +1,5 @@
+import { beforeEach, describe, expect, test } from "vitest";
+
 import { HttpMethods } from "../src";
 import { MockClientError, MockHttpClient, MockRequestConfig } from "./MockHttpClient";
 

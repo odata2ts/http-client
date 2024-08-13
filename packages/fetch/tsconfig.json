@@ -6,5 +6,5 @@
     "lib": ["DOM"],
     "target": "ES2016"
   },
-  "include": ["src", ".types"]
+  "include": ["src"]
 }

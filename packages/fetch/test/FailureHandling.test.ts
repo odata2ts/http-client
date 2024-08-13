@@ -1,3 +1,5 @@
+import { beforeEach, describe, expect, test, vi } from "vitest";
+
 import { DEFAULT_ERROR_MESSAGE, FetchClient, FetchClientError } from "../src";
 
 describe("Failure Handling Tests", function () {
@@ -13,7 +15,7 @@ describe("Failure Handling Tests", function () {
   } = {};
 
   // @ts-ignore: more simplistic parameters and returning different stuff
-  global.fetch = jest.fn((url: string, config?: RequestInit | undefined): Promise<MockResponse> => {
+  global.fetch = vi.fn((url: string, config?: RequestInit | undefined): Promise<MockResponse> => {
     // store last request config
     requestConfig = config;
 
