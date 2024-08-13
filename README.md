@@ -21,8 +21,11 @@ Main documentation for the odata2ts eco system:
 
 ## Support, Feedback, Contributing
 
-This project is open to feature requests, suggestions, bug reports, usage questions etc.
-via [GitHub issues](https://github.com/odata2ts/http-client/issues).
+If you have any sorts of questions use [GitHub Discussions](https://github.com/odata2ts/odata2ts/discussions)
+of the main `odata2ts` repository.
+
+This project is open to feature requests, suggestions, bug reports, and the like
+via [GitHub issues](https://github.com/odata2ts/odata2ts/issues) of the main `odata2ts` repository.
 
 Contributions and feedback are encouraged and always welcome.
 
