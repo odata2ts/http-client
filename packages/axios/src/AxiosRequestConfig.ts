@@ -27,6 +27,6 @@ export function mergeConfig(...configs: Array<InternalRequestConfig | undefined>
         }
         return { ...collector, ...passThrough };
       },
-      { headers: {} }
+      { headers: {} },
     );
 }

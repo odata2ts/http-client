@@ -3,9 +3,8 @@ import { ODataResponse } from "./ODataResponseModel";
 /**
  * Retrieves the configuration type for the given HTTP client.
  */
-export type ODataHttpClientConfig<ClientType extends ODataHttpClient> = ClientType extends ODataHttpClient<infer Config>
-  ? Config
-  : never;
+export type ODataHttpClientConfig<ClientType extends ODataHttpClient> =
+  ClientType extends ODataHttpClient<infer Config> ? Config : never;
 
 export interface ODataHttpClient<RequestConfig = any> {
   /**
@@ -20,13 +19,13 @@ export interface ODataHttpClient<RequestConfig = any> {
     url: string,
     data: any,
     requestConfig?: RequestConfig,
-    additionalHeaders?: Record<string, string>
+    additionalHeaders?: Record<string, string>,
   ): ODataResponse<ResponseModel>;
 
   get<ResponseModel>(
     url: string,
     requestConfig?: RequestConfig,
-    additionalHeaders?: Record<string, string>
+    additionalHeaders?: Record<string, string>,
   ): ODataResponse<ResponseModel>;
 
   /**
@@ -41,7 +40,7 @@ export interface ODataHttpClient<RequestConfig = any> {
     url: string,
     data: any,
     requestConfig?: RequestConfig,
-    additionalHeaders?: Record<string, string>
+    additionalHeaders?: Record<string, string>,
   ): ODataResponse<ResponseModel>;
 
   /**
@@ -56,7 +55,7 @@ export interface ODataHttpClient<RequestConfig = any> {
     url: string,
     data: any,
     requestConfig?: RequestConfig,
-    additionalHeaders?: Record<string, string>
+    additionalHeaders?: Record<string, string>,
   ): ODataResponse<ResponseModel>;
 
   /**
@@ -90,7 +89,7 @@ export interface ODataHttpClient<RequestConfig = any> {
   getStream(
     url: string,
     requestConfig?: RequestConfig,
-    additionalHeaders?: Record<string, string>
+    additionalHeaders?: Record<string, string>,
   ): ODataResponse<ReadableStream>;
 
   /**
@@ -107,6 +106,6 @@ export interface ODataHttpClient<RequestConfig = any> {
     data: Blob,
     mimeType: string,
     requestConfig?: RequestConfig,
-    additionalHeaders?: Record<string, string>
+    additionalHeaders?: Record<string, string>,
   ): ODataResponse<void | Blob>;
 }

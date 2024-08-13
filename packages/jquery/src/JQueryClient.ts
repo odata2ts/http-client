@@ -7,7 +7,6 @@ import {
   HttpMethods,
   InternalHttpClientConfig,
 } from "@odata2ts/http-client-base";
-
 import { AjaxRequestConfig, getDefaultConfig, mergeAjaxConfig } from "./AjaxRequestConfig";
 import { JQueryClientError } from "./JQueryClientError";
 
@@ -49,7 +48,7 @@ export class JQueryClient extends BaseHttpClient<AjaxRequestConfig> implements O
     url: string,
     data: any,
     requestConfig?: JQuery.AjaxSettings,
-    internalConfig: InternalHttpClientConfig = {}
+    internalConfig: InternalHttpClientConfig = {},
   ): Promise<HttpResponseModel<ResponseModel>> {
     const withInternalConfig = mergeAjaxConfig({ headers: internalConfig.headers }, requestConfig);
     const { params, ...mergedConfig } = mergeAjaxConfig(this.config, withInternalConfig);

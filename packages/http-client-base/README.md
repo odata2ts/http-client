@@ -30,19 +30,19 @@ import { BaseHttpClient, BaseHttpClientOptions, InternalHttpClientConfig } from 
 export interface MyRequestConfig {}
 
 export class MyHttpClient extends BaseHttpClient<MyRequestConfig> {
-    constructor(clientOptions: BaseHttpClientOptions) {
-        super(clientOptions);
-    }
-    
-    protected async executeRequest<ResponseModel>(
-        method: HttpMethods,
-        url: string,
-        data: any,
-        requestConfig: AxiosRequestConfig | undefined = {},
-        internalConfig?: InternalHttpClientConfig
-    ): Promise<HttpResponseModel<ResponseModel>> {
-        // your implementation
-    }
+  constructor(clientOptions: BaseHttpClientOptions) {
+    super(clientOptions);
+  }
+
+  protected async executeRequest<ResponseModel>(
+    method: HttpMethods,
+    url: string,
+    data: any,
+    requestConfig: AxiosRequestConfig | undefined = {},
+    internalConfig?: InternalHttpClientConfig,
+  ): Promise<HttpResponseModel<ResponseModel>> {
+    // your implementation
+  }
 }
 ```
 

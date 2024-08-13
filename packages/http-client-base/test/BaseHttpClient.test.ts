@@ -1,5 +1,4 @@
 import { beforeEach, describe, expect, test } from "vitest";
-
 import { HttpMethods } from "../src";
 import { MockClientError, MockHttpClient, MockRequestConfig } from "./MockHttpClient";
 
@@ -43,7 +42,7 @@ describe("BaseHttpClient Tests", () => {
   test("fail with missing url", async () => {
     await expect(() =>
       // @ts-expect-error
-      mockClient.get(undefined)
+      mockClient.get(undefined),
     ).rejects.toThrow("URL must be provided!");
   });
 

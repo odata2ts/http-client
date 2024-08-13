@@ -1,5 +1,4 @@
 import { beforeEach, describe, expect, test } from "vitest";
-
 import { AjaxRequestConfig, JQueryClient } from "../src";
 import { JqMock } from "./JQueryMock";
 
@@ -53,11 +52,11 @@ describe("JQueryClient Tests", function () {
   test("invalid url", async () => {
     await expect(
       // @ts-ignore
-      jqClient.get(null)
+      jqClient.get(null),
     ).rejects.toThrow("Value for URL must be provided!");
     await expect(
       // @ts-ignore
-      jqClient.get(undefined)
+      jqClient.get(undefined),
     ).rejects.toThrow("Value for URL must be provided!");
   });
 
@@ -201,7 +200,7 @@ describe("JQueryClient Tests", function () {
 
   test("stream request not supported", async () => {
     await expect(() => jqClient.getStream(DEFAULT_URL)).rejects.toThrow(
-      "Streaming is not supported by the JqueryClient!"
+      "Streaming is not supported by the JqueryClient!",
     );
   });
 });

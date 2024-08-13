@@ -1,5 +1,4 @@
 import { beforeEach, describe, expect, test } from "vitest";
-
 import { DEFAULT_ERROR_MESSAGE, JQueryClient, JQueryClientError } from "../src";
 import { JqMock } from "./JQueryMock";
 

@@ -5,7 +5,6 @@ import {
   HttpMethods,
   InternalHttpClientConfig,
 } from "@odata2ts/http-client-base";
-
 import { FetchClientError } from "./FetchClientError";
 import { FetchRequestConfig, getDefaultConfig, mergeFetchConfig } from "./FetchRequestConfig";
 
@@ -35,7 +34,7 @@ export class FetchClient extends BaseHttpClient<FetchRequestConfig> implements O
     url: string,
     data: any,
     requestConfig: FetchRequestConfig | undefined = {},
-    internalConfig: InternalHttpClientConfig = {}
+    internalConfig: InternalHttpClientConfig = {},
   ): Promise<HttpResponseModel<ResponseModel>> {
     const { headers, noBodyEvaluation } = internalConfig;
     const { params, ...config } = mergeFetchConfig(this.config, { headers }, requestConfig);
@@ -60,7 +59,7 @@ export class FetchClient extends BaseHttpClient<FetchRequestConfig> implements O
         buildErrorMessage(FETCH_FAILURE_MESSAGE, fetchError),
         undefined,
         undefined,
-        fetchError as Error
+        fetchError as Error,
       );
     }
 
@@ -79,7 +78,7 @@ export class FetchClient extends BaseHttpClient<FetchRequestConfig> implements O
         response.status,
         this.mapHeaders(response.headers),
         new Error(errMsg || DEFAULT_ERROR_MESSAGE),
-        response
+        response,
       );
     }
 
@@ -92,7 +91,7 @@ export class FetchClient extends BaseHttpClient<FetchRequestConfig> implements O
         buildErrorMessage(msg, error),
         response.status,
         this.mapHeaders(response.headers),
-        error as Error
+        error as Error,
       );
     }
 

@@ -1,5 +1,4 @@
 import { beforeEach, describe, expect, test } from "vitest";
-
 import { JQueryClient } from "../src";
 import { JqMock } from "./JQueryMock";
 

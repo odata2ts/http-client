@@ -6,9 +6,7 @@ import axios, {
   AxiosRequestConfig as OriginalRequestConfig,
 } from "axios";
 import { beforeEach, describe, expect, test, vi } from "vitest";
-
-import { AxiosClientError, AxiosRequestConfig, DEFAULT_ERROR_MESSAGE } from "../src";
-import { AxiosClient } from "../src";
+import { AxiosClient, AxiosClientError, AxiosRequestConfig, DEFAULT_ERROR_MESSAGE } from "../src";
 
 describe("Failure Handling Tests", function () {
   const RESPONSE_HEADERS = { "content-type": "application/json" };
@@ -43,7 +41,7 @@ describe("Failure Handling Tests", function () {
       }
       if (isRequestFailure || isResponseFailure) {
         return Promise.reject(
-          new AxiosError(message, undefined, undefined, isRequestFailure ? undefined : {}, undefined)
+          new AxiosError(message, undefined, undefined, isRequestFailure ? undefined : {}, undefined),
         );
       }
 
@@ -60,8 +58,8 @@ describe("Failure Handling Tests", function () {
             headers: RESPONSE_HEADERS,
             data: isEmptyBody ? undefined : jsonResult,
             config: {} as InternalAxiosRequestConfig<any>,
-          }
-        )
+          },
+        ),
       );
     },
   }));

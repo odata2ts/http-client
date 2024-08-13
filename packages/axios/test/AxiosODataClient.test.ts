@@ -1,6 +1,5 @@
 import axios, { AxiosResponse, CreateAxiosDefaults, AxiosRequestConfig as OriginalRequestConfig } from "axios";
 import { beforeEach, describe, expect, test, vi } from "vitest";
-
 import { AxiosClient, AxiosRequestConfig } from "../src";
 
 const DEFAULT_URL = "TEST/hi";
@@ -59,11 +58,11 @@ describe("Axios HTTP Client Tests", function () {
   test("invalid url", async () => {
     await expect(
       // @ts-ignore
-      axiosClient.get(null)
+      axiosClient.get(null),
     ).rejects.toThrow("Value for URL must be provided!");
     await expect(
       // @ts-ignore
-      axiosClient.get(undefined)
+      axiosClient.get(undefined),
     ).rejects.toThrow("Value for URL must be provided!");
   });
 

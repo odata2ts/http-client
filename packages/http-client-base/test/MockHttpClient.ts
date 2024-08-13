@@ -1,7 +1,5 @@
 import crypto from "crypto";
-
 import { HttpResponseModel, ODataClientError, ODataHttpClient } from "@odata2ts/http-client-api";
-
 import { BaseHttpClient, BaseHttpClientOptions, HttpMethods, InternalHttpClientConfig } from "../src";
 
 export class MockClientError extends Error implements ODataClientError {
@@ -9,7 +7,7 @@ export class MockClientError extends Error implements ODataClientError {
     message: string,
     public readonly status?: number,
     public readonly headers?: Record<string, string>,
-    public readonly cause?: Error
+    public readonly cause?: Error,
   ) {
     // @ts-ignore
     super(message, { cause });
@@ -47,14 +45,14 @@ export class MockHttpClient extends BaseHttpClient<MockRequestConfig> implements
     url: string,
     data: any,
     config: MockRequestConfig | undefined,
-    internalConfig?: InternalHttpClientConfig
+    internalConfig?: InternalHttpClientConfig,
   ): Promise<HttpResponseModel<ResponseModel>> {
     const mergedConfig: MockRequestConfig | undefined =
       config && internalConfig?.headers
         ? { ...config, headers: { ...config.headers, ...internalConfig.headers } }
         : internalConfig?.headers
-        ? { headers: internalConfig.headers }
-        : config;
+          ? { headers: internalConfig.headers }
+          : config;
     this.lastMethod = method;
     this.lastUrl = url;
     this.lastData = data;

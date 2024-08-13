@@ -1,4 +1,5 @@
 import * as crypto from "crypto";
+
 import AjaxSettings = JQuery.AjaxSettings;
 
 function createMockXhr(status: number, statusText: string, data: any, headers: { [k: string]: string } | undefined) {
@@ -87,7 +88,7 @@ export class JqMock {
         this.responseStatus!,
         "some err status text",
         this.responseData,
-        this.responseHeaders
+        this.responseHeaders,
       );
       // @ts-ignore
       this.requestConfig.error(mockXhr, mockXhr.statusText, this.errorMessage);

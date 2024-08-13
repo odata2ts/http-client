@@ -1,5 +1,4 @@
 import { beforeEach, describe, expect, test, vi } from "vitest";
-
 import { FetchClient, FetchRequestConfig } from "../src";
 
 const DEFAULT_URL = "TEST/hi";
@@ -80,11 +79,11 @@ describe("FetchClient Tests", function () {
   test("invalid url", async () => {
     await expect(
       // @ts-ignore
-      fetchClient.get(null)
+      fetchClient.get(null),
     ).rejects.toThrow("Value for URL must be provided!");
     await expect(
       // @ts-ignore
-      fetchClient.get(undefined)
+      fetchClient.get(undefined),
     ).rejects.toThrow("Value for URL must be provided!");
   });
 

@@ -1,15 +1,24 @@
 {
   "name": "@odata2ts/http-client-base",
   "version": "0.4.2",
-  "publishConfig": {
-    "access": "public"
-  },
   "description": "Core functionality for odata2ts HTTP clients",
-  "license": "MIT",
+  "keywords": [
+    "http client",
+    "odata",
+    "ts",
+    "odata2ts"
+  ],
   "repository": "git@github.com:odata2ts/http-client.git",
+  "license": "MIT",
   "author": "texttechne",
-  "main": "./lib/index.js",
   "type": "module",
+  "main": "./lib/index.js",
+  "types": "./lib/index.d.ts",
+  "files": [
+    "*.md",
+    "lib",
+    "LICENSE"
+  ],
   "scripts": {
     "build": "yarn clean && yarn compile",
     "check-circular-deps": "madge ./src --extensions ts --circular",
@@ -18,17 +27,6 @@
     "prepublish": "yarn build",
     "test": "vitest run ./test"
   },
-  "files": [
-    "*.md",
-    "lib",
-    "LICENSE"
-  ],
-  "keywords": [
-    "http client",
-    "odata",
-    "ts",
-    "odata2ts"
-  ],
   "dependencies": {
     "@odata2ts/http-client-api": "^0.5.1"
   },
@@ -38,5 +36,7 @@
     "rimraf": "^5.0.1",
     "typescript": "5.0.4"
   },
-  "types": "./lib/index.d.ts"
+  "publishConfig": {
+    "access": "public"
+  }
 }

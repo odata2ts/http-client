@@ -1,15 +1,25 @@
 {
   "name": "@odata2ts/http-client-fetch",
   "version": "0.6.2",
-  "publishConfig": {
-    "access": "public"
-  },
   "description": "HTTP client based on fetch and consumable by odata2ts",
-  "license": "MIT",
+  "keywords": [
+    "http client",
+    "fetch",
+    "odata",
+    "ts",
+    "odata2ts"
+  ],
   "repository": "git@github.com:odata2ts/http-client.git",
+  "license": "MIT",
   "author": "texttechne",
-  "main": "./lib/index.js",
   "type": "module",
+  "main": "./lib/index.js",
+  "types": "./lib/index.d.ts",
+  "files": [
+    "*.md",
+    "lib",
+    "LICENSE"
+  ],
   "scripts": {
     "build": "yarn clean && yarn compile",
     "check-circular-deps": "madge ./src --extensions ts --circular",
@@ -19,18 +29,6 @@
     "prepublish": "yarn build",
     "test": "vitest run test/**"
   },
-  "files": [
-    "*.md",
-    "lib",
-    "LICENSE"
-  ],
-  "keywords": [
-    "http client",
-    "fetch",
-    "odata",
-    "ts",
-    "odata2ts"
-  ],
   "dependencies": {
     "@odata2ts/http-client-base": "^0.4.2"
   },
@@ -40,5 +38,7 @@
     "rimraf": "^3.0.2",
     "typescript": "5.0.4"
   },
-  "types": "./lib/index.d.ts"
+  "publishConfig": {
+    "access": "public"
+  }
 }

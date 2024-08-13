@@ -1,29 +1,7 @@
 {
   "name": "@odata2ts/http-client-axios",
   "version": "0.10.2",
-  "publishConfig": {
-    "access": "public"
-  },
   "description": "Axios based odata HTTP client consumable by odata2ts",
-  "license": "MIT",
-  "repository": "git@github.com:odata2ts/http-client.git",
-  "author": "texttechne",
-  "main": "./lib/index.js",
-  "type": "module",
-  "scripts": {
-    "build": "yarn clean && yarn compile",
-    "check-circular-deps": "madge ./src --extensions ts --circular",
-    "clean": "rimraf lib coverage",
-    "compile": "tsc",
-    "int-test": "vitest run int-test/**",
-    "prepublish": "yarn build",
-    "test": "vitest run test/**"
-  },
-  "files": [
-    "*.md",
-    "lib",
-    "LICENSE"
-  ],
   "keywords": [
     "http client",
     "axios",
@@ -32,8 +10,25 @@
     "ts",
     "typescript"
   ],
-  "peerDependencies": {
-    "axios": "^0.27.0 || ^1.0.0"
+  "repository": "git@github.com:odata2ts/http-client.git",
+  "license": "MIT",
+  "author": "texttechne",
+  "type": "module",
+  "main": "./lib/index.js",
+  "types": "./lib/index.d.ts",
+  "files": [
+    "*.md",
+    "lib",
+    "LICENSE"
+  ],
+  "scripts": {
+    "build": "yarn clean && yarn compile",
+    "check-circular-deps": "madge ./src --extensions ts --circular",
+    "clean": "rimraf lib coverage",
+    "compile": "tsc",
+    "int-test": "vitest run int-test/**",
+    "prepublish": "yarn build",
+    "test": "vitest run test/**"
   },
   "dependencies": {
     "@odata2ts/http-client-base": "^0.4.2"
@@ -44,5 +39,10 @@
     "rimraf": "^5.0.1",
     "typescript": "5.0.4"
   },
-  "types": "./lib/index.d.ts"
+  "peerDependencies": {
+    "axios": "^0.27.0 || ^1.0.0"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
 }
