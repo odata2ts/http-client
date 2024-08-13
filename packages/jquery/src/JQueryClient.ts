@@ -63,6 +63,12 @@ export class JQueryClient extends BaseHttpClient<AjaxRequestConfig> implements O
         new URLSearchParams(params).toString();
     }
 
+    if (internalConfig.dataType === "blob") {
+      mergedConfig.xhrFields = { responseType: "blob" };
+    } else if (internalConfig.dataType === "stream") {
+      throw new Error("Streaming is not supported by the JqueryClient!");
+    }
+
     // the actual request
     return new Promise((resolve, reject) => {
       this.client.ajax({
@@ -77,7 +83,7 @@ export class JQueryClient extends BaseHttpClient<AjaxRequestConfig> implements O
         },
         error: (jqXHR: JQuery.jqXHR, textStatus: string, thrownError: string) => {
           const responseMessage = this.retrieveErrorMessage(jqXHR?.responseJSON);
-          const failMsg = responseMessage ?? thrownError ?? DEFAULT_ERROR_MESSAGE;
+          const failMsg = responseMessage || thrownError || DEFAULT_ERROR_MESSAGE;
           const errorMessage = responseMessage ? "OData server responded with error: " + responseMessage : failMsg;
           const responseHeaders = this.mapHeaders(jqXHR);
           reject(new JQueryClientError(errorMessage, jqXHR.status, responseHeaders, new Error(failMsg), jqXHR));

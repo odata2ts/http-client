@@ -14,6 +14,7 @@ export interface ClientOptions extends BaseHttpClientOptions {}
 export const DEFAULT_ERROR_MESSAGE = "No error message!";
 const FETCH_FAILURE_MESSAGE = "OData request failed entirely: ";
 const JSON_RETRIEVAL_FAILURE_MESSAGE = "Retrieving JSON body from OData response failed: ";
+const BLOB_RETRIEVAL_FAILURE_MESSAGE = "Retrieving blob from OData response failed: ";
 const RESPONSE_FAILURE_MESSAGE = "OData server responded with error: ";
 
 function buildErrorMessage(prefix: string, error: any) {
@@ -40,7 +41,7 @@ export class FetchClient extends BaseHttpClient<FetchRequestConfig> implements O
     const { params, ...config } = mergeFetchConfig(this.config, { headers }, requestConfig);
     config.method = method;
     if (typeof data !== "undefined") {
-      config.body = JSON.stringify(data);
+      config.body = internalConfig.dataType === "json" ? JSON.stringify(data) : data;
     }
     let finalUrl = url;
     if (params && Object.values(params).length) {
@@ -65,7 +66,12 @@ export class FetchClient extends BaseHttpClient<FetchRequestConfig> implements O
 
     // error response
     if (!response.ok) {
-      let responseData = await this.getResponseBody(response, false);
+      let responseData;
+      try {
+        responseData = await this.getResponseBody(response, internalConfig);
+      } catch (e) {
+        responseData = undefined;
+      }
       const errMsg = this.retrieveErrorMessage(responseData);
 
       throw new FetchClientError(
@@ -77,7 +83,18 @@ export class FetchClient extends BaseHttpClient<FetchRequestConfig> implements O
       );
     }
 
-    const responseData = noBodyEvaluation ? undefined : await this.getResponseBody(response, true);
+    let responseData;
+    try {
+      responseData = noBodyEvaluation ? undefined : await this.getResponseBody(response, internalConfig);
+    } catch (error) {
+      const msg = internalConfig.dataType === "blob" ? BLOB_RETRIEVAL_FAILURE_MESSAGE : JSON_RETRIEVAL_FAILURE_MESSAGE;
+      throw new FetchClientError(
+        buildErrorMessage(msg, error),
+        response.status,
+        this.mapHeaders(response.headers),
+        error as Error
+      );
+    }
 
     return {
       status: response.status,
@@ -87,23 +104,20 @@ export class FetchClient extends BaseHttpClient<FetchRequestConfig> implements O
     };
   }
 
-  protected async getResponseBody(response: Response, isFailedJsonFatal: boolean) {
+  protected async getResponseBody(response: Response, options: InternalHttpClientConfig) {
     if (response.status === 204) {
       return undefined;
     }
-    try {
-      return await response.json();
-    } catch (error) {
-      if (isFailedJsonFatal) {
-        throw new FetchClientError(
-          buildErrorMessage(JSON_RETRIEVAL_FAILURE_MESSAGE, error),
-          response.status,
-          this.mapHeaders(response.headers),
-          error as Error
-        );
-      }
-      return undefined;
+    switch (options.dataType) {
+      case "json":
+        return response.json();
+      case "blob":
+        return response.blob();
+      case "stream":
+        return response.body;
     }
+
+    return undefined;
   }
 
   protected mapHeaders(headers: Headers): Record<string, string> {

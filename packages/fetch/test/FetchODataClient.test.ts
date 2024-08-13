@@ -5,6 +5,8 @@ const DEFAULT_REQUEST_CONFIG = { method: "GET", cache: "no-store" };
 const JSON_VALUE = "application/json";
 const DEFAULT_GET_HEADERS = { accept: JSON_VALUE };
 const DEFAULT_EDIT_HEADERS = { ...DEFAULT_GET_HEADERS, "content-type": JSON_VALUE };
+const DEFAULT_BLOB = new Blob(["a", "b"]);
+const DEFAULT_STREAM = "aba";
 
 describe("FetchClient Tests", function () {
   let fetchClient: FetchClient;
@@ -27,7 +29,9 @@ describe("FetchClient Tests", function () {
       statusText: "OK",
       headers: new Headers(),
       ok: true,
+      body: DEFAULT_STREAM,
       json: () => Promise.resolve(jsonResult),
+      blob: () => Promise.resolve(DEFAULT_BLOB),
     });
   });
 
@@ -201,5 +205,35 @@ describe("FetchClient Tests", function () {
 
     await fetchClient.get("test?x=y");
     expect(requestUrl).toStrictEqual("test?x=y&hey=Ho&a=111&list=a%2Cb");
+  });
+
+  test("get blob request", async () => {
+    const response = await fetchClient.getBlob(DEFAULT_URL);
+
+    expect(response.status).toBe(200);
+    expect(requestUrl).toBe(DEFAULT_URL);
+    expect(response.data).toBe(DEFAULT_BLOB);
+    expect(getBaseRequestConfig()).toStrictEqual(DEFAULT_REQUEST_CONFIG);
+    expect(getRequestHeaderRecords()).toStrictEqual({});
+  });
+
+  test("update blob request", async () => {
+    const mimeType = "image/jpg";
+    const response = await fetchClient.updateBlob(DEFAULT_URL, DEFAULT_BLOB, mimeType);
+
+    expect(response.status).toBe(200);
+    expect(requestUrl).toBe(DEFAULT_URL);
+    expect(getBaseRequestConfig()).toStrictEqual({ ...DEFAULT_REQUEST_CONFIG, method: "PUT", body: DEFAULT_BLOB });
+    expect(getRequestHeaderRecords()).toStrictEqual({ accept: mimeType, "content-type": mimeType });
+  });
+
+  test("get stream request", async () => {
+    const response = await fetchClient.getStream(DEFAULT_URL);
+
+    expect(response.status).toBe(200);
+    expect(requestUrl).toBe(DEFAULT_URL);
+    expect(response.data).toBe(DEFAULT_STREAM);
+    expect(getBaseRequestConfig()).toStrictEqual(DEFAULT_REQUEST_CONFIG);
+    expect(getRequestHeaderRecords()).toStrictEqual({});
   });
 });

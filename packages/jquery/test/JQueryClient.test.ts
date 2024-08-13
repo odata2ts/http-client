@@ -181,4 +181,25 @@ describe("JQueryClient Tests", function () {
     await jqClient.get("test?x=y");
     expect(getRequestDetails().url).toStrictEqual("test?x=y&hey=Ho&a=111&list=a%2Cb");
   });
+
+  test("get blob request", async () => {
+    await jqClient.getBlob(DEFAULT_URL);
+
+    expect(getRequestDetails()).toMatchObject({ url: DEFAULT_URL, method: "GET", xhrFields: { responseType: "blob" } });
+    expect(getRequestHeaders()).toStrictEqual({});
+  });
+
+  test("update blob request", async () => {
+    const mimeType = "image/jpg";
+    await jqClient.updateBlob(DEFAULT_URL, new Blob(), mimeType);
+
+    expect(getRequestDetails()).toMatchObject({ url: DEFAULT_URL, method: "PUT", xhrFields: { responseType: "blob" } });
+    expect(getRequestHeaders()).toStrictEqual({ Accept: mimeType, "Content-Type": mimeType });
+  });
+
+  test("stream request not supported", async () => {
+    await expect(() => jqClient.getStream(DEFAULT_URL)).rejects.toThrow(
+      "Streaming is not supported by the JqueryClient!"
+    );
+  });
 });

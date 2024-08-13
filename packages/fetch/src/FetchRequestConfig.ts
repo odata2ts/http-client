@@ -38,6 +38,7 @@ export function mergeFetchConfig(...configs: Array<RequestInit | undefined>) {
 
         // headers as Headers object
         if (headers && headers instanceof Headers) {
+          // @ts-ignore: fails on CI test
           headers.forEach((val, key) => collectedHeaders.set(key, val));
         }
         // headers as plain Record<string,string>

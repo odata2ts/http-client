@@ -7,7 +7,7 @@ describe("CSRF Token Handling Tests", () => {
   let mockClient: MockHttpClient;
 
   function getTokenFromHeader() {
-    const headers = mockClient.lastConfig?.headers;
+    const headers = mockClient.lastInternalConfig?.headers;
     return headers ? headers[mockClient.getCsrfTokenKey()] : undefined;
   }
 
@@ -65,7 +65,7 @@ describe("CSRF Token Handling Tests", () => {
     mockClient.setCsrfTokenKey("test");
     await mockClient.post("test", {});
 
-    expect(mockClient.lastConfig?.headers).toBeTruthy();
-    expect(mockClient.lastConfig?.headers!["test"]).toBeTruthy();
+    expect(mockClient.lastInternalConfig?.headers).toBeTruthy();
+    expect(mockClient.lastInternalConfig?.headers!["test"]).toBeTruthy();
   });
 });

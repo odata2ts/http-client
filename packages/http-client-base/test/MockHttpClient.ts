@@ -19,6 +19,7 @@ export class MockClientError extends Error implements ODataClientError {
 
 export interface MockRequestConfig {
   headers?: Record<string, string>;
+  dataType?: string;
   x?: string;
 }
 
@@ -28,6 +29,7 @@ export class MockHttpClient extends BaseHttpClient<MockRequestConfig> implements
   public lastUrl?: string;
   public lastData?: any;
   public lastConfig?: MockRequestConfig;
+  public lastInternalConfig?: InternalHttpClientConfig;
 
   public simulateClientFailure: boolean = false;
   public simulateTokenExpired: boolean = false;
@@ -47,17 +49,17 @@ export class MockHttpClient extends BaseHttpClient<MockRequestConfig> implements
     config: MockRequestConfig | undefined,
     internalConfig?: InternalHttpClientConfig
   ): Promise<HttpResponseModel<ResponseModel>> {
-    let mergedConfig: MockRequestConfig | undefined = config ? { ...config } : undefined;
-    if (internalConfig?.headers) {
-      if (!mergedConfig) {
-        mergedConfig = {};
-      }
-      mergedConfig.headers = { ...mergedConfig.headers, ...internalConfig.headers };
-    }
+    const mergedConfig: MockRequestConfig | undefined =
+      config && internalConfig?.headers
+        ? { ...config, headers: { ...config.headers, ...internalConfig.headers } }
+        : internalConfig?.headers
+        ? { headers: internalConfig.headers }
+        : config;
     this.lastMethod = method;
     this.lastUrl = url;
     this.lastData = data;
-    this.lastConfig = mergedConfig;
+    this.lastConfig = config;
+    this.lastInternalConfig = internalConfig;
 
     const responseHeaders: Record<string, string> = {};
 
