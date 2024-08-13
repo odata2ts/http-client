@@ -20,39 +20,21 @@
     "version": "yarn install && git add yarn.lock"
   },
   "devDependencies": {
+    "@ianvs/prettier-plugin-sort-imports": "^4.3.1",
     "@lerna-lite/cli": "^1.17.0",
     "@lerna-lite/run": "^1.17.0",
-    "@prettier/plugin-xml": "^2.2.0",
+    "@prettier/plugin-xml": "^3.4.1",
     "@types/jsdom": "^21.1.7",
     "@types/node": "^20.2.5",
     "@vitest/coverage-istanbul": "^2.0.5",
     "env-cmd": "^10.1.0",
-    "import-sort-style-module": "^6.0.0",
     "jsdom": "^24.1.1",
     "madge": "^6.0.0",
     "prettier": "^2.8.8",
-    "prettier-plugin-import-sort": "^0.0.7",
-    "prettier-plugin-package": "^1.3.0",
-    "prettier-plugin-properties": "^0.2.0",
+    "prettier-plugin-packagejson": "^2.5.1",
     "rimraf": "^5.0.1",
     "typescript": "^5.0.4",
     "vitest": "^2.0.5"
-  },
-  "husky": {
-    "hooks": {
-      "pre-commit": "lint-staged"
-    }
-  },
-  "importSort": {
-    ".js, .jsx, .ts, .tsx": {
-      "style": "module",
-      "parser": "typescript"
-    }
-  },
-  "lint-staged": {
-    "*.{xml,js,jsx,ts,tsx,json,css,md}": [
-      "prettier --write"
-    ]
   },
   "workspaces": [
     "packages/*"
