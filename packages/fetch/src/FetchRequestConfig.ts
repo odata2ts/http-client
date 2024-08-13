@@ -7,7 +7,7 @@ const DEFAULT_CONFIG: RequestInit = {
  * Available config options for end user when making a given request.
  */
 export interface FetchRequestConfig
-  extends Pick<RequestInit, "credentials" | "cache" | "mode" | "redirect" | "referrerPolicy"> {
+  extends Partial<Pick<RequestInit, "credentials" | "cache" | "mode" | "redirect" | "referrerPolicy" | "signal">> {
   headers?: Record<string, string> | Headers;
   /**
    * Add query params.

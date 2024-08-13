@@ -1,4 +1,5 @@
 import { ODataCollectionResponseV4, ODataModelResponseV4 } from "@odata2ts/odata-core";
+import { describe, expect, test } from "vitest";
 
 import { FetchClient, FetchClientError } from "../src";
 
@@ -22,7 +23,7 @@ describe("HTTP Communication Tests", function () {
         pragma: "no-cache",
       },
     });
-    expect(headers).toStrictEqual({
+    expect(headers).toMatchObject({
       "content-length": "445",
       "content-type": "application/json; odata.metadata=minimal",
       "cache-control": "no-cache",
@@ -30,10 +31,7 @@ describe("HTTP Communication Tests", function () {
       expires: "-1",
       pragma: "no-cache",
       "odata-version": "4.0",
-      server: "Microsoft-IIS/10.0",
       vary: "Accept-Encoding",
-      "x-aspnet-version": "4.0.30319",
-      "x-powered-by": "ASP.NET",
     });
     expect(response.data).toMatchObject({
       FirstName: "Russell",

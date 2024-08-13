@@ -9,13 +9,15 @@
   "repository": "git@github.com:odata2ts/http-client.git",
   "author": "texttechne",
   "main": "./lib/index.js",
+  "type": "module",
   "scripts": {
     "build": "yarn clean && yarn compile",
     "check-circular-deps": "madge ./src --extensions ts --circular",
-    "clean": "rimraf build lib coverage",
+    "clean": "rimraf lib coverage",
     "compile": "tsc",
+    "int-test": "vitest run int-test/**",
     "prepublish": "yarn build",
-    "test": "jest --passWithNoTests"
+    "test": "vitest run test/**"
   },
   "files": [
     "*.md",
@@ -37,13 +39,9 @@
     "@odata2ts/http-client-base": "^0.4.2"
   },
   "devDependencies": {
-    "@types/jest": "^27.4.1",
     "@types/node": "^17.0.23",
     "axios": "^1.4.0",
-    "jest": "29.5.0",
     "rimraf": "^5.0.1",
-    "ts-jest": "^29.1.0",
-    "ts-node": "10.9.1",
     "typescript": "5.0.4"
   },
   "types": "./lib/index.d.ts"

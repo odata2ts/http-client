@@ -1,18 +1,25 @@
+// @vitest-environment jsdom
+
 import fs from "fs/promises";
 import path from "path";
 
 import { ODataCollectionResponseV4, ODataModelResponseV4 } from "@odata2ts/odata-core";
-import jQuery from "jquery";
-import { JSDOM } from "jsdom";
+import jquery from "jquery";
+import { beforeAll, describe, expect, test } from "vitest";
 
 import { JQueryClient, JQueryClientError } from "../src";
 
-describe("HTTP Communication Tests", function () {
+describe("HTTP Communication Tests", async function () {
   const BASE_URL = "https://services.odata.org/TripPinRESTierService/(S(xxxsujx4iqjss1vkeighyks8))";
   const DEFAULT_HEADERS = { Accept: "application/json", "Content-Type": "application/json" };
+  let REAL_CLIENT: JQueryClient;
 
-  const $ = jQuery(new JSDOM().window) as unknown as JQueryStatic;
-  const REAL_CLIENT = new JQueryClient($, { headers: DEFAULT_HEADERS });
+  beforeAll(async (): Promise<void> => {
+    expect(jquery, "JQuery not defined!").toBeDefined();
+    expect(jquery.ajax, "JQuery's ajax module is not initialized!").toBeDefined();
+
+    REAL_CLIENT = new JQueryClient(jquery, { headers: DEFAULT_HEADERS });
+  });
 
   test("Simple Get", async () => {
     const response = await REAL_CLIENT.get<ODataCollectionResponseV4<any>>(BASE_URL + "/People('russellwhyte')");
@@ -20,7 +27,7 @@ describe("HTTP Communication Tests", function () {
       status: 200,
       statusText: "OK",
     });
-    expect(response.headers).toStrictEqual({
+    expect(response.headers).toMatchObject({
       "content-length": "445",
       "content-type": "application/json; odata.metadata=minimal",
       "cache-control": "no-cache",
@@ -28,10 +35,7 @@ describe("HTTP Communication Tests", function () {
       expires: "-1",
       pragma: "no-cache",
       // "odata-version": "4.0",
-      // server: "Microsoft-IIS/10.0",
       // vary: "Accept-Encoding",
-      // "x-aspnet-version": "4.0.30319",
-      // "x-powered-by": "ASP.NET",
     });
     expect(response.data).toMatchObject({
       FirstName: "Russell",

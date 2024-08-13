@@ -1,9 +1,8 @@
 {
-  "extends": "../../tsconfig.settings.json",
+  "extends": "../../tsconfig.test.json",
   "compilerOptions": {
-    "types": ["reflect-metadata", "jest"],
-    "outDir": "./lib"
+    "rootDir": ".",
+    "lib": ["DOM"]
   },
-  "include": ["**/*"],
-  "exclude": ["node_modules", "lib", "build"]
+  "include": ["src", "test", "int-test"]
 }
