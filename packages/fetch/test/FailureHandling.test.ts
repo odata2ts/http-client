@@ -1,5 +1,4 @@
 import { beforeEach, describe, expect, test, vi } from "vitest";
-
 import { DEFAULT_ERROR_MESSAGE, FetchClient, FetchClientError } from "../src";
 
 describe("Failure Handling Tests", function () {

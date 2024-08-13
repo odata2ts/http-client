@@ -12,7 +12,6 @@ import axios, {
   AxiosRequestConfig as OriginalRequestConfig,
   RawAxiosResponseHeaders,
 } from "axios";
-
 import { AxiosClientError } from "./AxiosClientError";
 import { AxiosRequestConfig, mergeConfig } from "./AxiosRequestConfig";
 
@@ -42,7 +41,7 @@ export class AxiosClient extends BaseHttpClient<AxiosRequestConfig> implements O
     url: string,
     data: any,
     requestConfig: AxiosRequestConfig | undefined = {},
-    internalConfig: InternalHttpClientConfig = {}
+    internalConfig: InternalHttpClientConfig = {},
   ): Promise<HttpResponseModel<ResponseModel>> {
     // add URL, HTTP method and additional headers to the request config
     const { headers } = internalConfig;
@@ -70,7 +69,7 @@ export class AxiosClient extends BaseHttpClient<AxiosRequestConfig> implements O
             axiosError.response.status,
             this.mapHeaders(axiosError.response.headers),
             new Error(errMsg || DEFAULT_ERROR_MESSAGE),
-            axiosError
+            axiosError,
           );
         }
         // fatal failure without response
@@ -80,7 +79,7 @@ export class AxiosClient extends BaseHttpClient<AxiosRequestConfig> implements O
             undefined,
             undefined,
             error,
-            axiosError
+            axiosError,
           );
         }
       }

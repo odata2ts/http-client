@@ -1,5 +1,4 @@
 import { HttpResponseModel, ODataClientError, ODataResponse } from "@odata2ts/http-client-api";
-
 import { ErrorMessageRetriever, retrieveErrorMessage } from "./ErrorMessageRetriever";
 import { HttpMethods } from "./HttpMethods";
 
@@ -38,7 +37,7 @@ const JSON_VALUE = "application/json";
 
 function getInternalConfigWithJsonHeaders(
   headers?: Record<string, string>,
-  setContentType: boolean = true
+  setContentType: boolean = true,
 ): InternalHttpClientConfig {
   return {
     headers: {
@@ -78,7 +77,7 @@ export abstract class BaseHttpClient<RequestConfigType> {
     url: string,
     data: any,
     config?: RequestConfigType,
-    internalConfig?: InternalHttpClientConfig
+    internalConfig?: InternalHttpClientConfig,
   ): Promise<HttpResponseModel<ResponseModel>>;
 
   public getCsrfTokenKey() {
@@ -125,7 +124,7 @@ export abstract class BaseHttpClient<RequestConfigType> {
     url: string,
     data: any,
     requestConfig?: RequestConfigType,
-    internalConfig: InternalHttpClientConfig = {}
+    internalConfig: InternalHttpClientConfig = {},
   ): Promise<HttpResponseModel<ResponseModel>> {
     // noinspection SuspiciousTypeOfGuard
     if (typeof url !== "string") {
@@ -149,7 +148,7 @@ export abstract class BaseHttpClient<RequestConfigType> {
         url,
         data,
         requestConfig,
-        Object.keys(internalConfig).length ? internalConfig : undefined
+        Object.keys(internalConfig).length ? internalConfig : undefined,
       );
     } catch (e) {
       const clientError = e as ODataClientError;
@@ -173,14 +172,14 @@ export abstract class BaseHttpClient<RequestConfigType> {
   public get<ResponseModel>(
     url: string,
     requestConfig?: RequestConfigType,
-    additionalHeaders?: Record<string, string>
+    additionalHeaders?: Record<string, string>,
   ): Promise<HttpResponseModel<ResponseModel>> {
     return this.sendRequest<ResponseModel>(
       HttpMethods.Get,
       url,
       undefined,
       requestConfig,
-      getInternalConfigWithJsonHeaders(additionalHeaders, false)
+      getInternalConfigWithJsonHeaders(additionalHeaders, false),
     );
   }
 
@@ -188,14 +187,14 @@ export abstract class BaseHttpClient<RequestConfigType> {
     url: string,
     data: any,
     requestConfig?: RequestConfigType,
-    additionalHeaders?: Record<string, string>
+    additionalHeaders?: Record<string, string>,
   ): Promise<HttpResponseModel<ResponseModel>> {
     return this.sendRequest<ResponseModel>(
       HttpMethods.Post,
       url,
       data,
       requestConfig,
-      getInternalConfigWithJsonHeaders(additionalHeaders)
+      getInternalConfigWithJsonHeaders(additionalHeaders),
     );
   }
 
@@ -203,14 +202,14 @@ export abstract class BaseHttpClient<RequestConfigType> {
     url: string,
     data: any,
     requestConfig?: RequestConfigType,
-    additionalHeaders?: Record<string, string>
+    additionalHeaders?: Record<string, string>,
   ): Promise<HttpResponseModel<ResponseModel>> {
     return this.sendRequest<ResponseModel>(
       HttpMethods.Put,
       url,
       data,
       requestConfig,
-      getInternalConfigWithJsonHeaders(additionalHeaders)
+      getInternalConfigWithJsonHeaders(additionalHeaders),
     );
   }
 
@@ -218,14 +217,14 @@ export abstract class BaseHttpClient<RequestConfigType> {
     url: string,
     data: any,
     requestConfig?: RequestConfigType,
-    additionalHeaders?: Record<string, string>
+    additionalHeaders?: Record<string, string>,
   ): Promise<HttpResponseModel<ResponseModel>> {
     return this.sendRequest<ResponseModel>(
       HttpMethods.Patch,
       url,
       data,
       requestConfig,
-      getInternalConfigWithJsonHeaders(additionalHeaders)
+      getInternalConfigWithJsonHeaders(additionalHeaders),
     );
   }
 
@@ -236,21 +235,21 @@ export abstract class BaseHttpClient<RequestConfigType> {
   public delete(
     url: string,
     requestConfig?: RequestConfigType,
-    additionalHeaders?: Record<string, string>
+    additionalHeaders?: Record<string, string>,
   ): Promise<HttpResponseModel<void>> {
     return this.sendRequest<void>(
       HttpMethods.Delete,
       url,
       undefined,
       requestConfig,
-      this.getAdditionalHeaders(additionalHeaders)
+      this.getAdditionalHeaders(additionalHeaders),
     );
   }
 
   public getBlob(
     url: string,
     requestConfig?: RequestConfigType,
-    additionalHeaders?: Record<string, string>
+    additionalHeaders?: Record<string, string>,
   ): ODataResponse<Blob> {
     return this.sendRequest(HttpMethods.Get, url, undefined, requestConfig, {
       ...this.getAdditionalHeaders(additionalHeaders),
@@ -261,7 +260,7 @@ export abstract class BaseHttpClient<RequestConfigType> {
   public getStream(
     url: string,
     requestConfig?: RequestConfigType,
-    additionalHeaders?: Record<string, string>
+    additionalHeaders?: Record<string, string>,
   ): ODataResponse<ReadableStream> {
     return this.sendRequest(HttpMethods.Get, url, undefined, requestConfig, {
       ...this.getAdditionalHeaders(additionalHeaders),
@@ -274,7 +273,7 @@ export abstract class BaseHttpClient<RequestConfigType> {
     data: Blob,
     mimeType: string,
     requestConfig?: RequestConfigType,
-    additionalHeaders?: Record<string, string>
+    additionalHeaders?: Record<string, string>,
   ): ODataResponse<void | Blob> {
     return this.sendRequest(HttpMethods.Put, url, data, requestConfig, {
       headers: { ...additionalHeaders, Accept: mimeType, "Content-Type": mimeType },

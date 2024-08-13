@@ -48,6 +48,6 @@ export function mergeFetchConfig(...configs: Array<RequestInit | undefined>) {
 
         return { ...collector, ...passThrough };
       },
-      { headers: new Headers() }
+      { headers: new Headers() },
     );
 }

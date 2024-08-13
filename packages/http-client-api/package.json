@@ -1,27 +1,7 @@
 {
   "name": "@odata2ts/http-client-api",
   "version": "0.5.1",
-  "publishConfig": {
-    "access": "public"
-  },
   "description": "Specifies the contract between HTTP clients and odata2ts",
-  "license": "MIT",
-  "repository": "git@github.com:odata2ts/http-client.git",
-  "author": "texttechne",
-  "main": "./lib/index.js",
-  "type": "module",
-  "scripts": {
-    "build": "yarn clean && yarn compile",
-    "check-circular-deps": "madge ./src --extensions ts --circular",
-    "clean": "rimraf lib coverage",
-    "compile": "tsc",
-    "prepublish": "yarn build"
-  },
-  "files": [
-    "*.md",
-    "lib",
-    "LICENSE"
-  ],
   "keywords": [
     "http client",
     "api",
@@ -29,10 +9,30 @@
     "ts",
     "typescript"
   ],
+  "repository": "git@github.com:odata2ts/http-client.git",
+  "license": "MIT",
+  "author": "texttechne",
+  "type": "module",
+  "main": "./lib/index.js",
+  "types": "./lib/index.d.ts",
+  "files": [
+    "*.md",
+    "lib",
+    "LICENSE"
+  ],
+  "scripts": {
+    "build": "yarn clean && yarn compile",
+    "check-circular-deps": "madge ./src --extensions ts --circular",
+    "clean": "rimraf lib coverage",
+    "compile": "tsc",
+    "prepublish": "yarn build"
+  },
   "devDependencies": {
     "@types/node": "^20.2.5",
     "rimraf": "^5.0.1",
     "typescript": "5.0.4"
   },
-  "types": "./lib/index.d.ts"
+  "publishConfig": {
+    "access": "public"
+  }
 }
