@@ -1,3 +1,3 @@
-export * from "./FetchClient";
-export { FetchClientError } from "./FetchClientError";
-export { FetchRequestConfig } from "./FetchRequestConfig";
+export * from "./FetchClient.js";
+export { FetchClientError } from "./FetchClientError.js";
+export { FetchRequestConfig } from "./FetchRequestConfig.js";

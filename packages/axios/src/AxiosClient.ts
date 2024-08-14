@@ -12,8 +12,8 @@ import axios, {
   AxiosRequestConfig as OriginalRequestConfig,
   RawAxiosResponseHeaders,
 } from "axios";
-import { AxiosClientError } from "./AxiosClientError";
-import { AxiosRequestConfig, mergeConfig } from "./AxiosRequestConfig";
+import { AxiosClientError } from "./AxiosClientError.js";
+import { AxiosRequestConfig, mergeConfig } from "./AxiosRequestConfig.js";
 
 export interface ClientOptions extends BaseHttpClientOptions {}
 

@@ -7,8 +7,8 @@ import {
   HttpMethods,
   InternalHttpClientConfig,
 } from "@odata2ts/http-client-base";
-import { AjaxRequestConfig, getDefaultConfig, mergeAjaxConfig } from "./AjaxRequestConfig";
-import { JQueryClientError } from "./JQueryClientError";
+import { AjaxRequestConfig, getDefaultConfig, mergeAjaxConfig } from "./AjaxRequestConfig.js";
+import { JQueryClientError } from "./JQueryClientError.js";
 
 import jqXHR = JQuery.jqXHR;
 

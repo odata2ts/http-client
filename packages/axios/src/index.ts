@@ -1,3 +1,3 @@
-export * from "./AxiosClient";
-export { AxiosClientError } from "./AxiosClientError";
-export { AxiosRequestConfig } from "./AxiosRequestConfig";
+export * from "./AxiosClient.js";
+export { AxiosClientError } from "./AxiosClientError.js";
+export { AxiosRequestConfig } from "./AxiosRequestConfig.js";
