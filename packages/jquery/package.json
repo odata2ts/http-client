@@ -1,6 +1,6 @@
 {
   "name": "@odata2ts/http-client-jquery",
-  "version": "0.9.0",
+  "version": "0.9.1",
   "description": "JQuery based http client usable by odata2ts",
   "keywords": [
     "http client",
@@ -31,7 +31,7 @@
     "test": "vitest run test/**"
   },
   "dependencies": {
-    "@odata2ts/http-client-base": "^0.5.0"
+    "@odata2ts/http-client-base": "^0.5.1"
   },
   "devDependencies": {
     "@types/jquery": "^3.5.16",

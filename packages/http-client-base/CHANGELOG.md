@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.5.1](https://github.com/odata2ts/http-client/compare/@odata2ts/http-client-base@0.5.0...@odata2ts/http-client-base@0.5.1) (2024-08-14)
+
+### Bug Fixes
+
+* add ".js" suffix for all relative imports ([#20](https://github.com/odata2ts/http-client/issues/20)) ([961c910](https://github.com/odata2ts/http-client/commit/961c91002c8b1e9a7a6256cccd6b6d0ec9c142cd))
+
 # [0.5.0](https://github.com/odata2ts/http-client/compare/@odata2ts/http-client-base@0.4.2...@odata2ts/http-client-base@0.5.0) (2024-08-13)
 
 ### Code Refactoring
