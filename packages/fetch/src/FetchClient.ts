@@ -5,8 +5,8 @@ import {
   HttpMethods,
   InternalHttpClientConfig,
 } from "@odata2ts/http-client-base";
-import { FetchClientError } from "./FetchClientError";
-import { FetchRequestConfig, getDefaultConfig, mergeFetchConfig } from "./FetchRequestConfig";
+import { FetchClientError } from "./FetchClientError.js";
+import { FetchRequestConfig, getDefaultConfig, mergeFetchConfig } from "./FetchRequestConfig.js";
 
 export interface ClientOptions extends BaseHttpClientOptions {}
 
