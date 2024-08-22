@@ -39,5 +39,6 @@
     "rimraf": "^5.0.1",
     "typescript": "^5.0.4",
     "vitest": "^2.0.5"
-  }
+  },
+  "packageManager": "yarn@3.5.0"
 }
