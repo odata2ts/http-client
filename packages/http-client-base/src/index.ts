@@ -1,3 +1,3 @@
-export * from "./ErrorMessageRetriever.js";
-export { BaseHttpClient, BaseHttpClientOptions, InternalHttpClientConfig } from "./BaseHttpClient.js";
-export { HttpMethods } from "./HttpMethods.js";
+export * from "./ErrorMessageRetriever";
+export { BaseHttpClient, BaseHttpClientOptions, InternalHttpClientConfig } from "./BaseHttpClient";
+export { HttpMethods } from "./HttpMethods";

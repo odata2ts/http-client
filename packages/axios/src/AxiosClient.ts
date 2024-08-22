@@ -1,4 +1,4 @@
-import { HttpResponseModel, ODataHttpClient, ODataResponse } from "@odata2ts/http-client-api";
+import { HttpResponseModel, ODataHttpClient } from "@odata2ts/http-client-api";
 import {
   BaseHttpClient,
   BaseHttpClientOptions,
@@ -12,8 +12,8 @@ import axios, {
   AxiosRequestConfig as OriginalRequestConfig,
   RawAxiosResponseHeaders,
 } from "axios";
-import { AxiosClientError } from "./AxiosClientError.js";
-import { AxiosRequestConfig, mergeConfig } from "./AxiosRequestConfig.js";
+import { AxiosClientError } from "./AxiosClientError";
+import { AxiosRequestConfig, mergeConfig } from "./AxiosRequestConfig";
 
 export interface ClientOptions extends BaseHttpClientOptions {}
 

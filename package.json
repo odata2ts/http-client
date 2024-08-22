@@ -6,7 +6,7 @@
   "homepage": "https://odata2ts.github.io/",
   "repository": "git@github.com:odata2ts/http-client.git",
   "license": "MIT",
-  "type": "module",
+  "type": "commonjs",
   "workspaces": [
     "packages/*"
   ],

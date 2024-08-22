@@ -1,4 +1,4 @@
-import { CreateAxiosDefaults, AxiosRequestConfig as OriginalRequestConfig } from "axios";
+import { AxiosRequestConfig as OriginalRequestConfig } from "axios";
 
 export interface AxiosRequestConfig extends Omit<OriginalRequestConfig, "method" | "url" | "headers"> {
   headers?: Record<string, string>;
