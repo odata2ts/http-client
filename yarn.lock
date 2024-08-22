@@ -1138,7 +1138,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@odata2ts/http-client-api@^0.6.1, @odata2ts/http-client-api@workspace:packages/http-client-api":
+"@odata2ts/http-client-api@^0.6.2, @odata2ts/http-client-api@workspace:packages/http-client-api":
   version: 0.0.0-use.local
   resolution: "@odata2ts/http-client-api@workspace:packages/http-client-api"
   dependencies:
@@ -1152,7 +1152,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@odata2ts/http-client-axios@workspace:packages/axios"
   dependencies:
-    "@odata2ts/http-client-base": ^0.5.1
+    "@odata2ts/http-client-base": ^0.5.2
     "@types/node": ^17.0.23
     axios: ^1.4.0
     rimraf: ^5.0.1
@@ -1162,11 +1162,11 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@odata2ts/http-client-base@^0.5.1, @odata2ts/http-client-base@workspace:packages/http-client-base":
+"@odata2ts/http-client-base@^0.5.2, @odata2ts/http-client-base@workspace:packages/http-client-base":
   version: 0.0.0-use.local
   resolution: "@odata2ts/http-client-base@workspace:packages/http-client-base"
   dependencies:
-    "@odata2ts/http-client-api": ^0.6.1
+    "@odata2ts/http-client-api": ^0.6.2
     "@odata2ts/odata-core": ^0.3.7
     "@types/node": ^20.2.5
     rimraf: ^5.0.1
@@ -1178,7 +1178,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@odata2ts/http-client-fetch@workspace:packages/fetch"
   dependencies:
-    "@odata2ts/http-client-base": ^0.5.1
+    "@odata2ts/http-client-base": ^0.5.2
     "@odata2ts/odata-core": ^0.3.7
     "@types/node": ^17.0.23
     rimraf: ^3.0.2
@@ -1190,7 +1190,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@odata2ts/http-client-jquery@workspace:packages/jquery"
   dependencies:
-    "@odata2ts/http-client-base": ^0.5.1
+    "@odata2ts/http-client-base": ^0.5.2
     "@types/jquery": ^3.5.16
     "@types/node": ^20.2.5
     jquery: ^3.6.3
