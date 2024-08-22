@@ -2,7 +2,7 @@
   "compilerOptions": {
     "target": "ES2016",
     "lib": ["esnext", "dom"],
-    "module": "ESNext",
+    "module": "CommonJS",
     "moduleResolution": "node",
     "types": ["node"],
     "strict": true,

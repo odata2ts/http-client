@@ -1,6 +1,6 @@
 import { HttpResponseModel, ODataClientError, ODataResponse } from "@odata2ts/http-client-api";
-import { ErrorMessageRetriever, retrieveErrorMessage } from "./ErrorMessageRetriever.js";
-import { HttpMethods } from "./HttpMethods.js";
+import { ErrorMessageRetriever, retrieveErrorMessage } from "./ErrorMessageRetriever";
+import { HttpMethods } from "./HttpMethods";
 
 export interface BaseHttpClientOptions {
   /**
