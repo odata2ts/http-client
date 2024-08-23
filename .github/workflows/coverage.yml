@@ -16,17 +16,6 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           node-version: 20
-      - name: Get yarn cache directory path
-        id: yarn-cache-dir-path
-        run: echo "::set-output name=dir::$(yarn config get cacheFolder)"
-      - name: Restore yarn cache
-        uses: actions/cache@v2
-        id: yarn-cache
-        with:
-          path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
-          key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-yarn-
       - name: Install packages
         run: yarn --immutable
       - name: Check for circular dependencies
@@ -39,17 +28,6 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           node-version: 20
-      - name: Get yarn cache directory path
-        id: yarn-cache-dir-path
-        run: echo "::set-output name=dir::$(yarn config get cacheFolder)"
-      - name: Restore yarn cache
-        uses: actions/cache@v2
-        id: yarn-cache
-        with:
-          path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
-          key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-yarn-
       - name: Install packages
         run: yarn --immutable
       - name: Build packages
@@ -58,33 +36,7 @@ jobs:
         run: yarn type-test
       - name: Test with coverage
         run: yarn coverage
+      - name: run integration tests
+        run: yarn int-test
       - name: Coveralls
         uses: coverallsapp/github-action@v2
-  int_tests:
-    name: Integration Tests
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-node@v3
-        with:
-          node-version: 18.x
-      - name: Get yarn cache directory path
-        id: yarn-cache-dir-path
-        run: echo "::set-output name=dir::$(yarn config get cacheFolder)"
-      - name: Restore yarn cache
-        uses: actions/cache@v2
-        id: yarn-cache
-        with:
-          path: ${{ steps.yarn-cache-dir-path.outputs.dir }}
-          key: ${{ runner.os }}-yarn-${{ hashFiles('**/yarn.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-yarn-
-      - name: Install packages
-        run: yarn --immutable
-      - name: Build packages
-        run: yarn build
-      - name: Start CAP server & run integration tests
-        run: |
-          yarn start-cap &
-          sleep 15
-          yarn int-test
