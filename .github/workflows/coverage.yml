@@ -17,7 +17,7 @@ jobs:
         with:
           node-version: 20
       - name: Install packages
-        run: yarn --immutable
+        run: corepack enable && yarn set version 3.5.0 && yarn install --immutable
       - name: Check for circular dependencies
         run: yarn check-circular-deps
   tests_with_coverage:
@@ -29,7 +29,7 @@ jobs:
         with:
           node-version: 20
       - name: Install packages
-        run: corepack enable && yarn --immutable
+        run: corepack enable && yarn set version 3.5.0 && yarn install --immutable
       - name: Build packages
         run: yarn build
       - name: Type Test
