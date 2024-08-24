@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [0.8.0](https://github.com/odata2ts/http-client/compare/@odata2ts/http-client-fetch@0.7.2...@odata2ts/http-client-fetch@0.8.0) (2024-08-24)
+
+### Features
+
+* **fetch:** FetchClientError with full responseData object ([#22](https://github.com/odata2ts/http-client/issues/22)) ([e66fa95](https://github.com/odata2ts/http-client/commit/e66fa952909383d55555eed23d1a8e55fe0081f2))
+
 ## [0.7.2](https://github.com/odata2ts/http-client/compare/@odata2ts/http-client-fetch@0.7.1...@odata2ts/http-client-fetch@0.7.2) (2024-08-22)
 
 **Note:** Version bump only for package @odata2ts/http-client-fetch
