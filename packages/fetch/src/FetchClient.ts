@@ -78,7 +78,7 @@ export class FetchClient extends BaseHttpClient<FetchRequestConfig> implements O
         response.status,
         this.mapHeaders(response.headers),
         new Error(errMsg || DEFAULT_ERROR_MESSAGE),
-        response,
+        responseData,
       );
     }
 
