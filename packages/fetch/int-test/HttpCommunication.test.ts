@@ -1,17 +1,17 @@
-import { ODataCollectionResponseV4, ODataModelResponseV4 } from "@odata2ts/odata-core";
-import { describe, expect, test } from "vitest";
-import { FetchClient, FetchClientError } from "../src";
+import {ODataCollectionResponseV4, ODataModelResponseV4} from "@odata2ts/odata-core";
+import {describe, expect, test} from "vitest";
+import {FetchClient, FetchClientError} from "../src";
 
 describe("HTTP Communication Tests", function () {
   const BASE_URL = "https://services.odata.org/TripPinRESTierService/(S(xxxsujx4iqjss1vkeighyks7))";
-  const DEFAULT_HEADERS = { Accept: "application/json", "Content-Type": "application/json" };
+  const DEFAULT_HEADERS = {Accept: "application/json", "Content-Type": "application/json"};
 
-  const REAL_CLIENT = new FetchClient({ headers: DEFAULT_HEADERS });
+  const REAL_CLIENT = new FetchClient({headers: DEFAULT_HEADERS});
 
   test("Simple Get", async () => {
     const url = BASE_URL + "/People('russellwhyte')";
     const response = await REAL_CLIENT.get<ODataCollectionResponseV4<any>>(url);
-    const { date, ...headers } = response.headers;
+    const {date, ...headers} = response.headers;
     expect(response).toMatchObject({
       status: 200,
       statusText: "OK",
@@ -60,6 +60,12 @@ describe("HTTP Communication Tests", function () {
       expect(error.cause?.message).toBe(expectedErrorMsg);
       expect(error.stack).toMatch(expectedErrorMsg);
       expect(error.stack).toMatch(error.name);
+      expect(error.responseData).toStrictEqual({
+        "error": {
+          "code": "",
+          "message": "The request resource is not found.",
+        },
+      });
     }
   });
 

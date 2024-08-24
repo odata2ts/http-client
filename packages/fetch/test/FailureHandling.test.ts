@@ -40,6 +40,7 @@ describe("Failure Handling Tests", function () {
   });
 
   test("failure response", async () => {
+    simulateFailure.isOk = false
     simulateFailure.message = "oh no!";
 
     try {
@@ -56,6 +57,7 @@ describe("Failure Handling Tests", function () {
       expect(error.cause?.message).toBe(simulateFailure.message);
       expect(error.stack).toContain(simulateFailure.message);
       expect(error.stack).toContain("FetchClientError");
+      expect(error.responseData).toStrictEqual({ error: { message: simulateFailure.message } });
     }
   });
 
@@ -85,6 +87,7 @@ describe("Failure Handling Tests", function () {
       expect(error.cause?.message).toBe(simulateFailure.message);
       expect(error.stack).toContain(simulateFailure.message);
       expect(error.stack).toContain("FetchClientError");
+      expect(error.responseData).toBeUndefined();
     }
   });
 
@@ -109,6 +112,7 @@ describe("Failure Handling Tests", function () {
       expect(error.cause?.message).toBe(simulateFailure.message);
       expect(error.stack).toContain(simulateFailure.message);
       expect(error.stack).toContain("FetchClientError");
+      expect(error.responseData).toBeUndefined();
     }
   });
 
