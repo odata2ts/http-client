@@ -32,11 +32,7 @@ jobs:
         run: corepack enable && yarn set version 3.5.0 && yarn install --immutable
       - name: Build packages
         run: yarn build
-      - name: Type Test
-        run: yarn type-test
       - name: Test with coverage
         run: yarn coverage
-      - name: run integration tests
-        run: yarn int-test
       - name: Coveralls
         uses: coverallsapp/github-action@v2

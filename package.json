@@ -16,10 +16,8 @@
     "clean": "rimraf coverage",
     "clean-libs": "yarn clean && lerna run clean",
     "coverage": "vitest run --coverage",
-    "int-test": "lerna run int-test",
     "release": "env-cmd -f .env.local --no-override lerna version --no-private",
-    "test": "lerna run test -- --no-cache",
-    "type-test": "lerna run type-test",
+    "test": "lerna run test",
     "version": "yarn install && git add yarn.lock",
     "postversion": "lerna publish from-git"
   },

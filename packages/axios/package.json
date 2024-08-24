@@ -26,9 +26,10 @@
     "check-circular-deps": "madge ./src --extensions ts --circular",
     "clean": "rimraf lib coverage",
     "compile": "tsc",
-    "int-test": "vitest run int-test/**",
-    "prepublish": "yarn build",
-    "test": "vitest run test/**"
+    "unit-test": "vitest run --dir test",
+    "int-test": "vitest run --dir int-test",
+    "test": "vitest run",
+    "prepublish": "yarn build"
   },
   "dependencies": {
     "@odata2ts/http-client-base": "^0.5.2"

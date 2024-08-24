@@ -25,7 +25,7 @@
     "clean": "rimraf lib coverage",
     "compile": "tsc",
     "prepublish": "yarn build",
-    "test": "vitest run ./test"
+    "test": "vitest run"
   },
   "dependencies": {
     "@odata2ts/http-client-api": "^0.6.2"
