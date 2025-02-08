@@ -28,8 +28,8 @@
     "compile": "tsc",
     "unit-test": "vitest run --dir test",
     "int-test": "vitest run --dir int-test",
-    "test": "vitest run",
-    "prepublish": "yarn build"
+    "prepack": "yarn compile",
+    "test": "vitest run"
   },
   "dependencies": {
     "@odata2ts/http-client-base": "^0.5.3"
