@@ -8,31 +8,29 @@ on:
     types: [assigned, opened, synchronize, reopened]
 
 jobs:
-  check_circular_deps:
-    name: Check for Circular Deps
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-node@v3
-        with:
-          node-version: 20
-      - name: Install packages
-        run: corepack enable && yarn set version 3.5.0 && yarn install --immutable
-      - name: Check for circular dependencies
-        run: yarn check-circular-deps
-  tests_with_coverage:
+  test:
     name: Testing With Coverage
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: true
+      matrix:
+        node: [ 20 ]
     steps:
-      - uses: actions/checkout@v2
-      - uses: actions/setup-node@v3
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: ${{ matrix.node }}
+#      - name: Install packages
+#        run: corepack enable && yarn set version 3.5.0 && yarn install --immutable
       - name: Install packages
-        run: corepack enable && yarn set version 3.5.0 && yarn install --immutable
-      - name: Build packages
+        run: yarn --immutable
+      - name: Build
         run: yarn build
+      - name: Check Circular Deps
+        run: yarn check-circular-deps
       - name: Test with coverage
         run: yarn coverage
       - name: Coveralls
         uses: coverallsapp/github-action@v2
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
