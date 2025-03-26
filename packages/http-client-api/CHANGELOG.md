@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.6.3](https://github.com/odata2ts/http-client/compare/@odata2ts/http-client-api@0.6.2...@odata2ts/http-client-api-v0.6.3) (2025-03-26)
+
+
+### Bug Fixes
+
+* always build all packages before release ([#26](https://github.com/odata2ts/http-client/issues/26)) ([a316f6c](https://github.com/odata2ts/http-client/commit/a316f6ce54c4360c8d6f87799ba6fd9c53bff52c))
+* deploy with code ([#25](https://github.com/odata2ts/http-client/issues/25)) ([3e0e78c](https://github.com/odata2ts/http-client/commit/3e0e78cd2e0b0c3215bc0ed97dd62c75d8b6c5ea))
+
 ## [0.6.2](https://github.com/odata2ts/http-client/compare/@odata2ts/http-client-api@0.6.1...@odata2ts/http-client-api@0.6.2) (2024-08-22)
 
 **Note:** Version bump only for package @odata2ts/http-client-api
