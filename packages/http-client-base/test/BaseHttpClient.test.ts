@@ -2,14 +2,7 @@ import { beforeEach, describe, expect, test } from "vitest";
 import { HttpMethods } from "../src";
 import { MockClientError, MockHttpClient, MockRequestConfig } from "./MockHttpClient";
 
-function mergeConfigWithHeaders(config: MockRequestConfig, headers: Record<string, string>) {
-  return {
-    ...config,
-    headers: { ...headers, ...config.headers },
-  };
-}
-
-const DEFAULT_URL = "http://test.testing.com/myService/theEntity";
+const DEFAULT_URL = "https://test.testing.com/myService/theEntity";
 const DEFAULT_CONFIG: MockRequestConfig = { headers: { x: "a" }, x: "y" };
 const ADDITIONAL_HEADERS = { "Content-Type": "ct" };
 const DEFAULT_DATA = { a: "b" };
@@ -148,7 +141,10 @@ describe("BaseHttpClient Tests", () => {
     expect(mockClient.lastUrl).toBe(DEFAULT_URL);
     expect(mockClient.lastData).toBeUndefined();
     expect(mockClient.lastConfig).toBeUndefined();
-    expect(mockClient.lastInternalConfig).toBeUndefined();
+    expect(mockClient.lastInternalConfig).toStrictEqual({
+      dataType: "json",
+      headers: { "Accept": "application/json" }
+    });
   });
 
   test("DELETE with config", async () => {
@@ -228,16 +224,6 @@ describe("BaseHttpClient Tests", () => {
       dataType: "blob",
       headers: { ...ADDITIONAL_HEADERS, ...DEFAULT_BLOB_HEADERS },
     });
-  });
-
-  test("DELETE with config", async () => {
-    await mockClient.delete(DEFAULT_URL, DEFAULT_CONFIG);
-
-    expect(mockClient.lastMethod).toBe("DELETE");
-    expect(mockClient.lastUrl).toBe(DEFAULT_URL);
-    expect(mockClient.lastData).toBeUndefined();
-    expect(mockClient.lastConfig).toStrictEqual(DEFAULT_CONFIG);
-    expect(mockClient.lastInternalConfig).toBeUndefined();
   });
 
   test("retrieveErrorMessage", async () => {

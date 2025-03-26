@@ -172,7 +172,7 @@ describe("FetchClient Tests", function () {
 
     expect(requestUrl).toBe(DEFAULT_URL);
     expect(getBaseRequestConfig()).toStrictEqual({ ...DEFAULT_REQUEST_CONFIG, method: "DELETE" });
-    expect(getRequestHeaderRecords()).toStrictEqual({});
+    expect(getRequestHeaderRecords()).toStrictEqual({ accept: "application/json" });
   });
 
   test("simulate 204 no content", async () => {

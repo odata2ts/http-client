@@ -147,7 +147,7 @@ describe("JQueryClient Tests", function () {
     await jqClient.delete(DEFAULT_URL);
 
     expect(getRequestDetails()).toMatchObject({ url: DEFAULT_URL, method: "DELETE" });
-    expect(getRequestHeaders()).toStrictEqual({});
+    expect(getRequestHeaders()).toStrictEqual({ Accept: "application/json" });
   });
 
   /*  test("simulate 204 no content", async () => {
