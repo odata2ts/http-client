@@ -242,7 +242,7 @@ export abstract class BaseHttpClient<RequestConfigType> {
       url,
       undefined,
       requestConfig,
-      this.getAdditionalHeaders(additionalHeaders),
+      getInternalConfigWithJsonHeaders(additionalHeaders, false)
     );
   }
 
