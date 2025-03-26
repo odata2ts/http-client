@@ -157,7 +157,7 @@ describe("Axios HTTP Client Tests", function () {
 
     expect(requestConfig).toStrictEqual({
       url: DEFAULT_URL,
-      headers: undefined,
+      headers: { Accept: "application/json" },
       method: "DELETE",
     });
   });
