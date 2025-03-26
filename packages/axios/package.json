@@ -1,6 +1,6 @@
 {
   "name": "@odata2ts/http-client-axios",
-  "version": "0.11.3",
+  "version": "0.12.0",
   "description": "Axios based odata HTTP client consumable by odata2ts",
   "keywords": [
     "http client",
@@ -31,7 +31,7 @@
     "test": "vitest run"
   },
   "dependencies": {
-    "@odata2ts/http-client-base": "^0.5.3"
+    "@odata2ts/http-client-base": "^0.5.4"
   },
   "devDependencies": {
     "@types/node": "^17.0.23",

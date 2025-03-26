@@ -3,6 +3,22 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.5.4](https://github.com/odata2ts/http-client/compare/@odata2ts/http-client-base@0.5.3...@odata2ts/http-client-base-v0.5.4) (2025-03-26)
+
+
+### Bug Fixes
+
+* always build all packages before release ([#26](https://github.com/odata2ts/http-client/issues/26)) ([a316f6c](https://github.com/odata2ts/http-client/commit/a316f6ce54c4360c8d6f87799ba6fd9c53bff52c))
+* delete requests with Accept json header ([ea1b06d](https://github.com/odata2ts/http-client/commit/ea1b06d509b490e1e899e96a62a10eac3f65da8e))
+* deploy with code ([#25](https://github.com/odata2ts/http-client/issues/25)) ([3e0e78c](https://github.com/odata2ts/http-client/commit/3e0e78cd2e0b0c3215bc0ed97dd62c75d8b6c5ea))
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * @odata2ts/http-client-api bumped from ^0.6.2 to ^0.6.3
+
 ## [0.5.3](https://github.com/odata2ts/http-client/compare/@odata2ts/http-client-base@0.5.2...@odata2ts/http-client-base@0.5.3) (2024-08-24)
 
 **Note:** Version bump only for package @odata2ts/http-client-base
