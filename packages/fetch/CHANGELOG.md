@@ -9,6 +9,20 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 
 * **fetch:** FetchClientError with full responseData object ([#22](https://github.com/odata2ts/http-client/issues/22)) ([e66fa95](https://github.com/odata2ts/http-client/commit/e66fa952909383d55555eed23d1a8e55fe0081f2))
 
+## [0.9.1](https://github.com/odata2ts/http-client/compare/@odata2ts/fetch-v0.9.0...@odata2ts/fetch-v0.9.1) (2026-01-22)
+
+
+### Features
+
+* create blob request ([#28](https://github.com/odata2ts/http-client/issues/28)) ([4cc238d](https://github.com/odata2ts/http-client/commit/4cc238d3fbe07c09d56732b4b12d0b1b875a3ef5))
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * @odata2ts/http-client-base bumped from ^0.5.4 to ^0.5.5
+
 ## [0.9.0](https://github.com/odata2ts/http-client/compare/@odata2ts/fetch-v0.8.0...@odata2ts/fetch-v0.9.0) (2025-03-26)
 
 

@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.6.4](https://github.com/odata2ts/http-client/compare/@odata2ts/http-client-api-v0.6.3...@odata2ts/http-client-api-v0.6.4) (2026-01-22)
+
+
+### Features
+
+* create blob request ([#28](https://github.com/odata2ts/http-client/issues/28)) ([4cc238d](https://github.com/odata2ts/http-client/commit/4cc238d3fbe07c09d56732b4b12d0b1b875a3ef5))
+
 ## [0.6.3](https://github.com/odata2ts/http-client/compare/@odata2ts/http-client-api@0.6.2...@odata2ts/http-client-api-v0.6.3) (2025-03-26)
 
 
