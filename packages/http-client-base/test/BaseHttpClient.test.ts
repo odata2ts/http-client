@@ -10,7 +10,7 @@ const JSON_VALUE = "application/json";
 const DEFAULT_GET_HEADERS = { Accept: JSON_VALUE };
 const DEFAULT_TYPE = { dataType: "json" };
 const DEFAULT_EDIT_HEADERS = { ...DEFAULT_GET_HEADERS, "Content-Type": JSON_VALUE };
-const DEFAULT_BLOB_HEADERS = { "Content-Type": "image/png", Accept: "image/png" };
+const DEFAULT_BLOB_HEADERS = { "Content-Type": "image/png", Accept: JSON_VALUE };
 
 const DEFAULT_GET_CONFIG = { headers: DEFAULT_GET_HEADERS, ...DEFAULT_TYPE };
 const DEFAULT_EDIT_CONFIG = { headers: DEFAULT_EDIT_HEADERS, ...DEFAULT_TYPE };
@@ -143,7 +143,7 @@ describe("BaseHttpClient Tests", () => {
     expect(mockClient.lastConfig).toBeUndefined();
     expect(mockClient.lastInternalConfig).toStrictEqual({
       dataType: "json",
-      headers: { "Accept": "application/json" }
+      headers: { Accept: "application/json" },
     });
   });
 
@@ -194,6 +194,36 @@ describe("BaseHttpClient Tests", () => {
     expect(mockClient.lastData).toBeUndefined();
     expect(mockClient.lastConfig).toStrictEqual(DEFAULT_CONFIG);
     expect(mockClient.lastInternalConfig).toStrictEqual({ headers: ADDITIONAL_HEADERS, dataType: "stream" });
+  });
+
+  test("create blob request", async () => {
+    const data = new Blob(["a", "b"]);
+    const mimeType = "image/png";
+    await mockClient.createBlob(DEFAULT_URL, data, mimeType);
+
+    expect(mockClient.lastMethod).toBe("POST");
+    expect(mockClient.lastUrl).toBe(DEFAULT_URL);
+    expect(mockClient.lastData).toBe(data);
+    expect(mockClient.lastConfig).toBeUndefined();
+    expect(mockClient.lastInternalConfig).toStrictEqual({
+      dataType: "blob",
+      headers: DEFAULT_BLOB_HEADERS,
+    });
+  });
+
+  test("create blob request with config and headers", async () => {
+    const data = new Blob(["a", "b"]);
+    const mimeType = "image/png";
+    await mockClient.createBlob(DEFAULT_URL, data, mimeType, DEFAULT_CONFIG, ADDITIONAL_HEADERS);
+
+    expect(mockClient.lastMethod).toBe("POST");
+    expect(mockClient.lastUrl).toBe(DEFAULT_URL);
+    expect(mockClient.lastData).toBe(data);
+    expect(mockClient.lastConfig).toStrictEqual(DEFAULT_CONFIG);
+    expect(mockClient.lastInternalConfig).toStrictEqual({
+      dataType: "blob",
+      headers: { ...ADDITIONAL_HEADERS, ...DEFAULT_BLOB_HEADERS },
+    });
   });
 
   test("update blob request", async () => {

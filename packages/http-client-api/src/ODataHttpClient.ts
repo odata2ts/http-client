@@ -93,6 +93,23 @@ export interface ODataHttpClient<RequestConfig = any> {
   ): ODataResponse<ReadableStream>;
 
   /**
+   * Creates binary data (Edm.Stream).
+   *
+   * @param url
+   * @param data
+   * @param mimeType
+   * @param requestConfig
+   * @param additionalHeaders
+   */
+  createBlob(
+    url: string,
+    data: Blob,
+    mimeType: string,
+    requestConfig?: RequestConfig,
+    additionalHeaders?: Record<string, string>,
+  ): ODataResponse<void | Blob>;
+
+  /**
    * Updates binary data (Edm.Stream).
    *
    * @param url

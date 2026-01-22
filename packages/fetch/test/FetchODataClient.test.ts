@@ -225,7 +225,7 @@ describe("FetchClient Tests", function () {
     expect(response.status).toBe(200);
     expect(requestUrl).toBe(DEFAULT_URL);
     expect(getBaseRequestConfig()).toStrictEqual({ ...DEFAULT_REQUEST_CONFIG, method: "PUT", body: DEFAULT_BLOB });
-    expect(getRequestHeaderRecords()).toStrictEqual({ accept: mimeType, "content-type": mimeType });
+    expect(getRequestHeaderRecords()).toStrictEqual({ accept: JSON_VALUE, "content-type": mimeType });
   });
 
   test("get stream request", async () => {
