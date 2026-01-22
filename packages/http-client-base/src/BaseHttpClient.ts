@@ -49,6 +49,21 @@ function getInternalConfigWithJsonHeaders(
   };
 }
 
+function getAdditionalHeaders(jsonResponse: boolean, additionalHeaders?: Record<string, string>, contentType?: string) {
+  let headers: Record<string, string> = {};
+  if (jsonResponse) {
+    headers.Accept = JSON_VALUE;
+  }
+  if (additionalHeaders) {
+    headers = { ...headers, ...additionalHeaders };
+  }
+  if (contentType) {
+    headers["Content-Type"] = contentType;
+  }
+
+  return Object.keys(headers).length ? { headers } : undefined;
+}
+
 export abstract class BaseHttpClient<RequestConfigType> {
   private csrfToken: string | undefined;
   private csrfTokenKey = DEFAULT_CSRF_TOKEN_KEY;
@@ -228,10 +243,6 @@ export abstract class BaseHttpClient<RequestConfigType> {
     );
   }
 
-  private getAdditionalHeaders(additionalHeaders?: Record<string, string>) {
-    return additionalHeaders ? { headers: additionalHeaders } : undefined;
-  }
-
   public delete(
     url: string,
     requestConfig?: RequestConfigType,
@@ -242,7 +253,7 @@ export abstract class BaseHttpClient<RequestConfigType> {
       url,
       undefined,
       requestConfig,
-      getInternalConfigWithJsonHeaders(additionalHeaders, false)
+      getInternalConfigWithJsonHeaders(additionalHeaders, false),
     );
   }
 
@@ -252,7 +263,7 @@ export abstract class BaseHttpClient<RequestConfigType> {
     additionalHeaders?: Record<string, string>,
   ): ODataResponse<Blob> {
     return this.sendRequest(HttpMethods.Get, url, undefined, requestConfig, {
-      ...this.getAdditionalHeaders(additionalHeaders),
+      ...getAdditionalHeaders(false, additionalHeaders),
       dataType: "blob",
     });
   }
@@ -263,8 +274,21 @@ export abstract class BaseHttpClient<RequestConfigType> {
     additionalHeaders?: Record<string, string>,
   ): ODataResponse<ReadableStream> {
     return this.sendRequest(HttpMethods.Get, url, undefined, requestConfig, {
-      ...this.getAdditionalHeaders(additionalHeaders),
+      ...getAdditionalHeaders(false, additionalHeaders),
       dataType: "stream",
+    });
+  }
+
+  public createBlob(
+    url: string,
+    data: Blob,
+    mimeType: string,
+    requestConfig?: RequestConfigType,
+    additionalHeaders?: Record<string, string>,
+  ): ODataResponse<void | Blob> {
+    return this.sendRequest(HttpMethods.Post, url, data, requestConfig, {
+      ...getAdditionalHeaders(true, additionalHeaders, mimeType),
+      dataType: "blob",
     });
   }
 
@@ -276,7 +300,7 @@ export abstract class BaseHttpClient<RequestConfigType> {
     additionalHeaders?: Record<string, string>,
   ): ODataResponse<void | Blob> {
     return this.sendRequest(HttpMethods.Put, url, data, requestConfig, {
-      headers: { ...additionalHeaders, Accept: mimeType, "Content-Type": mimeType },
+      ...getAdditionalHeaders(true, additionalHeaders, mimeType),
       dataType: "blob",
     });
   }

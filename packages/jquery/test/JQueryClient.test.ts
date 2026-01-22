@@ -195,7 +195,7 @@ describe("JQueryClient Tests", function () {
     await jqClient.updateBlob(DEFAULT_URL, new Blob(), mimeType);
 
     expect(getRequestDetails()).toMatchObject({ url: DEFAULT_URL, method: "PUT", xhrFields: { responseType: "blob" } });
-    expect(getRequestHeaders()).toStrictEqual({ Accept: mimeType, "Content-Type": mimeType });
+    expect(getRequestHeaders()).toStrictEqual({ Accept: JSON_VALUE, "Content-Type": mimeType });
   });
 
   test("stream request not supported", async () => {

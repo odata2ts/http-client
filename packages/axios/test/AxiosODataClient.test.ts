@@ -188,7 +188,7 @@ describe("Axios HTTP Client Tests", function () {
 
     expect(requestConfig).toStrictEqual({
       url: DEFAULT_URL,
-      headers: { Accept: mimeType, "Content-Type": mimeType },
+      headers: { Accept: JSON_VALUE, "Content-Type": mimeType },
       method: "PUT",
       responseType: "blob",
       data,
