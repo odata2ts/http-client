@@ -1,29 +1,31 @@
 /// <reference path="../../../node_modules/@types/jquery/JQueryStatic.d.ts" />
 
-import { HttpResponseModel, ODataHttpClient } from "@odata2ts/http-client-api";
 import {
-  BaseHttpClient,
-  BaseHttpClientOptions,
-  HttpMethods,
-  InternalHttpClientConfig,
-} from "@odata2ts/http-client-base";
-import { AjaxRequestConfig, getDefaultConfig, mergeAjaxConfig } from "./AjaxRequestConfig";
+  HttpResponseModel,
+  ODataHttpClient,
+  ODataHttpClientOptions,
+  ODataHttpMethods,
+} from "@odata2ts/http-client-api";
+import { BaseHttpClient, BaseRequestConfig } from "@odata2ts/http-client-base";
 import { JQueryClientError } from "./JQueryClientError";
+import { JQueryRequestConfig, mergeConfigs } from "./JQueryRequestConfig";
 
 import jqXHR = JQuery.jqXHR;
 
 export const DEFAULT_ERROR_MESSAGE = "No error message!";
 
-export interface ClientOptions extends BaseHttpClientOptions {}
+interface InternalRequestConfig
+  extends JQueryRequestConfig,
+    Pick<JQuery.AjaxSettings, "url" | "data" | "dataType" | "method" | "xhrFields"> {}
 
-export class JQueryClient extends BaseHttpClient<AjaxRequestConfig> implements ODataHttpClient<AjaxRequestConfig> {
+export class JQueryClient extends BaseHttpClient<JQueryRequestConfig> implements ODataHttpClient<JQueryRequestConfig> {
   private readonly client: JQueryStatic;
-  private readonly config: JQuery.AjaxSettings;
+  private readonly config: JQueryRequestConfig;
 
-  constructor(jquery: JQueryStatic, config?: AjaxRequestConfig, clientOptions?: ClientOptions) {
+  constructor(jquery: JQueryStatic, config?: JQueryRequestConfig, clientOptions?: ODataHttpClientOptions) {
     super(clientOptions);
     this.client = jquery;
-    this.config = getDefaultConfig(config);
+    this.config = config ?? {};
   }
 
   protected mapHeaders(jqXhr: jqXHR): Record<string, string> {
@@ -44,26 +46,34 @@ export class JQueryClient extends BaseHttpClient<AjaxRequestConfig> implements O
   }
 
   protected async executeRequest<ResponseModel>(
-    method: HttpMethods,
+    method: ODataHttpMethods,
     url: string,
     data: any,
-    requestConfig?: JQuery.AjaxSettings,
-    internalConfig: InternalHttpClientConfig = {},
+    requestConfig?: JQueryRequestConfig,
+    internalConfig: BaseRequestConfig = {},
   ): Promise<HttpResponseModel<ResponseModel>> {
-    const withInternalConfig = mergeAjaxConfig({ headers: internalConfig.headers }, requestConfig);
-    const { params, ...mergedConfig } = mergeAjaxConfig(this.config, withInternalConfig);
-    mergedConfig.method = method;
-    mergedConfig.data = JSON.stringify(data);
-    mergedConfig.url = url;
+    const { headers } = internalConfig;
+    const { params, ...mergedConfig } = mergeConfigs(this.config, mergeConfigs({ headers }, requestConfig));
+
+    // set core inputs for request
+    const resultConfig: InternalRequestConfig = {
+      ...mergedConfig,
+      method,
+      data: JSON.stringify(data),
+      url,
+    };
+
+    // apply additional query params to the URL
     if (params && Object.values(params).length) {
-      mergedConfig.url +=
+      resultConfig.url +=
         (url.match(/\?/) ? "&" : "?") +
         // @ts-ignore
         new URLSearchParams(params).toString();
     }
 
+    // handling of extra data types: blob and stream (not supported)
     if (internalConfig.dataType === "blob") {
-      mergedConfig.xhrFields = { responseType: "blob" };
+      resultConfig.xhrFields = { responseType: "blob" };
     } else if (internalConfig.dataType === "stream") {
       throw new Error("Streaming is not supported by the JqueryClient!");
     }
@@ -71,7 +81,7 @@ export class JQueryClient extends BaseHttpClient<AjaxRequestConfig> implements O
     // the actual request
     return new Promise((resolve, reject) => {
       this.client.ajax({
-        ...mergedConfig,
+        ...resultConfig,
         success: (response: any, textStatus: string, jqXHR: JQuery.jqXHR) => {
           resolve({
             status: jqXHR.status,
