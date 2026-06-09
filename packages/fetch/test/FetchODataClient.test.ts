@@ -44,13 +44,7 @@ describe("FetchClient Tests", function () {
     };
   };
 
-  const getRequestHeaderRecords = () => {
-    const headers = requestConfig?.headers as Headers;
-    const result: Record<string, string> = {};
-
-    headers.forEach((val, key) => (result[key] = val));
-    return result;
-  };
+  const getRequestHeaderRecords = () => requestConfig?.headers ?? {};
 
   /**
    * request config without headers
