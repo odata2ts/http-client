@@ -1,3 +1,3 @@
-export { AjaxRequestConfig } from "./AjaxRequestConfig";
+export { JQueryRequestConfig } from "./JQueryRequestConfig";
 export * from "./JQueryClient";
 export { JQueryClientError } from "./JQueryClientError";

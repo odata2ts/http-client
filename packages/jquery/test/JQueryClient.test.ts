@@ -1,9 +1,9 @@
 import { beforeEach, describe, expect, test } from "vitest";
-import { AjaxRequestConfig, JQueryClient } from "../src";
+import { JQueryClient, JQueryRequestConfig } from "../src";
 import { JqMock } from "./JQueryMock";
 
 const DEFAULT_URL = "TEST/hi";
-const DEFAULT_REQUEST_CONFIG: AjaxRequestConfig = { timeout: 666, headers: { test: "test" } };
+const DEFAULT_REQUEST_CONFIG: JQueryRequestConfig = { timeout: 666, headers: { test: "test" } };
 const JSON_VALUE = "application/json";
 const DEFAULT_GET_HEADERS = { Accept: JSON_VALUE };
 const DEFAULT_EDIT_HEADERS = { ...DEFAULT_GET_HEADERS, "Content-Type": JSON_VALUE };
@@ -15,8 +15,6 @@ describe("JQueryClient Tests", function () {
   const DEFAULT_CONFIG = {
     url: DEFAULT_URL,
     method: "GET",
-    // dataType: "json",
-    cache: false,
   };
 
   const getRequestData = () => {
@@ -90,8 +88,8 @@ describe("JQueryClient Tests", function () {
     jqClient = new JQueryClient(jqMock, { headers: { Accept: "x", def: "default" } });
 
     const headers = { Accept: "hey", "Content-Type": "Ho", test: "test" };
-    const config: AjaxRequestConfig = {
-      // @ts-ignore: method is not exposed as it should not be overridden
+    const config: JQueryRequestConfig = {
+      // @ts-expect-error: method is not exposed as it should not be overridden
       method: "POST",
       headers,
     };
