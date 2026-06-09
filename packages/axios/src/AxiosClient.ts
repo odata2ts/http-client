@@ -1,10 +1,11 @@
-import { HttpResponseModel, ODataHttpClient } from "@odata2ts/http-client-api";
 import {
-  BaseHttpClient,
-  BaseHttpClientOptions,
-  HttpMethods,
-  InternalHttpClientConfig,
-} from "@odata2ts/http-client-base";
+  HttpResponseModel,
+  ODataHttpClient,
+  ODataHttpClientOptions,
+  ODataHttpMethods,
+} from "@odata2ts/http-client-api";
+import { ODataHttpDataTypes } from "@odata2ts/http-client-api/lib/ODataHttpDataTypes";
+import { BaseHttpClient, BaseRequestConfig } from "@odata2ts/http-client-base";
 import axios, {
   AxiosError,
   AxiosInstance,
@@ -14,8 +15,6 @@ import axios, {
 } from "axios";
 import { AxiosClientError } from "./AxiosClientError";
 import { AxiosRequestConfig, mergeConfig } from "./AxiosRequestConfig";
-
-export interface ClientOptions extends BaseHttpClientOptions {}
 
 export const DEFAULT_ERROR_MESSAGE = "No error message!";
 const FAILURE_NO_RESPONSE = "No response from server! Failure: ";
@@ -28,34 +27,42 @@ function buildErrorMessage(prefix: string, error: any) {
   return prefix + (msg || DEFAULT_ERROR_MESSAGE);
 }
 
+interface InternalRequestConfig
+  extends AxiosRequestConfig,
+    Pick<OriginalRequestConfig, "method" | "url" | "responseType"> {}
+
 export class AxiosClient extends BaseHttpClient<AxiosRequestConfig> implements ODataHttpClient<AxiosRequestConfig> {
   protected readonly client: AxiosInstance;
 
-  constructor(config?: AxiosRequestConfig, clientOptions?: ClientOptions) {
+  constructor(config?: AxiosRequestConfig, clientOptions?: ODataHttpClientOptions) {
     super(clientOptions);
     this.client = axios.create(config);
   }
 
   protected async executeRequest<ResponseModel>(
-    method: HttpMethods,
+    method: ODataHttpMethods,
     url: string,
     data: any,
     requestConfig: AxiosRequestConfig | undefined = {},
-    internalConfig: InternalHttpClientConfig = {},
+    internalConfig: BaseRequestConfig = {},
   ): Promise<HttpResponseModel<ResponseModel>> {
-    // add URL, HTTP method and additional headers to the request config
     const { headers } = internalConfig;
-    const config: OriginalRequestConfig = mergeConfig({ headers }, requestConfig, { url, method });
-    if (typeof data !== "undefined") {
-      config.data = data;
-    }
 
-    if (internalConfig.dataType && internalConfig.dataType !== "json") {
-      config.responseType = internalConfig.dataType;
+    // set core inputs for request
+    const resultConfig: InternalRequestConfig = {
+      ...mergeConfig({ headers }, requestConfig),
+      url,
+      method,
+    };
+    if (typeof data !== "undefined") {
+      resultConfig.data = data;
+    }
+    if (internalConfig.dataType && internalConfig.dataType !== ODataHttpDataTypes.JSON) {
+      resultConfig.responseType = internalConfig.dataType;
     }
 
     try {
-      return await this.client.request(config);
+      return await this.client.request(resultConfig);
     } catch (error: any) {
       if ((error as AxiosError).isAxiosError) {
         const axiosError = error as AxiosError;
