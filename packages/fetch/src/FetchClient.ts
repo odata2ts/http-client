@@ -1,14 +1,13 @@
-import { HttpResponseModel, ODataHttpClient } from "@odata2ts/http-client-api";
 import {
-  BaseHttpClient,
-  BaseHttpClientOptions,
-  HttpMethods,
-  InternalHttpClientConfig,
-} from "@odata2ts/http-client-base";
+  HttpResponseModel,
+  ODataHttpClient,
+  ODataHttpClientOptions,
+  ODataHttpMethods,
+} from "@odata2ts/http-client-api";
+import { ODataHttpDataTypes } from "@odata2ts/http-client-api/lib/ODataHttpDataTypes";
+import { BaseHttpClient, BaseRequestConfig } from "@odata2ts/http-client-base";
 import { FetchClientError } from "./FetchClientError";
 import { FetchRequestConfig, getDefaultConfig, mergeFetchConfig } from "./FetchRequestConfig";
-
-export interface ClientOptions extends BaseHttpClientOptions {}
 
 export const DEFAULT_ERROR_MESSAGE = "No error message!";
 const FETCH_FAILURE_MESSAGE = "OData request failed entirely: ";
@@ -21,27 +20,36 @@ function buildErrorMessage(prefix: string, error: any) {
   return prefix + (msg || DEFAULT_ERROR_MESSAGE);
 }
 
-export class FetchClient extends BaseHttpClient<FetchRequestConfig> implements ODataHttpClient<FetchRequestConfig> {
-  protected readonly config: RequestInit;
+interface InternalFetchConfig extends FetchRequestConfig, Pick<RequestInit, "method" | "body"> {}
 
-  constructor(config?: FetchRequestConfig, clientOptions?: ClientOptions) {
+export class FetchClient extends BaseHttpClient<FetchRequestConfig> implements ODataHttpClient<FetchRequestConfig> {
+  protected readonly config: FetchRequestConfig;
+
+  constructor(config?: FetchRequestConfig, clientOptions?: ODataHttpClientOptions) {
     super(clientOptions);
     this.config = getDefaultConfig(config);
   }
 
   protected async executeRequest<ResponseModel>(
-    method: HttpMethods,
+    method: ODataHttpMethods,
     url: string,
     data: any,
     requestConfig: FetchRequestConfig | undefined = {},
-    internalConfig: InternalHttpClientConfig = {},
+    internalConfig: BaseRequestConfig = {},
   ): Promise<HttpResponseModel<ResponseModel>> {
     const { headers, noBodyEvaluation } = internalConfig;
     const { params, ...config } = mergeFetchConfig(this.config, { headers }, requestConfig);
-    config.method = method;
+
+    // set core inputs for request
+    const resultConfig: InternalFetchConfig = {
+      ...config,
+      method,
+    };
     if (typeof data !== "undefined") {
-      config.body = internalConfig.dataType === "json" ? JSON.stringify(data) : data;
+      resultConfig.body = internalConfig.dataType === ODataHttpDataTypes.JSON ? JSON.stringify(data) : data;
     }
+
+    // apply additional query params to the URL
     let finalUrl = url;
     if (params && Object.values(params).length) {
       finalUrl +=
@@ -53,7 +61,7 @@ export class FetchClient extends BaseHttpClient<FetchRequestConfig> implements O
     // the actual request
     let response: Response;
     try {
-      response = await fetch(finalUrl, config);
+      response = await fetch(finalUrl, resultConfig);
     } catch (fetchError) {
       throw new FetchClientError(
         buildErrorMessage(FETCH_FAILURE_MESSAGE, fetchError),
@@ -103,7 +111,7 @@ export class FetchClient extends BaseHttpClient<FetchRequestConfig> implements O
     };
   }
 
-  protected async getResponseBody(response: Response, options: InternalHttpClientConfig) {
+  protected async getResponseBody(response: Response, options: BaseRequestConfig) {
     if (response.status === 204) {
       return undefined;
     }

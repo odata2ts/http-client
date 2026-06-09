@@ -1,5 +1,6 @@
-const DEFAULT_CONFIG: RequestInit = {
-  // headers: { Accept: "application/json", "Content-Type": "application/json" },
+import { ODataRequestConfig } from "@odata2ts/http-client-api";
+
+const DEFAULT_CONFIG: FetchRequestConfig = {
   cache: "no-store",
 };
 
@@ -7,47 +8,41 @@ const DEFAULT_CONFIG: RequestInit = {
  * Available config options for end user when making a given request.
  */
 export interface FetchRequestConfig
-  extends Partial<Pick<RequestInit, "credentials" | "cache" | "mode" | "redirect" | "referrerPolicy" | "signal">> {
-  headers?: Record<string, string> | Headers;
-  /**
-   * Add query params.
-   */
-  params?: Record<string, string | number | boolean | Array<string | number | boolean>>;
-}
+  extends ODataRequestConfig,
+    Partial<Pick<RequestInit, "credentials" | "cache" | "mode" | "redirect" | "referrerPolicy" | "signal">> {}
 
-export interface InternalFetchConfig extends Omit<RequestInit, "headers">, Pick<FetchRequestConfig, "params"> {
-  headers: Headers;
-}
-
-export function getDefaultConfig(config?: FetchRequestConfig): RequestInit {
+export function getDefaultConfig(config?: FetchRequestConfig): FetchRequestConfig {
   return mergeFetchConfig(DEFAULT_CONFIG, config);
 }
 
 export function mergeFetchConfig(): undefined;
-export function mergeFetchConfig(...configs: Array<RequestInit | undefined>): InternalFetchConfig;
-export function mergeFetchConfig(...configs: Array<RequestInit | undefined>) {
+export function mergeFetchConfig(...configs: Array<FetchRequestConfig | undefined>): FetchRequestConfig;
+export function mergeFetchConfig(...configs: Array<FetchRequestConfig | undefined>) {
   if (!configs.length) {
     return undefined;
   }
   return configs
-    .filter((c): c is RequestInit => !!c)
-    .reduce<InternalFetchConfig>(
+    .filter((c): c is FetchRequestConfig => !!c)
+    .reduce<FetchRequestConfig>(
       (collector, current) => {
+        const { headers: prevHeaders, ...prevPassThrough } = collector;
         const { headers, ...passThrough } = current;
-        const collectedHeaders = collector.headers as Headers;
 
-        // headers as Headers object
-        if (headers && headers instanceof Headers) {
-          // @ts-ignore: fails on CI test
-          headers.forEach((val, key) => collectedHeaders.set(key, val));
-        }
-        // headers as plain Record<string,string>
-        else if (headers) {
-          Object.entries(headers).forEach(([key, val]) => collectedHeaders.set(key, val));
+        if (headers) {
+          Object.entries(cleanHeaders(headers)).forEach(([key, val]) => (collector.headers![key] = val));
         }
 
         return { ...collector, ...passThrough };
       },
-      { headers: new Headers() },
+      { headers: {} },
     );
+}
+
+function cleanHeaders(headers: Record<string, string>): Record<string, string> {
+  const result: Record<string, string> = {};
+  const temp = new Headers();
+  Object.entries(headers).forEach(([key, val]) => temp.set(key, val));
+  temp.forEach((val, key) => (result[key] = val));
+
+  return result;
 }
