@@ -1,12 +1,13 @@
+import { ODataRequestConfig } from "./ODataRequestConfig";
 import { ODataResponse } from "./ODataResponseModel";
 
 /**
  * Retrieves the configuration type for the given HTTP client.
  */
-export type ODataHttpClientConfig<ClientType extends ODataHttpClient> =
+export type ODataHttpClientConfig<ClientType extends ODataHttpClient<any>> =
   ClientType extends ODataHttpClient<infer Config> ? Config : never;
 
-export interface ODataHttpClient<RequestConfig = any> {
+export interface ODataHttpClient<RequestConfig extends ODataRequestConfig = ODataRequestConfig> {
   /**
    * Create a model or collection entry.
    *
