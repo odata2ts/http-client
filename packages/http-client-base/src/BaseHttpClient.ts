@@ -1,26 +1,17 @@
-import { HttpResponseModel, ODataClientError, ODataResponse } from "@odata2ts/http-client-api";
+import {
+  DATA_MANIPULATION_METHODS,
+  HttpResponseModel,
+  ODataClientError,
+  ODataHttpClientOptions,
+  ODataHttpMethods,
+  ODataRequestConfig,
+  ODataResponse,
+} from "@odata2ts/http-client-api";
+import { ODataHttpDataTypes } from "@odata2ts/http-client-api/lib/ODataHttpDataTypes";
 import { ErrorMessageRetriever, retrieveErrorMessage } from "./ErrorMessageRetriever";
-import { HttpMethods } from "./HttpMethods";
 
-export interface BaseHttpClientOptions {
-  /**
-   * Enable automatic CSRF token handling.
-   */
-  useCsrfProtection?: boolean;
-  /**
-   * Specify the URL from which the token is fetched.
-   * This could be any path to your OData service, since the token is exchanged via HTTP request headers.
-   * However, it should be a fast response and usually the root URL to the OData service is a good choice.
-   */
-  csrfTokenFetchUrl?: string;
-}
-
-export interface InternalHttpClientConfig {
-  dataType?: "json" | "blob" | "stream";
-  /**
-   * Additional headers set internally by services or HttpClient implementation.
-   */
-  headers?: Record<string, string>;
+export interface BaseRequestConfig extends ODataRequestConfig {
+  dataType?: ODataHttpDataTypes;
   /**
    * Very special option needed for FetchClient to not evaluate the response body in certain situations.
    */
@@ -28,8 +19,6 @@ export interface InternalHttpClientConfig {
 }
 
 export const DEFAULT_CSRF_TOKEN_KEY = "x-csrf-token";
-
-const EDIT_METHODS = [HttpMethods.Post, HttpMethods.Put, HttpMethods.Patch, HttpMethods.Delete];
 const FAILURE_MISSING_CSRF_URL =
   "When automatic CSRF token handling is activated, the URL must be supplied via attribute [csrfTokenFetchUrl]!";
 const FAILURE_MISSING_URL = "Value for URL must be provided!";
@@ -38,14 +27,14 @@ const JSON_VALUE = "application/json";
 function getInternalConfigWithJsonHeaders(
   headers?: Record<string, string>,
   setContentType: boolean = true,
-): InternalHttpClientConfig {
+): BaseRequestConfig {
   return {
     headers: {
       Accept: JSON_VALUE,
       ...(setContentType ? { "Content-Type": JSON_VALUE } : undefined),
       ...headers,
     },
-    dataType: "json",
+    dataType: ODataHttpDataTypes.JSON,
   };
 }
 
@@ -70,7 +59,7 @@ export abstract class BaseHttpClient<RequestConfigType> {
 
   protected retrieveErrorMessage: ErrorMessageRetriever = retrieveErrorMessage;
 
-  protected constructor(private baseOptions: BaseHttpClientOptions = { useCsrfProtection: false }) {
+  protected constructor(private baseOptions: ODataHttpClientOptions = { useCsrfProtection: false }) {
     if (baseOptions.useCsrfProtection && !baseOptions.csrfTokenFetchUrl?.trim()) {
       throw new Error(FAILURE_MISSING_CSRF_URL);
     }
@@ -88,11 +77,11 @@ export abstract class BaseHttpClient<RequestConfigType> {
    * @param internalConfig request configuration from base client including additional headers which should override end user configurations
    */
   protected abstract executeRequest<ResponseModel>(
-    method: HttpMethods,
+    method: ODataHttpMethods,
     url: string,
     data: any,
     config?: RequestConfigType,
-    internalConfig?: InternalHttpClientConfig,
+    internalConfig?: BaseRequestConfig,
   ): Promise<HttpResponseModel<ResponseModel>>;
 
   public getCsrfTokenKey() {
@@ -116,7 +105,7 @@ export abstract class BaseHttpClient<RequestConfigType> {
 
   protected async fetchSecurityToken(): Promise<string | undefined> {
     const fetchUrl = this.baseOptions!.csrfTokenFetchUrl!;
-    const response = await this.sendRequest(HttpMethods.Get, fetchUrl, undefined, undefined, {
+    const response = await this.sendRequest(ODataHttpMethods.Get, fetchUrl, undefined, undefined, {
       noBodyEvaluation: true,
       headers: { [this.csrfTokenKey]: "Fetch", Accept: JSON_VALUE },
     });
@@ -135,11 +124,11 @@ export abstract class BaseHttpClient<RequestConfigType> {
    * @private
    */
   private async sendRequest<ResponseModel>(
-    method: HttpMethods,
+    method: ODataHttpMethods,
     url: string,
     data: any,
     requestConfig?: RequestConfigType,
-    internalConfig: InternalHttpClientConfig = {},
+    internalConfig: BaseRequestConfig = {},
   ): Promise<HttpResponseModel<ResponseModel>> {
     // noinspection SuspiciousTypeOfGuard
     if (typeof url !== "string") {
@@ -147,7 +136,7 @@ export abstract class BaseHttpClient<RequestConfigType> {
     }
 
     // setup automatic CSRF token handling
-    if (this.baseOptions.useCsrfProtection && EDIT_METHODS.includes(method)) {
+    if (this.baseOptions.useCsrfProtection && DATA_MANIPULATION_METHODS.includes(method)) {
       const [tokenKey, tokenValue] = await this.setupSecurityToken();
       if (tokenValue) {
         if (!internalConfig.headers) {
@@ -190,7 +179,7 @@ export abstract class BaseHttpClient<RequestConfigType> {
     additionalHeaders?: Record<string, string>,
   ): Promise<HttpResponseModel<ResponseModel>> {
     return this.sendRequest<ResponseModel>(
-      HttpMethods.Get,
+      ODataHttpMethods.Get,
       url,
       undefined,
       requestConfig,
@@ -205,7 +194,7 @@ export abstract class BaseHttpClient<RequestConfigType> {
     additionalHeaders?: Record<string, string>,
   ): Promise<HttpResponseModel<ResponseModel>> {
     return this.sendRequest<ResponseModel>(
-      HttpMethods.Post,
+      ODataHttpMethods.Post,
       url,
       data,
       requestConfig,
@@ -220,7 +209,7 @@ export abstract class BaseHttpClient<RequestConfigType> {
     additionalHeaders?: Record<string, string>,
   ): Promise<HttpResponseModel<ResponseModel>> {
     return this.sendRequest<ResponseModel>(
-      HttpMethods.Put,
+      ODataHttpMethods.Put,
       url,
       data,
       requestConfig,
@@ -235,7 +224,7 @@ export abstract class BaseHttpClient<RequestConfigType> {
     additionalHeaders?: Record<string, string>,
   ): Promise<HttpResponseModel<ResponseModel>> {
     return this.sendRequest<ResponseModel>(
-      HttpMethods.Patch,
+      ODataHttpMethods.Patch,
       url,
       data,
       requestConfig,
@@ -249,7 +238,7 @@ export abstract class BaseHttpClient<RequestConfigType> {
     additionalHeaders?: Record<string, string>,
   ): Promise<HttpResponseModel<void>> {
     return this.sendRequest<void>(
-      HttpMethods.Delete,
+      ODataHttpMethods.Delete,
       url,
       undefined,
       requestConfig,
@@ -262,9 +251,9 @@ export abstract class BaseHttpClient<RequestConfigType> {
     requestConfig?: RequestConfigType,
     additionalHeaders?: Record<string, string>,
   ): ODataResponse<Blob> {
-    return this.sendRequest(HttpMethods.Get, url, undefined, requestConfig, {
+    return this.sendRequest(ODataHttpMethods.Get, url, undefined, requestConfig, {
       ...getAdditionalHeaders(false, additionalHeaders),
-      dataType: "blob",
+      dataType: ODataHttpDataTypes.BLOB,
     });
   }
 
@@ -273,9 +262,9 @@ export abstract class BaseHttpClient<RequestConfigType> {
     requestConfig?: RequestConfigType,
     additionalHeaders?: Record<string, string>,
   ): ODataResponse<ReadableStream> {
-    return this.sendRequest(HttpMethods.Get, url, undefined, requestConfig, {
+    return this.sendRequest(ODataHttpMethods.Get, url, undefined, requestConfig, {
       ...getAdditionalHeaders(false, additionalHeaders),
-      dataType: "stream",
+      dataType: ODataHttpDataTypes.STREAM,
     });
   }
 
@@ -286,9 +275,9 @@ export abstract class BaseHttpClient<RequestConfigType> {
     requestConfig?: RequestConfigType,
     additionalHeaders?: Record<string, string>,
   ): ODataResponse<void | Blob> {
-    return this.sendRequest(HttpMethods.Post, url, data, requestConfig, {
+    return this.sendRequest(ODataHttpMethods.Post, url, data, requestConfig, {
       ...getAdditionalHeaders(true, additionalHeaders, mimeType),
-      dataType: "blob",
+      dataType: ODataHttpDataTypes.BLOB,
     });
   }
 
@@ -299,9 +288,9 @@ export abstract class BaseHttpClient<RequestConfigType> {
     requestConfig?: RequestConfigType,
     additionalHeaders?: Record<string, string>,
   ): ODataResponse<void | Blob> {
-    return this.sendRequest(HttpMethods.Put, url, data, requestConfig, {
+    return this.sendRequest(ODataHttpMethods.Put, url, data, requestConfig, {
       ...getAdditionalHeaders(true, additionalHeaders, mimeType),
-      dataType: "blob",
+      dataType: ODataHttpDataTypes.BLOB,
     });
   }
 }

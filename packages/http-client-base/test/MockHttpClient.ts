@@ -1,6 +1,12 @@
 import crypto from "crypto";
-import { HttpResponseModel, ODataClientError, ODataHttpClient } from "@odata2ts/http-client-api";
-import { BaseHttpClient, BaseHttpClientOptions, HttpMethods, InternalHttpClientConfig } from "../src";
+import {
+  HttpResponseModel,
+  ODataClientError,
+  ODataHttpClient,
+  ODataHttpClientOptions,
+  ODataHttpMethods,
+} from "@odata2ts/http-client-api";
+import { BaseHttpClient, BaseRequestConfig } from "../src";
 
 export class MockClientError extends Error implements ODataClientError {
   constructor(
@@ -23,16 +29,16 @@ export interface MockRequestConfig {
 
 export class MockHttpClient extends BaseHttpClient<MockRequestConfig> implements ODataHttpClient<MockRequestConfig> {
   public generatedCsrfToken?: string;
-  public lastMethod?: HttpMethods;
+  public lastMethod?: ODataHttpMethods;
   public lastUrl?: string;
   public lastData?: any;
   public lastConfig?: MockRequestConfig;
-  public lastInternalConfig?: InternalHttpClientConfig;
+  public lastInternalConfig?: BaseRequestConfig;
 
   public simulateClientFailure: boolean = false;
   public simulateTokenExpired: boolean = false;
 
-  constructor(baseOptions?: BaseHttpClientOptions) {
+  constructor(baseOptions?: ODataHttpClientOptions) {
     super(baseOptions);
   }
 
@@ -41,11 +47,11 @@ export class MockHttpClient extends BaseHttpClient<MockRequestConfig> implements
   }
 
   executeRequest<ResponseModel>(
-    method: HttpMethods,
+    method: ODataHttpMethods,
     url: string,
     data: any,
     config: MockRequestConfig | undefined,
-    internalConfig?: InternalHttpClientConfig,
+    internalConfig?: BaseRequestConfig,
   ): Promise<HttpResponseModel<ResponseModel>> {
     const mergedConfig: MockRequestConfig | undefined =
       config && internalConfig?.headers

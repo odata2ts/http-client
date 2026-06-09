@@ -1,5 +1,5 @@
+import { ODataHttpMethods } from "@odata2ts/http-client-api";
 import { beforeEach, describe, expect, test } from "vitest";
-import { HttpMethods } from "../src";
 import { MockClientError, MockHttpClient, MockRequestConfig } from "./MockHttpClient";
 
 const DEFAULT_URL = "https://test.testing.com/myService/theEntity";
@@ -25,7 +25,7 @@ describe("BaseHttpClient Tests", () => {
   test("simple GET request", async () => {
     await mockClient.get(DEFAULT_URL);
 
-    expect(mockClient.lastMethod).toBe(HttpMethods.Get);
+    expect(mockClient.lastMethod).toBe(ODataHttpMethods.Get);
     expect(mockClient.lastUrl).toBe(DEFAULT_URL);
     expect(mockClient.lastData).toBeUndefined();
     expect(mockClient.lastConfig).toBeUndefined();
@@ -101,7 +101,7 @@ describe("BaseHttpClient Tests", () => {
   test("simple PUT request", async () => {
     await mockClient.put(DEFAULT_URL, DEFAULT_DATA);
 
-    expect(mockClient.lastMethod).toBe(HttpMethods.Put);
+    expect(mockClient.lastMethod).toBe(ODataHttpMethods.Put);
     expect(mockClient.lastUrl).toBe(DEFAULT_URL);
     expect(mockClient.lastData).toStrictEqual(DEFAULT_DATA);
     expect(mockClient.lastConfig).toBeUndefined();
@@ -119,7 +119,7 @@ describe("BaseHttpClient Tests", () => {
   test("simple PATCH request", async () => {
     await mockClient.patch(DEFAULT_URL, DEFAULT_DATA);
 
-    expect(mockClient.lastMethod).toBe(HttpMethods.Patch);
+    expect(mockClient.lastMethod).toBe(ODataHttpMethods.Patch);
     expect(mockClient.lastUrl).toBe(DEFAULT_URL);
     expect(mockClient.lastData).toStrictEqual(DEFAULT_DATA);
     expect(mockClient.lastConfig).toBeUndefined();
@@ -150,7 +150,7 @@ describe("BaseHttpClient Tests", () => {
   test("DELETE with config", async () => {
     await mockClient.delete(DEFAULT_URL, DEFAULT_CONFIG);
 
-    expect(mockClient.lastMethod).toBe(HttpMethods.Delete);
+    expect(mockClient.lastMethod).toBe(ODataHttpMethods.Delete);
     expect(mockClient.lastUrl).toBe(DEFAULT_URL);
     expect(mockClient.lastData).toBeUndefined();
     expect(mockClient.lastConfig).toStrictEqual(DEFAULT_CONFIG);
@@ -169,7 +169,7 @@ describe("BaseHttpClient Tests", () => {
   test("get blob request with config and headers", async () => {
     await mockClient.getBlob(DEFAULT_URL, DEFAULT_CONFIG, ADDITIONAL_HEADERS);
 
-    expect(mockClient.lastMethod).toBe(HttpMethods.Get);
+    expect(mockClient.lastMethod).toBe(ODataHttpMethods.Get);
     expect(mockClient.lastUrl).toBe(DEFAULT_URL);
     expect(mockClient.lastData).toBeUndefined();
     expect(mockClient.lastConfig).toStrictEqual(DEFAULT_CONFIG);
@@ -189,7 +189,7 @@ describe("BaseHttpClient Tests", () => {
   test("get stream request with config and headers", async () => {
     await mockClient.getStream(DEFAULT_URL, DEFAULT_CONFIG, ADDITIONAL_HEADERS);
 
-    expect(mockClient.lastMethod).toBe(HttpMethods.Get);
+    expect(mockClient.lastMethod).toBe(ODataHttpMethods.Get);
     expect(mockClient.lastUrl).toBe(DEFAULT_URL);
     expect(mockClient.lastData).toBeUndefined();
     expect(mockClient.lastConfig).toStrictEqual(DEFAULT_CONFIG);
