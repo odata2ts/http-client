@@ -1,24 +1,20 @@
+import { ODataRequestConfig } from "@odata2ts/http-client-api";
 import { AxiosRequestConfig as OriginalRequestConfig } from "axios";
 
-export interface AxiosRequestConfig extends Omit<OriginalRequestConfig, "method" | "url" | "headers"> {
-  headers?: Record<string, string>;
-}
-
-export interface InternalRequestConfig extends Omit<OriginalRequestConfig, "headers"> {
-  url?: string;
-  headers?: Record<string, string>;
-}
+export interface AxiosRequestConfig
+  extends ODataRequestConfig,
+    Omit<OriginalRequestConfig, "method" | "url" | "headers" | "params"> {}
 
 export function mergeConfig(): undefined;
-export function mergeConfig(...configs: Array<InternalRequestConfig | undefined>): InternalRequestConfig;
-export function mergeConfig(...configs: Array<InternalRequestConfig | undefined>) {
+export function mergeConfig(...configs: Array<AxiosRequestConfig | undefined>): AxiosRequestConfig;
+export function mergeConfig(...configs: Array<AxiosRequestConfig | undefined>) {
   if (!configs.length) {
     return undefined;
   }
 
   return configs
-    .filter((c): c is InternalRequestConfig => !!c)
-    .reduce<InternalRequestConfig>(
+    .filter((c): c is AxiosRequestConfig => !!c)
+    .reduce<AxiosRequestConfig>(
       (collector, current) => {
         const { headers, ...passThrough } = current;
 
