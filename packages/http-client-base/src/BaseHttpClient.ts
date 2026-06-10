@@ -246,6 +246,22 @@ export abstract class BaseHttpClient<RequestConfigType> {
     );
   }
 
+  public request<ResponseModel>(
+    url: string,
+    method: ODataHttpMethods,
+    data: any,
+    requestConfig?: RequestConfigType,
+    additionalHeaders?: Record<string, string>,
+  ): Promise<HttpResponseModel<ResponseModel>> {
+    return this.sendRequest<ResponseModel>(
+      method,
+      url,
+      data,
+      requestConfig,
+      getInternalConfigWithJsonHeaders(additionalHeaders),
+    );
+  }
+
   public getBlob(
     url: string,
     requestConfig?: RequestConfigType,

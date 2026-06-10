@@ -1,3 +1,4 @@
+import { ODataHttpMethods } from "./ODataHttpMethods";
 import { ODataRequestConfig } from "./ODataRequestConfig";
 import { ODataResponse } from "./ODataResponseModel";
 
@@ -67,6 +68,23 @@ export interface ODataHttpClient<RequestConfig extends ODataRequestConfig = ODat
    * @param additionalHeaders
    */
   delete(url: string, requestConfig?: RequestConfig, additionalHeaders?: Record<string, string>): ODataResponse<void>;
+
+  /**
+   * Generic function to call one of the above methods via method enum.
+   *
+   * @param url
+   * @param method
+   * @param data
+   * @param requestConfig
+   * @param additionalHeaders
+   */
+  request<ResponseModel>(
+    url: string,
+    method: ODataHttpMethods,
+    data: any,
+    requestConfig?: RequestConfig,
+    additionalHeaders?: Record<string, string>,
+  ): ODataResponse<ResponseModel>;
 
   /**
    * Get binary data (Edm.Stream) as Blob.
