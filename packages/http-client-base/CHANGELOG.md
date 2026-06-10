@@ -3,6 +3,22 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.5.6](https://github.com/odata2ts/http-client/compare/@odata2ts/http-client-base-v0.5.5...@odata2ts/http-client-base-v0.5.6) (2026-06-10)
+
+
+### Features
+
+* add generic request method ([#31](https://github.com/odata2ts/http-client/issues/31)) ([73f2c7c](https://github.com/odata2ts/http-client/commit/73f2c7c676ca40813ba6c0a722bc4382652a7b18))
+* **api:** introducing `request` method ([73f2c7c](https://github.com/odata2ts/http-client/commit/73f2c7c676ca40813ba6c0a722bc4382652a7b18))
+* **base:** implementation of `request` method ([73f2c7c](https://github.com/odata2ts/http-client/commit/73f2c7c676ca40813ba6c0a722bc4382652a7b18))
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * @odata2ts/http-client-api bumped from ^0.6.4 to ^0.6.5
+
 ## [0.5.5](https://github.com/odata2ts/http-client/compare/@odata2ts/http-client-base-v0.5.4...@odata2ts/http-client-base-v0.5.5) (2026-06-10)
 
 

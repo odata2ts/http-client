@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * @odata2ts/http-client-base bumped from ^0.5.5 to ^0.5.6
+
 ## [0.12.1](https://github.com/odata2ts/http-client/compare/@odata2ts/axios-v0.12.0...@odata2ts/axios-v0.12.1) (2026-06-10)
 
 

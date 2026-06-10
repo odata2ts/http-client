@@ -9,6 +9,12 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 
 * **fetch:** FetchClientError with full responseData object ([#22](https://github.com/odata2ts/http-client/issues/22)) ([e66fa95](https://github.com/odata2ts/http-client/commit/e66fa952909383d55555eed23d1a8e55fe0081f2))
 
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * @odata2ts/http-client-base bumped from ^0.5.5 to ^0.5.6
+
 ## [0.9.1](https://github.com/odata2ts/http-client/compare/@odata2ts/fetch-v0.9.0...@odata2ts/fetch-v0.9.1) (2026-06-10)
 
 
