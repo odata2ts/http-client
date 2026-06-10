@@ -156,6 +156,23 @@ describe("BaseHttpClient Tests", () => {
     expect(mockClient.lastConfig).toStrictEqual(DEFAULT_CONFIG);
   });
 
+  test("generic GET request", async () => {
+    await mockClient.request(DEFAULT_URL, ODataHttpMethods.Get, undefined);
+
+    expect(mockClient.lastMethod).toBe(ODataHttpMethods.Get);
+    expect(mockClient.lastUrl).toBe(DEFAULT_URL);
+    expect(mockClient.lastData).toBeUndefined();
+  });
+
+  test("generic POST request with config", async () => {
+    await mockClient.request(DEFAULT_URL, ODataHttpMethods.Post, DEFAULT_DATA, DEFAULT_CONFIG);
+
+    expect(mockClient.lastMethod).toBe(ODataHttpMethods.Post);
+    expect(mockClient.lastUrl).toBe(DEFAULT_URL);
+    expect(mockClient.lastData).toStrictEqual(DEFAULT_DATA);
+    expect(mockClient.lastConfig).toStrictEqual(DEFAULT_CONFIG);
+  });
+
   test("get blob request", async () => {
     await mockClient.getBlob(DEFAULT_URL);
 
