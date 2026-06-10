@@ -3,6 +3,29 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.11.0](https://github.com/odata2ts/http-client/compare/@odata2ts/jquery-v0.10.0...@odata2ts/jquery-v0.11.0) (2026-06-10)
+
+
+### ⚠ BREAKING CHANGES
+
+* **jquery:** AjaxRequestConfig becomes JQueryRequestConfig
+
+### Features
+
+* create blob request ([#28](https://github.com/odata2ts/http-client/issues/28)) ([4cc238d](https://github.com/odata2ts/http-client/commit/4cc238d3fbe07c09d56732b4b12d0b1b875a3ef5))
+
+
+### Code Refactoring
+
+* **jquery:** benefit from api additions & improve config handling ([d08e4f3](https://github.com/odata2ts/http-client/commit/d08e4f30140d4c1d8968c71b89c9eb009ab44a93))
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * @odata2ts/http-client-base bumped from ^0.5.4 to ^0.5.5
+
 ## [0.10.0](https://github.com/odata2ts/http-client/compare/@odata2ts/jquery-v0.9.3...@odata2ts/jquery-v0.10.0) (2025-03-26)
 
 
