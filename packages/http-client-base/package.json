@@ -31,7 +31,7 @@
   },
   "devDependencies": {
     "@odata2ts/odata-core": "^0.3.7",
-    "@types/node": "^20.2.5",
+    "@types/node": "^24",
     "rimraf": "^5.0.1",
     "typescript": "5.0.4"
   },

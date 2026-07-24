@@ -27,7 +27,7 @@
     "compile": "tsc"
   },
   "devDependencies": {
-    "@types/node": "^20.2.5",
+    "@types/node": "^24",
     "rimraf": "^5.0.1",
     "typescript": "5.0.4"
   },

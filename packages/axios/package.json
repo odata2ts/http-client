@@ -26,16 +26,16 @@
     "check-circular-deps": "madge ./src --extensions ts --circular",
     "clean": "rimraf lib coverage",
     "compile": "tsc",
-    "unit-test": "vitest run --dir test",
     "int-test": "vitest run --dir int-test",
-    "test": "vitest run"
+    "test": "vitest run",
+    "unit-test": "vitest run --dir test"
   },
   "dependencies": {
     "@odata2ts/http-client-base": "^0.5.6"
   },
   "devDependencies": {
-    "@types/node": "^17.0.23",
-    "axios": "^1.4.0",
+    "@types/node": "^24",
+    "axios": "^1.18.1",
     "rimraf": "^5.0.1",
     "typescript": "5.0.4"
   },
