@@ -1,0 +1,59 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": ["config:recommended", "schedule:weekly"],
+  "dependencyDashboard": true,
+  "lockFileMaintenance": {
+    "enabled": true
+  },
+  "packageRules": [
+    {
+      "description": "This repo's own published packages are cross-referenced via plain semver ranges (not workspace:), and their interdependency versions are managed by release-please as part of this repo's own release process - not Renovate",
+      "matchPackageNames": [
+        "@odata2ts/http-client-api",
+        "@odata2ts/http-client-base",
+        "@odata2ts/http-client-axios",
+        "@odata2ts/http-client-fetch",
+        "@odata2ts/http-client-jquery"
+      ],
+      "enabled": false
+    },
+    {
+      "description": "http-client-jquery exists specifically for SAP UI5 compatibility, which still ships jQuery 3.6 - never propose 3.7+ or 4.x here (patches within 3.6.x still flow through the normal devDependency automerge rule below)",
+      "matchPackageNames": ["jquery", "@types/jquery"],
+      "allowedVersions": "<3.7.0"
+    },
+    {
+      "description": "Group all prettier-related packages together",
+      "matchPackageNames": [
+        "prettier",
+        "prettier-plugin-packagejson",
+        "@ianvs/prettier-plugin-sort-imports",
+        "@prettier/plugin-xml"
+      ],
+      "groupName": "prettier"
+    },
+    {
+      "description": "Group vitest with its coverage plugin",
+      "matchPackageNames": ["vitest", "@vitest/coverage-istanbul"],
+      "groupName": "vitest"
+    },
+    {
+      "description": "Keep @types/node aligned with the Node 24 runtime major",
+      "matchPackageNames": ["@types/node"],
+      "allowedVersions": "<25"
+    },
+    {
+      "description": "Automerge safe devDependency patch/minor updates once CI is green",
+      "matchDepTypes": ["devDependencies"],
+      "matchUpdateTypes": ["patch", "minor"],
+      "groupName": "dev dependencies (patch/minor)",
+      "automerge": true,
+      "platformAutomerge": true
+    },
+    {
+      "description": "Never automerge major updates - always requires manual review",
+      "matchUpdateTypes": ["major"],
+      "automerge": false
+    }
+  ]
+}
