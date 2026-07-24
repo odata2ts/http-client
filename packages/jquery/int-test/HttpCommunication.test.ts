@@ -1,7 +1,5 @@
 // @vitest-environment jsdom
 
-import fs from "fs/promises";
-import path from "path";
 import { ODataCollectionResponseV4, ODataModelResponseV4 } from "@odata2ts/odata-core";
 import jquery from "jquery";
 import { beforeAll, describe, expect, test } from "vitest";
@@ -71,13 +69,10 @@ describe("HTTP Communication Tests", async function () {
       status: 200,
       statusText: "OK",
     });
-    expect(response.headers).toMatchObject({
-      "content-length": "52246",
-      "content-type": "image/jpeg",
-    });
-
-    const imgBuffer = await fs.readFile(path.join(__dirname, "test.jpg"));
-    expect(response.data.size).toBe(imgBuffer.byteLength);
+    expect(response.headers["content-type"]).toBe("image/jpeg");
+    // don't pin the exact byte count of this externally hosted image - it can change server-side;
+    // instead verify the received blob actually matches what the server itself reported
+    expect(response.data.size).toBe(Number(response.headers["content-length"]));
   });
 
   const entitySetUrl = BASE_URL + "/People";
