@@ -27,12 +27,13 @@
     "test": "vitest run"
   },
   "dependencies": {
-    "@odata2ts/http-client-api": "^0.6.5"
+    "@odata2ts/http-client-api": "^0.6.5",
+    "tslib": "^2.8.1"
   },
   "devDependencies": {
     "@odata2ts/odata-core": "^0.3.7",
     "@types/node": "^24",
-    "rimraf": "^5.0.1",
+    "rimraf": "^6.1.3",
     "typescript": "5.0.4"
   },
   "publishConfig": {
