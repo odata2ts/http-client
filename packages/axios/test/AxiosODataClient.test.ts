@@ -130,6 +130,18 @@ describe("Axios HTTP Client Tests", function () {
     expect(requestConfig?.data).toStrictEqual(dataStructure);
   });
 
+  /**
+   * Axios serializes the body itself and leaves strings alone, so this client never suffered from the
+   * double quoting of https://github.com/odata2ts/odata2ts/issues/383. Pinned to keep it that way.
+   */
+  test("post request with plain text body", async () => {
+    const query = "%24select=UserName&%24top=10";
+
+    await axiosClient.post("", query, undefined, { "Content-Type": "text/plain" });
+
+    expect(requestConfig?.data).toBe(query);
+  });
+
   test("put request", async () => {
     await axiosClient.put(DEFAULT_URL, {});
 

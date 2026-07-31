@@ -23,6 +23,8 @@ const FAILURE_MISSING_CSRF_URL =
   "When automatic CSRF token handling is activated, the URL must be supplied via attribute [csrfTokenFetchUrl]!";
 const FAILURE_MISSING_URL = "Value for URL must be provided!";
 const JSON_VALUE = "application/json";
+const PLAIN_TEXT_VALUE = "text/plain";
+const CONTENT_TYPE_KEY = "content-type";
 
 function getInternalConfigWithJsonHeaders(
   headers?: Record<string, string>,
@@ -63,6 +65,23 @@ export abstract class BaseHttpClient<RequestConfigType> {
     if (baseOptions.useCsrfProtection && !baseOptions.csrfTokenFetchUrl?.trim()) {
       throw new Error(FAILURE_MISSING_CSRF_URL);
     }
+  }
+
+  /**
+   * Whether the given headers declare the request body as plain text, in which case it must be passed
+   * to the server as it is: serializing it as JSON would wrap it into double quotes.
+   *
+   * The header name is matched case-insensitively, since callers are free to choose their own spelling.
+   * Of multiple matches the last one wins, mirroring how the headers were merged in the first place.
+   *
+   * @param headers the headers of the request
+   */
+  protected isPlainTextBody(headers?: Record<string, string>): boolean {
+    const contentType = Object.entries(headers ?? {})
+      .filter(([key]) => key.toLowerCase() === CONTENT_TYPE_KEY)
+      .pop()?.[1];
+
+    return !!contentType?.toLowerCase().startsWith(PLAIN_TEXT_VALUE);
   }
 
   /**

@@ -42,6 +42,13 @@ export class MockHttpClient extends BaseHttpClient<MockRequestConfig> implements
     super(baseOptions);
   }
 
+  /**
+   * Exposes the protected method, which extending clients use to decide upon JSON serialization.
+   */
+  public checkPlainTextBody(headers?: Record<string, string>) {
+    return this.isPlainTextBody(headers);
+  }
+
   public exposedErrorMessageRetriever(errorResponse: any) {
     return this.retrieveErrorMessage(errorResponse);
   }

@@ -134,6 +134,46 @@ describe("BaseHttpClient Tests", () => {
     expect(mockClient.lastConfig).toStrictEqual(DEFAULT_CONFIG);
   });
 
+  /**
+   * Only a body which is explicitly declared as plain text is exempt from JSON serialization,
+   * see https://github.com/odata2ts/odata2ts/issues/383.
+   */
+  describe("isPlainTextBody", () => {
+    test("false without any headers or content type", () => {
+      expect(mockClient.checkPlainTextBody()).toBe(false);
+      expect(mockClient.checkPlainTextBody({})).toBe(false);
+      expect(mockClient.checkPlainTextBody({ Accept: JSON_VALUE })).toBe(false);
+    });
+
+    test("true for plain text", () => {
+      expect(mockClient.checkPlainTextBody({ "Content-Type": "text/plain" })).toBe(true);
+    });
+
+    test("true for plain text with charset", () => {
+      expect(mockClient.checkPlainTextBody({ "Content-Type": "text/plain; charset=utf-8" })).toBe(true);
+    });
+
+    test("false for any other content type", () => {
+      expect(mockClient.checkPlainTextBody({ "Content-Type": JSON_VALUE })).toBe(false);
+      expect(mockClient.checkPlainTextBody({ "Content-Type": "application/xml" })).toBe(false);
+      expect(mockClient.checkPlainTextBody({ "Content-Type": "image/png" })).toBe(false);
+    });
+
+    test("header name and value are matched case-insensitively", () => {
+      expect(mockClient.checkPlainTextBody({ "content-type": "text/plain" })).toBe(true);
+      expect(mockClient.checkPlainTextBody({ "CONTENT-TYPE": "TEXT/PLAIN" })).toBe(true);
+    });
+
+    /**
+     * The default JSON content type is only overridden by a differently spelled header, so both end up in
+     * the merged headers. The later one is the one which was meant to win.
+     */
+    test("the last of multiple content types wins", () => {
+      expect(mockClient.checkPlainTextBody({ "Content-Type": JSON_VALUE, "content-type": "text/plain" })).toBe(true);
+      expect(mockClient.checkPlainTextBody({ "content-type": "text/plain", "Content-Type": JSON_VALUE })).toBe(false);
+    });
+  });
+
   test("simple DELETE request", async () => {
     await mockClient.delete(DEFAULT_URL);
 
