@@ -3,18 +3,6 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
-# [0.8.0](https://github.com/odata2ts/http-client/compare/@odata2ts/http-client-fetch@0.7.2...@odata2ts/http-client-fetch@0.8.0) (2024-08-24)
-
-### Features
-
-* **fetch:** FetchClientError with full responseData object ([#22](https://github.com/odata2ts/http-client/issues/22)) ([e66fa95](https://github.com/odata2ts/http-client/commit/e66fa952909383d55555eed23d1a8e55fe0081f2))
-
-### Dependencies
-
-* The following workspace dependencies were updated
-  * dependencies
-    * @odata2ts/http-client-base bumped from ^0.5.5 to ^0.5.6
-
 ## [0.10.0](https://github.com/odata2ts/http-client/compare/@odata2ts/fetch-v0.9.2...@odata2ts/fetch-v0.10.0) (2026-07-31)
 
 
@@ -59,6 +47,15 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 * The following workspace dependencies were updated
   * dependencies
     * @odata2ts/http-client-base bumped from ^0.5.6 to ^0.5.7
+
+## [0.9.2](https://github.com/odata2ts/http-client/compare/@odata2ts/fetch-v0.9.1...@odata2ts/fetch-v0.9.2) (2026-06-10)
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * @odata2ts/http-client-base bumped from ^0.5.5 to ^0.5.6
 
 ## [0.9.1](https://github.com/odata2ts/http-client/compare/@odata2ts/fetch-v0.9.0...@odata2ts/fetch-v0.9.1) (2026-06-10)
 
@@ -115,6 +112,12 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 * The following workspace dependencies were updated
   * dependencies
     * @odata2ts/http-client-base bumped from ^0.5.3 to ^0.5.4
+
+# [0.8.0](https://github.com/odata2ts/http-client/compare/@odata2ts/http-client-fetch@0.7.2...@odata2ts/http-client-fetch@0.8.0) (2024-08-24)
+
+### Features
+
+* **fetch:** FetchClientError with full responseData object ([#22](https://github.com/odata2ts/http-client/issues/22)) ([e66fa95](https://github.com/odata2ts/http-client/commit/e66fa952909383d55555eed23d1a8e55fe0081f2))
 
 ## [0.7.2](https://github.com/odata2ts/http-client/compare/@odata2ts/http-client-fetch@0.7.1...@odata2ts/http-client-fetch@0.7.2) (2024-08-22)
 
