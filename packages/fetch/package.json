@@ -1,6 +1,6 @@
 {
   "name": "@odata2ts/http-client-fetch",
-  "version": "0.9.2",
+  "version": "0.10.0",
   "description": "HTTP client based on fetch and consumable by odata2ts",
   "keywords": [
     "http client",
@@ -30,7 +30,7 @@
     "unit-test": "vitest run --dir test"
   },
   "dependencies": {
-    "@odata2ts/http-client-base": "^0.5.6",
+    "@odata2ts/http-client-base": "^0.5.7",
     "tslib": "^2.8.1"
   },
   "devDependencies": {

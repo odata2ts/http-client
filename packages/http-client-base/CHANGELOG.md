@@ -3,6 +3,21 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.5.7](https://github.com/odata2ts/http-client/compare/@odata2ts/http-client-base-v0.5.6...@odata2ts/http-client-base-v0.5.7) (2026-07-31)
+
+
+### Bug Fixes
+
+* send a plain text request body as it is ([#35](https://github.com/odata2ts/http-client/issues/35)) ([2d44aff](https://github.com/odata2ts/http-client/commit/2d44aff43d4804070d53ea84dae271365bab4cf8))
+* update typescript to 6.0.3 and migrate to nodenext resolution ([f713098](https://github.com/odata2ts/http-client/commit/f71309861d7a58b7f0fb65cf8395f0262a932a9f))
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * @odata2ts/http-client-api bumped from ^0.6.5 to ^0.6.6
+
 ## [0.5.6](https://github.com/odata2ts/http-client/compare/@odata2ts/http-client-base-v0.5.5...@odata2ts/http-client-base-v0.5.6) (2026-06-10)
 
 
