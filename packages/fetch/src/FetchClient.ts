@@ -46,8 +46,9 @@ export class FetchClient extends BaseHttpClient<FetchRequestConfig> implements O
       method,
     };
     if (typeof data !== "undefined") {
-      resultConfig.body =
-        ODataHttpDataTypes.JSON && !this.isPlainTextBody(internalConfig.headers) ? JSON.stringify(data) : data;
+      const serializeAsJson =
+        internalConfig.dataType === ODataHttpDataTypes.JSON && !this.isPlainTextBody(internalConfig.headers);
+      resultConfig.body = serializeAsJson ? JSON.stringify(data) : data;
     }
 
     // apply additional query params to the URL
