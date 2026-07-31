@@ -128,6 +128,19 @@ describe("JQueryClient Tests", function () {
     expect(getRequestData()).toBe(JSON.stringify(dataStructure));
   });
 
+  /**
+   * A plain text body goes over the wire as it is: JSON serializing it would wrap it into double quotes,
+   * which the server cannot parse. See https://github.com/odata2ts/odata2ts/issues/383.
+   */
+  test("post request with plain text body", async () => {
+    const query = "%24select=UserName&%24top=10";
+
+    await jqClient.post("", query, undefined, { "Content-Type": "text/plain" });
+
+    expect(getRequestData()).toBe(query);
+    expect(getRequestData()).not.toMatch(/^"/);
+  });
+
   test("put request", async () => {
     await jqClient.put(DEFAULT_URL, {});
 

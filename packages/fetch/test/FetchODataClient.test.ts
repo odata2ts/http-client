@@ -144,6 +144,20 @@ describe("FetchClient Tests", function () {
     expect(requestConfig?.body).toBe(JSON.stringify(dataStructure));
   });
 
+  /**
+   * A plain text body goes over the wire as it is: JSON serializing it would wrap it into double quotes,
+   * which the server cannot parse. See https://github.com/odata2ts/odata2ts/issues/383.
+   */
+  test("post request with plain text body", async () => {
+    const query = "%24select=UserName&%24top=10";
+
+    await fetchClient.post("", query, undefined, { "Content-Type": "text/plain" });
+
+    expect(requestConfig?.body).toBe(query);
+    expect(requestConfig?.body).not.toMatch(/^"/);
+    expect(getRequestHeaderRecords()).toMatchObject({ "content-type": "text/plain" });
+  });
+
   test("put request", async () => {
     await fetchClient.put(DEFAULT_URL, {});
 

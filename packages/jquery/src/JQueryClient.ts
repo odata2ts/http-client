@@ -59,7 +59,8 @@ export class JQueryClient extends BaseHttpClient<JQueryRequestConfig> implements
     const resultConfig: InternalRequestConfig = {
       ...mergedConfig,
       method,
-      data: JSON.stringify(data),
+      // only an explicitly plain text body is passed through as it is
+      data: this.isPlainTextBody(internalConfig.headers) ? data : JSON.stringify(data),
       url,
     };
 
