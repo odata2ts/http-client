@@ -21,13 +21,13 @@
       "component": "@odata2ts/http-client-base"
     },
     "packages/axios": {
-      "component": "@odata2ts/axios"
+      "component": "@odata2ts/http-client-axios"
     },
     "packages/fetch": {
-      "component": "@odata2ts/fetch"
+      "component": "@odata2ts/http-client-fetch"
     },
     "packages/jquery": {
-      "component": "@odata2ts/jquery"
+      "component": "@odata2ts/http-client-jquery"
     }
   }
 }
