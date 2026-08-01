@@ -15,8 +15,9 @@ import jqXHR = JQuery.jqXHR;
 export const DEFAULT_ERROR_MESSAGE = "No error message!";
 
 interface InternalRequestConfig
-  extends JQueryRequestConfig,
-    Pick<JQuery.AjaxSettings, "url" | "data" | "dataType" | "method" | "xhrFields"> {}
+  extends
+    JQueryRequestConfig,
+    Pick<JQuery.AjaxSettings, "url" | "data" | "dataType" | "method" | "xhrFields" | "processData" | "contentType"> {}
 
 export class JQueryClient extends BaseHttpClient<JQueryRequestConfig> implements ODataHttpClient<JQueryRequestConfig> {
   private readonly client: JQueryStatic;
@@ -54,13 +55,14 @@ export class JQueryClient extends BaseHttpClient<JQueryRequestConfig> implements
   ): Promise<HttpResponseModel<ResponseModel>> {
     const { headers } = internalConfig;
     const { params, ...mergedConfig } = mergeConfigs(this.config, mergeConfigs({ headers }, requestConfig));
+    const isBinary = internalConfig.dataType === "blob";
 
     // set core inputs for request
     const resultConfig: InternalRequestConfig = {
       ...mergedConfig,
       method,
-      // only an explicitly plain text body is passed through as it is
-      data: this.isPlainTextBody(internalConfig.headers) ? data : JSON.stringify(data),
+      // only binary data and an explicitly plain text body are passed through as they are
+      data: isBinary || this.isPlainTextBody(internalConfig.headers) ? data : JSON.stringify(data),
       url,
     };
 
@@ -73,8 +75,12 @@ export class JQueryClient extends BaseHttpClient<JQueryRequestConfig> implements
     }
 
     // handling of extra data types: blob and stream (not supported)
-    if (internalConfig.dataType === "blob") {
+    if (isBinary) {
       resultConfig.xhrFields = { responseType: "blob" };
+      // jQuery would otherwise turn the blob into a query string (processData defaults to true)
+      // and add its own urlencoded content type; the actual mime type is already part of the headers
+      resultConfig.processData = false;
+      resultConfig.contentType = false;
     } else if (internalConfig.dataType === "stream") {
       throw new Error("Streaming is not supported by the JqueryClient!");
     }
