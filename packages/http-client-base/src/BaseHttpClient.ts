@@ -183,9 +183,11 @@ export abstract class BaseHttpClient<RequestConfigType> {
         !!clientError.headers &&
         clientError.headers["x-csrf-token"] === "Required"
       ) {
-        // token has expired: reset csrf token & perform the original request again
+        // token has expired: reset csrf token & perform the original request again;
+        // the internal config must be handed over as well, otherwise the repeated request would lose
+        // its headers (content type!) and its data type
         this.csrfToken = undefined;
-        return this.sendRequest<ResponseModel>(method, url, data, requestConfig);
+        return this.sendRequest<ResponseModel>(method, url, data, requestConfig, internalConfig);
       }
 
       throw e;

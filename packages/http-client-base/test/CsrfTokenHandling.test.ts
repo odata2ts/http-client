@@ -58,6 +58,33 @@ describe("CSRF Token Handling Tests", () => {
     expect(token).not.toBe(token2);
   });
 
+  /**
+   * The repeated request must be the identical one: losing the internal config would strip the headers
+   * (content type!) and the data type, whereby e.g. a blob would no longer be recognized as binary data.
+   */
+  test("token expiration retains internal config", async () => {
+    const mimeType = "text/csv";
+    const blob = new Blob(["hello world"], { type: mimeType });
+    const requestConfig = { x: "y" };
+
+    // the first request caches the token, the second one runs into its expiration
+    await mockClient.post("test", {});
+    mockClient.simulateTokenExpired = true;
+    await mockClient.updateBlob("test", blob, mimeType, requestConfig, { hey: "ho" });
+
+    expect(mockClient.lastData).toBe(blob);
+    expect(mockClient.lastConfig).toStrictEqual(requestConfig);
+    expect(mockClient.lastInternalConfig).toMatchObject({
+      dataType: "blob",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": mimeType,
+        hey: "ho",
+        [mockClient.getCsrfTokenKey()]: mockClient.generatedCsrfToken!,
+      },
+    });
+  });
+
   test("set token key", async () => {
     expect(mockClient.getCsrfTokenKey()).toBe("x-csrf-token");
     mockClient.setCsrfTokenKey("");
