@@ -201,11 +201,41 @@ describe("JQueryClient Tests", function () {
     expect(getRequestHeaders()).toStrictEqual({});
   });
 
+  /**
+   * Binary data must reach the server as it is: JSON serializing a blob would yield "{}", while jQuery's
+   * processData would turn it into a query string. See https://github.com/odata2ts/odata2ts/issues/421.
+   */
+  test("create blob request", async () => {
+    const mimeType = "text/csv";
+    const blob = new Blob(["hello world"], { type: mimeType });
+
+    await jqClient.createBlob(DEFAULT_URL, blob, mimeType);
+
+    expect(getRequestData()).toBe(blob);
+    expect(getRequestDetails()).toMatchObject({
+      url: DEFAULT_URL,
+      method: "POST",
+      xhrFields: { responseType: "blob" },
+      processData: false,
+      contentType: false,
+    });
+    expect(getRequestHeaders()).toStrictEqual({ Accept: JSON_VALUE, "Content-Type": mimeType });
+  });
+
   test("update blob request", async () => {
     const mimeType = "image/jpg";
-    await jqClient.updateBlob(DEFAULT_URL, new Blob(), mimeType);
+    const blob = new Blob([new Uint8Array([1, 2, 3])], { type: mimeType });
 
-    expect(getRequestDetails()).toMatchObject({ url: DEFAULT_URL, method: "PUT", xhrFields: { responseType: "blob" } });
+    await jqClient.updateBlob(DEFAULT_URL, blob, mimeType);
+
+    expect(getRequestData()).toBe(blob);
+    expect(getRequestDetails()).toMatchObject({
+      url: DEFAULT_URL,
+      method: "PUT",
+      xhrFields: { responseType: "blob" },
+      processData: false,
+      contentType: false,
+    });
     expect(getRequestHeaders()).toStrictEqual({ Accept: JSON_VALUE, "Content-Type": mimeType });
   });
 
