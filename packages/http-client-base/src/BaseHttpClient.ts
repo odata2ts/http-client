@@ -185,7 +185,7 @@ export abstract class BaseHttpClient<RequestConfigType> {
         !!this.baseOptions.useCsrfProtection &&
         clientError.status === 403 &&
         !!clientError.headers &&
-        clientError.headers["x-csrf-token"] === "Required"
+        clientError.headers[this.csrfTokenKey] === "Required"
       ) {
         // token has expired: reset csrf token & perform the original request again;
         // the internal config must be handed over as well, otherwise the repeated request would lose
