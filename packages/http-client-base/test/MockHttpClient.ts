@@ -8,6 +8,8 @@ import {
 } from "@odata2ts/http-client-api";
 import { BaseHttpClient, BaseRequestConfig } from "../src";
 
+const MAX_FAILING_REQUESTS = 10;
+
 export class MockClientError extends Error implements ODataClientError {
   constructor(
     message: string,
@@ -35,8 +37,16 @@ export class MockHttpClient extends BaseHttpClient<MockRequestConfig> implements
   public lastConfig?: MockRequestConfig;
   public lastInternalConfig?: BaseRequestConfig;
 
+  public requestCount: number = 0;
+
   public simulateClientFailure: boolean = false;
   public simulateTokenExpired: boolean = false;
+  /**
+   * Simulates a server which rejects the token no matter how often a new one is fetched.
+   * After MAX_FAILING_REQUESTS it answers with a different error, so that a client which does not
+   * limit its retries fails fast instead of looping forever.
+   */
+  public simulateTokenAlwaysExpired: boolean = false;
 
   constructor(baseOptions?: ODataHttpClientOptions) {
     super(baseOptions);
@@ -71,11 +81,13 @@ export class MockHttpClient extends BaseHttpClient<MockRequestConfig> implements
     this.lastData = data;
     this.lastConfig = config;
     this.lastInternalConfig = internalConfig;
+    this.requestCount++;
 
     const responseHeaders: Record<string, string> = {};
 
     // CSRF token request => custom response
-    if (mergedConfig?.headers && mergedConfig.headers[this.getCsrfTokenKey()] === "Fetch") {
+    const isTokenFetch = mergedConfig?.headers && mergedConfig.headers[this.getCsrfTokenKey()] === "Fetch";
+    if (isTokenFetch) {
       this.generatedCsrfToken = crypto.randomBytes(4).toString("hex");
       responseHeaders[this.getCsrfTokenKey()] = this.generatedCsrfToken;
     }
@@ -83,9 +95,11 @@ export class MockHttpClient extends BaseHttpClient<MockRequestConfig> implements
     if (this.simulateClientFailure) {
       this.simulateClientFailure = false;
       return Promise.reject(new MockClientError("Oh no!", 400, {}, new Error("oh damn!")));
-    } else if (this.simulateTokenExpired) {
+    } else if (this.simulateTokenExpired || (this.simulateTokenAlwaysExpired && !isTokenFetch)) {
       this.simulateTokenExpired = false;
-      return Promise.reject(new MockClientError("Token expired!", 403, { [this.getCsrfTokenKey()]: "Required" }));
+      return this.requestCount > MAX_FAILING_REQUESTS
+        ? Promise.reject(new MockClientError("Too many requests!", 429, {}))
+        : Promise.reject(new MockClientError("Token expired!", 403, { [this.getCsrfTokenKey()]: "Required" }));
     }
 
     return Promise.resolve({

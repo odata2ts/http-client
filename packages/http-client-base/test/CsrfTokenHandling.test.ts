@@ -85,6 +85,19 @@ describe("CSRF Token Handling Tests", () => {
     });
   });
 
+  /**
+   * A server which demands a new token again and again must not send us into an endless loop:
+   * the request is repeated exactly once, then its failure is passed on to the caller.
+   */
+  test("token expiration only leads to one retry", async () => {
+    mockClient.simulateTokenAlwaysExpired = true;
+
+    await expect(mockClient.post("test", {})).rejects.toThrow("Token expired!");
+
+    // token fetch plus the actual request, and that whole game exactly one more time
+    expect(mockClient.requestCount).toBe(4);
+  });
+
   test("set token key", async () => {
     expect(mockClient.getCsrfTokenKey()).toBe("x-csrf-token");
     mockClient.setCsrfTokenKey("");
