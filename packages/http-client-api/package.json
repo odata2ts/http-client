@@ -24,7 +24,9 @@
     "build": "yarn clean && yarn compile",
     "check-circular-deps": "madge ./src --extensions ts --circular",
     "clean": "rimraf lib coverage",
-    "compile": "tsc"
+    "compile": "tsc",
+    "test": "vitest run",
+    "unit-test": "vitest run --dir test"
   },
   "dependencies": {
     "tslib": "^2.8.1"

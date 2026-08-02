@@ -42,6 +42,10 @@ export class MockHttpClient extends BaseHttpClient<MockRequestConfig> implements
   public simulateClientFailure: boolean = false;
   public simulateTokenExpired: boolean = false;
   /**
+   * Simulates a server which answers the token request without handing out a token.
+   */
+  public simulateMissingToken: boolean = false;
+  /**
    * Simulates a server which rejects the token no matter how often a new one is fetched.
    * After MAX_FAILING_REQUESTS it answers with a different error, so that a client which does not
    * limit its retries fails fast instead of looping forever.
@@ -87,7 +91,7 @@ export class MockHttpClient extends BaseHttpClient<MockRequestConfig> implements
 
     // CSRF token request => custom response
     const isTokenFetch = mergedConfig?.headers && mergedConfig.headers[this.getCsrfTokenKey()] === "Fetch";
-    if (isTokenFetch) {
+    if (isTokenFetch && !this.simulateMissingToken) {
       this.generatedCsrfToken = crypto.randomBytes(4).toString("hex");
       responseHeaders[this.getCsrfTokenKey()] = this.generatedCsrfToken;
     }

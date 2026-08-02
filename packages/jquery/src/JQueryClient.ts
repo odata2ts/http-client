@@ -54,8 +54,8 @@ export class JQueryClient extends BaseHttpClient<JQueryRequestConfig> implements
     method: ODataHttpMethods,
     url: string,
     data: any,
-    requestConfig?: JQueryRequestConfig,
-    internalConfig: BaseRequestConfig = {},
+    requestConfig: JQueryRequestConfig | undefined,
+    internalConfig: BaseRequestConfig,
   ): Promise<HttpResponseModel<ResponseModel>> {
     const { headers } = internalConfig;
     const { params, ...mergedConfig } = mergeConfigs(this.config, mergeConfigs({ headers }, requestConfig));

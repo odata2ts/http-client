@@ -45,6 +45,20 @@ describe("CSRF Token Handling Tests", () => {
     expect(getTokenFromHeader()).toBe(token);
   });
 
+  /**
+   * A server which does not hand out a token must not stop the request: it goes out without one,
+   * and the server decides whether that is acceptable.
+   */
+  test("no token handed out", async () => {
+    mockClient.simulateMissingToken = true;
+
+    await mockClient.post(DEFAULT_URL, DEFAULT_DATA);
+
+    expect(mockClient.generatedCsrfToken).toBeUndefined();
+    expect(getTokenFromHeader()).toBeUndefined();
+    expect(mockClient.lastUrl).toBe(DEFAULT_URL);
+  });
+
   test("token expiration", async () => {
     await mockClient.post("test", {});
     const token = mockClient.generatedCsrfToken;

@@ -25,7 +25,7 @@ Extend the class `BaseHttpClient` to simplify your HttpClient implementation.
 You need to implement two abstract methods:
 
 ```ts
-import { BaseHttpClient, BaseHttpClientOptions, InternalHttpClientConfig } from "@odata2ts/http-client-base";
+import { BaseHttpClient, BaseRequestConfig } from "@odata2ts/http-client-base";
 
 export interface MyRequestConfig {}
 
@@ -38,8 +38,9 @@ export class MyHttpClient extends BaseHttpClient<MyRequestConfig> {
     method: HttpMethods,
     url: string,
     data: any,
-    requestConfig: AxiosRequestConfig | undefined = {},
-    internalConfig?: InternalHttpClientConfig,
+    requestConfig: MyRequestConfig | undefined,
+    // always handed over, so no fallback is needed for it
+    internalConfig: BaseRequestConfig,
   ): Promise<HttpResponseModel<ResponseModel>> {
     // your implementation
   }

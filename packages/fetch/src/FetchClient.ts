@@ -13,19 +13,7 @@ export const DEFAULT_ERROR_MESSAGE = "No error message!";
 const FETCH_FAILURE_MESSAGE = "OData request failed entirely: ";
 const JSON_RETRIEVAL_FAILURE_MESSAGE = "Retrieving JSON body from OData response failed: ";
 const BLOB_RETRIEVAL_FAILURE_MESSAGE = "Retrieving blob from OData response failed: ";
-const STREAM_RETRIEVAL_FAILURE_MESSAGE = "Retrieving stream from OData response failed: ";
 const RESPONSE_FAILURE_MESSAGE = "OData server responded with error: ";
-
-function getRetrievalFailureMessage(dataType: ODataHttpDataTypes | undefined) {
-  switch (dataType) {
-    case ODataHttpDataTypes.BLOB:
-      return BLOB_RETRIEVAL_FAILURE_MESSAGE;
-    case ODataHttpDataTypes.STREAM:
-      return STREAM_RETRIEVAL_FAILURE_MESSAGE;
-    default:
-      return JSON_RETRIEVAL_FAILURE_MESSAGE;
-  }
-}
 
 function buildErrorMessage(prefix: string, error: any) {
   const msg = typeof error === "string" ? error : (error as Error)?.message;
@@ -62,7 +50,7 @@ export class FetchClient extends BaseHttpClient<FetchRequestConfig> implements O
     url: string,
     data: any,
     requestConfig: FetchRequestConfig | undefined = {},
-    internalConfig: BaseRequestConfig = {},
+    internalConfig: BaseRequestConfig,
   ): Promise<HttpResponseModel<ResponseModel>> {
     const { headers, noBodyEvaluation } = internalConfig;
     const { params, ...config } = mergeFetchConfig(this.config, { headers }, requestConfig);
@@ -127,7 +115,9 @@ export class FetchClient extends BaseHttpClient<FetchRequestConfig> implements O
     try {
       responseData = noBodyEvaluation ? undefined : await this.getResponseBody(response, internalConfig);
     } catch (error) {
-      const msg = getRetrievalFailureMessage(internalConfig.dataType);
+      // only json and blob can fail here at all: reading the stream is up to the caller, and a
+      // response without a body never reaches this point
+      const msg = internalConfig.dataType === "blob" ? BLOB_RETRIEVAL_FAILURE_MESSAGE : JSON_RETRIEVAL_FAILURE_MESSAGE;
       throw new FetchClientError(
         buildErrorMessage(msg, error),
         response.status,
@@ -149,17 +139,16 @@ export class FetchClient extends BaseHttpClient<FetchRequestConfig> implements O
       return undefined;
     }
     switch (options.dataType) {
-      case "json":
-        return response.json();
       case "blob":
         return response.blob();
       case "stream":
         // a response without any body at all yields null here, which the declared ReadableStream does
         // not include; undefined is what a 204 already hands back for every other data type
         return response.body ?? undefined;
+      // json is the default data type throughout, so anything else is read as json as well
+      default:
+        return response.json();
     }
-
-    return undefined;
   }
 
   protected mapHeaders(headers: Headers): Record<string, string> {

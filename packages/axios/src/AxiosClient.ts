@@ -70,7 +70,7 @@ export class AxiosClient extends BaseHttpClient<AxiosRequestConfig> implements O
     url: string,
     data: any,
     requestConfig: AxiosRequestConfig | undefined = {},
-    internalConfig: BaseRequestConfig = {},
+    internalConfig: BaseRequestConfig,
   ): Promise<HttpResponseModel<ResponseModel>> {
     const { headers } = internalConfig;
 
