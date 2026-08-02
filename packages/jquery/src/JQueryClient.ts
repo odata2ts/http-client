@@ -13,6 +13,10 @@ import { JQueryRequestConfig, mergeConfigs } from "./JQueryRequestConfig";
 import jqXHR = JQuery.jqXHR;
 
 export const DEFAULT_ERROR_MESSAGE = "No error message!";
+export const FAILURE_STREAM_UNSUPPORTED =
+  "Streaming is not supported by the JqueryClient! XmlHttpRequest, which jQuery's ajax method builds " +
+  "upon, has no streaming API at all - neither for reading a response nor for sending a request body. " +
+  "Use the FetchClient for streams.";
 
 interface InternalRequestConfig
   extends
@@ -82,7 +86,8 @@ export class JQueryClient extends BaseHttpClient<JQueryRequestConfig> implements
       resultConfig.processData = false;
       resultConfig.contentType = false;
     } else if (internalConfig.dataType === "stream") {
-      throw new Error("Streaming is not supported by the JqueryClient!");
+      // a refusal is a failure of this client like any other, hence it carries the same error type
+      throw new JQueryClientError(FAILURE_STREAM_UNSUPPORTED);
     }
 
     // the actual request

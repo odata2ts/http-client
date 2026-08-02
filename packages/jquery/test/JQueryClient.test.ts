@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, test } from "vitest";
-import { JQueryClient, JQueryRequestConfig } from "../src";
+import { FAILURE_STREAM_UNSUPPORTED, JQueryClient, JQueryClientError, JQueryRequestConfig } from "../src";
 import { JqMock } from "./JQueryMock";
 
 const DEFAULT_URL = "TEST/hi";
@@ -240,9 +240,9 @@ describe("JQueryClient Tests", function () {
   });
 
   test("stream request not supported", async () => {
-    await expect(() => jqClient.getStream(DEFAULT_URL)).rejects.toThrow(
-      "Streaming is not supported by the JqueryClient!",
-    );
+    await expect(() => jqClient.getStream(DEFAULT_URL)).rejects.toThrow(FAILURE_STREAM_UNSUPPORTED);
+    // a refusal is a failure of this client like any other, hence the same error type
+    await expect(() => jqClient.getStream(DEFAULT_URL)).rejects.toBeInstanceOf(JQueryClientError);
   });
 
   test("stream upload not supported either", async () => {
@@ -250,11 +250,9 @@ describe("JQueryClient Tests", function () {
     const stream = new Blob(["hello world"]).stream();
 
     await expect(() => jqClient.createStream(DEFAULT_URL, stream, mimeType)).rejects.toThrow(
-      "Streaming is not supported by the JqueryClient!",
+      FAILURE_STREAM_UNSUPPORTED,
     );
-    await expect(() => jqClient.updateStream(DEFAULT_URL, stream, mimeType)).rejects.toThrow(
-      "Streaming is not supported by the JqueryClient!",
-    );
+    await expect(() => jqClient.updateStream(DEFAULT_URL, stream, mimeType)).rejects.toBeInstanceOf(JQueryClientError);
 
     // nothing went over the wire
     expect(jqMock.getRequestConfig()).toBeUndefined();
