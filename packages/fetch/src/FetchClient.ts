@@ -2,9 +2,9 @@ import {
   HttpResponseModel,
   ODataHttpClient,
   ODataHttpClientOptions,
+  ODataHttpDataTypes,
   ODataHttpMethods,
 } from "@odata2ts/http-client-api";
-import { ODataHttpDataTypes } from "@odata2ts/http-client-api/lib/ODataHttpDataTypes";
 import { BaseHttpClient, BaseRequestConfig } from "@odata2ts/http-client-base";
 import { FetchClientError } from "./FetchClientError";
 import { FetchRequestConfig, getDefaultConfig, mergeFetchConfig } from "./FetchRequestConfig";

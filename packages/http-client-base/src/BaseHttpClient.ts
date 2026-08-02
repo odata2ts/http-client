@@ -3,11 +3,11 @@ import {
   HttpResponseModel,
   ODataClientError,
   ODataHttpClientOptions,
+  ODataHttpDataTypes,
   ODataHttpMethods,
   ODataRequestConfig,
   ODataResponse,
 } from "@odata2ts/http-client-api";
-import { ODataHttpDataTypes } from "@odata2ts/http-client-api/lib/ODataHttpDataTypes";
 import { ErrorMessageRetriever, retrieveErrorMessage } from "./ErrorMessageRetriever";
 
 export interface BaseRequestConfig extends ODataRequestConfig {

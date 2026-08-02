@@ -1,6 +1,5 @@
 import { describe, expect, test } from "vitest";
-// not exported via index, hence the direct import - the clients reach for it the same way
-import { ODataHttpDataTypes } from "../src/ODataHttpDataTypes";
+import { ODataHttpDataTypes } from "../src";
 
 /**
  * Every client compares the requested data type against these plain strings, partly without using
