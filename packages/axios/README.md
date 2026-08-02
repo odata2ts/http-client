@@ -13,8 +13,9 @@ It supports:
 
 It does **not** support:
 
-- **streaming** (`getStream`): axios' XHR adapter cannot stream at all, and its http adapter yields a
-  Node.js stream rather than a `ReadableStream`. The call is refused with an error.
+- **streaming** in either direction (`getStream`, `createStream` / `updateStream`): axios' XHR adapter
+  cannot stream at all, and its http adapter neither accepts a `ReadableStream` as request body nor
+  yields one as response. The call is refused with an error.
 - **binary responses outside the browser** (`getBlob`, and a write answering with the stored content):
   without `XMLHttpRequest` axios falls back to its http adapter, which decodes the response as text, so
   a `Blob` can never be delivered. Refused with an error instead of handing back a string that only

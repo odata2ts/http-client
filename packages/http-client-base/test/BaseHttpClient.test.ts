@@ -313,6 +313,66 @@ describe("BaseHttpClient Tests", () => {
     });
   });
 
+  test("create stream request", async () => {
+    const data = new Blob(["a", "b"]).stream();
+    const mimeType = "image/png";
+    await mockClient.createStream(DEFAULT_URL, data, mimeType);
+
+    expect(mockClient.lastMethod).toBe("POST");
+    expect(mockClient.lastUrl).toBe(DEFAULT_URL);
+    expect(mockClient.lastData).toBe(data);
+    expect(mockClient.lastConfig).toBeUndefined();
+    expect(mockClient.lastInternalConfig).toStrictEqual({
+      dataType: "stream",
+      headers: DEFAULT_BLOB_HEADERS,
+    });
+  });
+
+  test("create stream request with config and headers", async () => {
+    const data = new Blob(["a", "b"]).stream();
+    const mimeType = "image/png";
+    await mockClient.createStream(DEFAULT_URL, data, mimeType, DEFAULT_CONFIG, ADDITIONAL_HEADERS);
+
+    expect(mockClient.lastMethod).toBe("POST");
+    expect(mockClient.lastUrl).toBe(DEFAULT_URL);
+    expect(mockClient.lastData).toBe(data);
+    expect(mockClient.lastConfig).toStrictEqual(DEFAULT_CONFIG);
+    expect(mockClient.lastInternalConfig).toStrictEqual({
+      dataType: "stream",
+      headers: { ...ADDITIONAL_HEADERS, ...DEFAULT_BLOB_HEADERS },
+    });
+  });
+
+  test("update stream request", async () => {
+    const data = new Blob(["a", "b"]).stream();
+    const mimeType = "image/png";
+    await mockClient.updateStream(DEFAULT_URL, data, mimeType);
+
+    expect(mockClient.lastMethod).toBe("PUT");
+    expect(mockClient.lastUrl).toBe(DEFAULT_URL);
+    expect(mockClient.lastData).toBe(data);
+    expect(mockClient.lastConfig).toBeUndefined();
+    expect(mockClient.lastInternalConfig).toStrictEqual({
+      dataType: "stream",
+      headers: DEFAULT_BLOB_HEADERS,
+    });
+  });
+
+  test("update stream request with config and headers", async () => {
+    const data = new Blob(["a", "b"]).stream();
+    const mimeType = "image/png";
+    await mockClient.updateStream(DEFAULT_URL, data, mimeType, DEFAULT_CONFIG, ADDITIONAL_HEADERS);
+
+    expect(mockClient.lastMethod).toBe("PUT");
+    expect(mockClient.lastUrl).toBe(DEFAULT_URL);
+    expect(mockClient.lastData).toBe(data);
+    expect(mockClient.lastConfig).toStrictEqual(DEFAULT_CONFIG);
+    expect(mockClient.lastInternalConfig).toStrictEqual({
+      dataType: "stream",
+      headers: { ...ADDITIONAL_HEADERS, ...DEFAULT_BLOB_HEADERS },
+    });
+  });
+
   test("retrieveErrorMessage", async () => {
     const message = "my bad!";
     const errorMessageV4 = { error: { message } };

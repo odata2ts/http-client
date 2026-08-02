@@ -144,4 +144,46 @@ export interface ODataHttpClient<RequestConfig extends ODataRequestConfig = ODat
     requestConfig?: RequestConfig,
     additionalHeaders?: Record<string, string>,
   ): ODataResponse<void | Blob>;
+
+  /**
+   * Creates binary data (Edm.Stream) from a ReadableStream, so that the payload does not have to be
+   * held in memory as a whole.
+   *
+   * Cannot be supported by HTTP clients based on XmlHttpRequest, e.g. axios.
+   * Should throw an error in this case.
+   *
+   * @param url
+   * @param data
+   * @param mimeType
+   * @param requestConfig
+   * @param additionalHeaders
+   */
+  createStream(
+    url: string,
+    data: ReadableStream,
+    mimeType: string,
+    requestConfig?: RequestConfig,
+    additionalHeaders?: Record<string, string>,
+  ): ODataResponse<void | ReadableStream>;
+
+  /**
+   * Updates binary data (Edm.Stream) from a ReadableStream, so that the payload does not have to be
+   * held in memory as a whole.
+   *
+   * Cannot be supported by HTTP clients based on XmlHttpRequest, e.g. axios.
+   * Should throw an error in this case.
+   *
+   * @param url
+   * @param data
+   * @param mimeType
+   * @param requestConfig
+   * @param additionalHeaders
+   */
+  updateStream(
+    url: string,
+    data: ReadableStream,
+    mimeType: string,
+    requestConfig?: RequestConfig,
+    additionalHeaders?: Record<string, string>,
+  ): ODataResponse<void | ReadableStream>;
 }

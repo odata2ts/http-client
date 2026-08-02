@@ -244,4 +244,19 @@ describe("JQueryClient Tests", function () {
       "Streaming is not supported by the JqueryClient!",
     );
   });
+
+  test("stream upload not supported either", async () => {
+    const mimeType = "text/csv";
+    const stream = new Blob(["hello world"]).stream();
+
+    await expect(() => jqClient.createStream(DEFAULT_URL, stream, mimeType)).rejects.toThrow(
+      "Streaming is not supported by the JqueryClient!",
+    );
+    await expect(() => jqClient.updateStream(DEFAULT_URL, stream, mimeType)).rejects.toThrow(
+      "Streaming is not supported by the JqueryClient!",
+    );
+
+    // nothing went over the wire
+    expect(jqMock.getRequestConfig()).toBeUndefined();
+  });
 });

@@ -334,4 +334,30 @@ export abstract class BaseHttpClient<RequestConfigType> {
       dataType: ODataHttpDataTypes.BLOB,
     });
   }
+
+  public createStream(
+    url: string,
+    data: ReadableStream,
+    mimeType: string,
+    requestConfig?: RequestConfigType,
+    additionalHeaders?: Record<string, string>,
+  ): ODataResponse<void | ReadableStream> {
+    return this.sendRequest(ODataHttpMethods.Post, url, data, requestConfig, {
+      ...getAdditionalHeaders(true, additionalHeaders, mimeType),
+      dataType: ODataHttpDataTypes.STREAM,
+    });
+  }
+
+  public updateStream(
+    url: string,
+    data: ReadableStream,
+    mimeType: string,
+    requestConfig?: RequestConfigType,
+    additionalHeaders?: Record<string, string>,
+  ): ODataResponse<void | ReadableStream> {
+    return this.sendRequest(ODataHttpMethods.Put, url, data, requestConfig, {
+      ...getAdditionalHeaders(true, additionalHeaders, mimeType),
+      dataType: ODataHttpDataTypes.STREAM,
+    });
+  }
 }
