@@ -20,7 +20,22 @@ function buildErrorMessage(prefix: string, error: any) {
   return prefix + (msg || DEFAULT_ERROR_MESSAGE);
 }
 
-interface InternalFetchConfig extends FetchRequestConfig, Pick<RequestInit, "method" | "body"> {}
+/**
+ * Whether the body is a stream, in which case fetch needs to be told about it explicitly.
+ *
+ * Guarded by a typeof check, since a runtime without ReadableStream cannot have produced one either.
+ */
+function isReadableStream(body: unknown): body is ReadableStream {
+  return typeof ReadableStream !== "undefined" && body instanceof ReadableStream;
+}
+
+interface InternalFetchConfig extends FetchRequestConfig, Pick<RequestInit, "method" | "body"> {
+  /**
+   * Required by the Fetch standard as soon as the request body is a stream - without it fetch refuses
+   * the request altogether. Declared here since RequestInit does not carry it yet.
+   */
+  duplex?: "half";
+}
 
 export class FetchClient extends BaseHttpClient<FetchRequestConfig> implements ODataHttpClient<FetchRequestConfig> {
   protected readonly config: FetchRequestConfig;
@@ -49,6 +64,10 @@ export class FetchClient extends BaseHttpClient<FetchRequestConfig> implements O
       const serializeAsJson =
         internalConfig.dataType === ODataHttpDataTypes.JSON && !this.isPlainTextBody(internalConfig.headers);
       resultConfig.body = serializeAsJson ? JSON.stringify(data) : data;
+
+      if (isReadableStream(resultConfig.body)) {
+        resultConfig.duplex = "half";
+      }
     }
 
     // apply additional query params to the URL

@@ -24,7 +24,8 @@ const FAILURE_AXIOS = "Fatal Axios failure: ";
 
 export const FAILURE_STREAM_UNSUPPORTED =
   "Streaming is not supported by the AxiosClient! Its XHR adapter cannot stream at all, and its http " +
-  "adapter yields a Node.js stream instead of a ReadableStream. Use the FetchClient for streams.";
+  "adapter neither accepts a ReadableStream as request body nor yields one as response. " +
+  "Use the FetchClient for streams.";
 export const FAILURE_BLOB_UNSUPPORTED =
   "Binary responses are not supported by the AxiosClient outside the browser! Without XMLHttpRequest " +
   "axios falls back to its http adapter, which decodes the response as text - so a Blob can never be " +
@@ -92,6 +93,7 @@ export class AxiosClient extends BaseHttpClient<AxiosRequestConfig> implements O
      * declares a `ReadableStream`, and `blob` a plain string where it declares a `Blob`. Both satisfy the
      * compiler and fail at the first `.text()` or `.getReader()` - far away from the cause.
      */
+    // covers both directions: reading a stream as well as sending one as request body
     if (internalConfig.dataType === ODataHttpDataTypes.STREAM) {
       throw new AxiosClientError(FAILURE_STREAM_UNSUPPORTED);
     }

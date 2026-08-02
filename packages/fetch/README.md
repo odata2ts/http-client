@@ -10,6 +10,8 @@ It supports:
 
 - request configuration
 - automatic CSRF token handling
+- binary data in both directions: as `Blob` (`getBlob` / `createBlob` / `updateBlob`) and as stream
+  (`getStream` / `createStream` / `updateStream`), the latter being the only client able to do so
 
 Works also for Node.js v18+, but is still marked as **experimental**.
 

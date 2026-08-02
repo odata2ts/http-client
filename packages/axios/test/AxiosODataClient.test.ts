@@ -253,6 +253,23 @@ describe("Axios HTTP Client Tests", function () {
       );
     });
 
+    test("sending a stream is refused as well", async () => {
+      // Unlike a blob, a stream cannot even be sent: the http adapter does not accept a ReadableStream
+      // as request body, and the XHR adapter cannot stream in the first place.
+      const data = new Blob(["a"]).stream();
+
+      await expect(axiosClient.createStream(DEFAULT_URL, data, "image/jpg")).rejects.toThrow(
+        FAILURE_STREAM_UNSUPPORTED,
+      );
+
+      simulateBrowser();
+      await expect(axiosClient.updateStream(DEFAULT_URL, data, "image/jpg")).rejects.toThrow(
+        FAILURE_STREAM_UNSUPPORTED,
+      );
+
+      expect(requestConfig).toBeUndefined();
+    });
+
     test("streaming is refused in either environment", async () => {
       // Not an environment question at all: the XHR adapter cannot stream, and the http adapter returns a
       // Node.js stream where the API declares a ReadableStream.

@@ -245,4 +245,42 @@ describe("FetchClient Tests", function () {
     expect(getBaseRequestConfig()).toStrictEqual(DEFAULT_REQUEST_CONFIG);
     expect(getRequestHeaderRecords()).toStrictEqual({});
   });
+
+  /**
+   * A streamed request body requires duplex: fetch refuses the request outright without it.
+   * The blob and JSON tests above pin the counterpart via toStrictEqual: no duplex for other bodies.
+   */
+  test("create stream request", async () => {
+    const mimeType = "text/csv";
+    const stream = new Blob(["hello world"]).stream();
+
+    const response = await fetchClient.createStream(DEFAULT_URL, stream, mimeType);
+
+    expect(response.status).toBe(200);
+    expect(requestUrl).toBe(DEFAULT_URL);
+    expect(getBaseRequestConfig()).toStrictEqual({
+      ...DEFAULT_REQUEST_CONFIG,
+      method: "POST",
+      body: stream,
+      duplex: "half",
+    });
+    expect(getRequestHeaderRecords()).toStrictEqual({ accept: JSON_VALUE, "content-type": mimeType });
+  });
+
+  test("update stream request", async () => {
+    const mimeType = "text/csv";
+    const stream = new Blob(["hello world"]).stream();
+
+    const response = await fetchClient.updateStream(DEFAULT_URL, stream, mimeType);
+
+    expect(response.status).toBe(200);
+    expect(requestUrl).toBe(DEFAULT_URL);
+    expect(getBaseRequestConfig()).toStrictEqual({
+      ...DEFAULT_REQUEST_CONFIG,
+      method: "PUT",
+      body: stream,
+      duplex: "half",
+    });
+    expect(getRequestHeaderRecords()).toStrictEqual({ accept: JSON_VALUE, "content-type": mimeType });
+  });
 });
