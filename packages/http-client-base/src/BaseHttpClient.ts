@@ -140,6 +140,7 @@ export abstract class BaseHttpClient<RequestConfigType> {
    * @param data
    * @param requestConfig
    * @param internalConfig
+   * @param isRetry whether this is already the repetition of a request whose CSRF token had expired
    * @private
    */
   private async sendRequest<ResponseModel>(
@@ -148,6 +149,7 @@ export abstract class BaseHttpClient<RequestConfigType> {
     data: any,
     requestConfig?: RequestConfigType,
     internalConfig: BaseRequestConfig = {},
+    isRetry: boolean = false,
   ): Promise<HttpResponseModel<ResponseModel>> {
     // noinspection SuspiciousTypeOfGuard
     if (typeof url !== "string") {
@@ -176,8 +178,10 @@ export abstract class BaseHttpClient<RequestConfigType> {
     } catch (e) {
       const clientError = e as ODataClientError;
 
-      // automatic CSRF token handling
+      // automatic CSRF token handling: only ever repeat a request once, since a server which keeps
+      // demanding a new token would otherwise make us recurse endlessly
       if (
+        !isRetry &&
         !!this.baseOptions.useCsrfProtection &&
         clientError.status === 403 &&
         !!clientError.headers &&
@@ -187,7 +191,7 @@ export abstract class BaseHttpClient<RequestConfigType> {
         // the internal config must be handed over as well, otherwise the repeated request would lose
         // its headers (content type!) and its data type
         this.csrfToken = undefined;
-        return this.sendRequest<ResponseModel>(method, url, data, requestConfig, internalConfig);
+        return this.sendRequest<ResponseModel>(method, url, data, requestConfig, internalConfig, true);
       }
 
       throw e;
