@@ -1,6 +1,6 @@
 import axios, { AxiosResponse, CreateAxiosDefaults, AxiosRequestConfig as OriginalRequestConfig } from "axios";
-import { beforeEach, describe, expect, test, vi } from "vitest";
-import { AxiosClient, AxiosRequestConfig } from "../src";
+import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
+import { AxiosClient, AxiosRequestConfig, FAILURE_BLOB_UNSUPPORTED, FAILURE_STREAM_UNSUPPORTED } from "../src";
 
 const DEFAULT_URL = "TEST/hi";
 const JSON_VALUE = "application/json";
@@ -182,39 +182,86 @@ describe("Axios HTTP Client Tests", function () {
     expect(response.data).toBeUndefined();
   });
 
-  test("get blob request", async () => {
-    await axiosClient.getBlob(DEFAULT_URL);
+  /**
+   * Binary data is the one area where the two axios adapters differ in what they can deliver at all, so
+   * these tests state which environment they are in: `XMLHttpRequest` is what axios picks the adapter by.
+   * Vitest runs in Node here, hence no XHR unless a test stubs one in.
+   */
+  describe("binary data", () => {
+    const blobHeaders = { Accept: JSON_VALUE, "Content-Type": "image/jpg" };
 
-    expect(requestConfig).toStrictEqual({
-      url: DEFAULT_URL,
-      headers: undefined,
-      responseType: "blob",
-      method: "GET",
+    function simulateBrowser() {
+      vi.stubGlobal("XMLHttpRequest", class {});
+    }
+
+    afterEach(() => {
+      vi.unstubAllGlobals();
     });
-  });
 
-  test("update blob request", async () => {
-    const data = new Blob(["a"]);
-    const mimeType = "image/jpg";
-    await axiosClient.updateBlob(DEFAULT_URL, data, mimeType);
+    test("get blob request in the browser", async () => {
+      simulateBrowser();
 
-    expect(requestConfig).toStrictEqual({
-      url: DEFAULT_URL,
-      headers: { Accept: JSON_VALUE, "Content-Type": mimeType },
-      method: "PUT",
-      responseType: "blob",
-      data,
+      await axiosClient.getBlob(DEFAULT_URL);
+
+      expect(requestConfig).toStrictEqual({
+        url: DEFAULT_URL,
+        headers: undefined,
+        responseType: "blob",
+        method: "GET",
+      });
     });
-  });
 
-  test("stream request not supported", async () => {
-    await axiosClient.getStream(DEFAULT_URL);
+    test("get blob request is refused without XMLHttpRequest", async () => {
+      // The http adapter decodes the response as text, so it would hand back a string where the API
+      // declares a Blob - a lie the compiler cannot catch, hence the refusal.
+      await expect(axiosClient.getBlob(DEFAULT_URL)).rejects.toThrow(FAILURE_BLOB_UNSUPPORTED);
+      expect(requestConfig).toBeUndefined();
+    });
 
-    expect(requestConfig).toStrictEqual({
-      url: DEFAULT_URL,
-      headers: undefined,
-      method: "GET",
-      responseType: "stream",
+    test("update blob request in the browser", async () => {
+      simulateBrowser();
+      const data = new Blob(["a"]);
+
+      await axiosClient.updateBlob(DEFAULT_URL, data, "image/jpg");
+
+      expect(requestConfig).toStrictEqual({
+        url: DEFAULT_URL,
+        headers: blobHeaders,
+        method: "PUT",
+        responseType: "blob",
+        data,
+      });
+    });
+
+    test("uploading a blob works without XMLHttpRequest, as long as nothing binary comes back", async () => {
+      // Sending is fine on either adapter, and the usual answer is 204 - refusing this would break a
+      // working upload path for Node users.
+      simulateNoContent = true;
+      const data = new Blob(["a"]);
+
+      const response = await axiosClient.updateBlob(DEFAULT_URL, data, "image/jpg");
+
+      expect(response.status).toBe(204);
+      expect(requestConfig).toMatchObject({ method: "PUT", responseType: "blob", data });
+    });
+
+    test("a blob coming back from a write is refused without XMLHttpRequest", async () => {
+      // Here the server does answer with content: that response can only be a string, so it is refused
+      // rather than passed on as a pseudo-Blob.
+      await expect(axiosClient.updateBlob(DEFAULT_URL, new Blob(["a"]), "image/jpg")).rejects.toThrow(
+        FAILURE_BLOB_UNSUPPORTED,
+      );
+    });
+
+    test("streaming is refused in either environment", async () => {
+      // Not an environment question at all: the XHR adapter cannot stream, and the http adapter returns a
+      // Node.js stream where the API declares a ReadableStream.
+      await expect(axiosClient.getStream(DEFAULT_URL)).rejects.toThrow(FAILURE_STREAM_UNSUPPORTED);
+
+      simulateBrowser();
+      await expect(axiosClient.getStream(DEFAULT_URL)).rejects.toThrow(FAILURE_STREAM_UNSUPPORTED);
+
+      expect(requestConfig).toBeUndefined();
     });
   });
 });
