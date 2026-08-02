@@ -9,6 +9,18 @@ It supports:
 
 - request configuration
 - automatic CSRF token handling
+- uploading binary data (`createBlob` / `updateBlob`)
+
+It does **not** support:
+
+- **streaming** (`getStream`): axios' XHR adapter cannot stream at all, and its http adapter yields a
+  Node.js stream rather than a `ReadableStream`. The call is refused with an error.
+- **binary responses outside the browser** (`getBlob`, and a write answering with the stored content):
+  without `XMLHttpRequest` axios falls back to its http adapter, which decodes the response as text, so
+  a `Blob` can never be delivered. Refused with an error instead of handing back a string that only
+  claims to be a `Blob`.
+
+Use the [Fetch Client](https://www.npmjs.com/package/@odata2ts/http-client-fetch) if you need either.
 
 ## Installation
 

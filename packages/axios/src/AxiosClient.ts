@@ -22,14 +22,39 @@ const FAILURE_NO_REQUEST = "No request was sent! Failure: ";
 const FAILURE_RESPONSE_MESSAGE = "OData server responded with error: ";
 const FAILURE_AXIOS = "Fatal Axios failure: ";
 
+export const FAILURE_STREAM_UNSUPPORTED =
+  "Streaming is not supported by the AxiosClient! Its XHR adapter cannot stream at all, and its http " +
+  "adapter yields a Node.js stream instead of a ReadableStream. Use the FetchClient for streams.";
+export const FAILURE_BLOB_UNSUPPORTED =
+  "Binary responses are not supported by the AxiosClient outside the browser! Without XMLHttpRequest " +
+  "axios falls back to its http adapter, which decodes the response as text - so a Blob can never be " +
+  "delivered. Use the FetchClient for binary data.";
+
 function buildErrorMessage(prefix: string, error: any) {
   const msg = typeof error === "string" ? error : (error as Error)?.message;
   return prefix + (msg || DEFAULT_ERROR_MESSAGE);
 }
 
+/**
+ * Whether axios will use its XHR adapter, which is the only one of the two that can deliver a `Blob`.
+ *
+ * Asked as a question about the environment rather than about the configured adapter on purpose: axios
+ * picks the adapter itself, and the presence of `XMLHttpRequest` is exactly what that choice comes down
+ * to. Without it the http adapter takes over and hands back a string, which is the failure this guards.
+ */
+function hasBinaryCapableAdapter(): boolean {
+  return typeof XMLHttpRequest !== "undefined";
+}
+
+/**
+ * Whether the response carried no body worth looking at - 204 leaves axios with an empty string.
+ */
+function isEmpty(data: unknown): boolean {
+  return data === undefined || data === null || data === "";
+}
+
 interface InternalRequestConfig
-  extends AxiosRequestConfig,
-    Pick<OriginalRequestConfig, "method" | "url" | "responseType"> {}
+  extends AxiosRequestConfig, Pick<OriginalRequestConfig, "method" | "url" | "responseType"> {}
 
 export class AxiosClient extends BaseHttpClient<AxiosRequestConfig> implements ODataHttpClient<AxiosRequestConfig> {
   protected readonly client: AxiosInstance;
@@ -61,8 +86,24 @@ export class AxiosClient extends BaseHttpClient<AxiosRequestConfig> implements O
       resultConfig.responseType = internalConfig.dataType;
     }
 
+    /*
+     * Refuse what this client cannot deliver, instead of returning something that merely looks like it.
+     * Passing `responseType` through was silently wrong: `stream` yielded a Node.js stream where the API
+     * declares a `ReadableStream`, and `blob` a plain string where it declares a `Blob`. Both satisfy the
+     * compiler and fail at the first `.text()` or `.getReader()` - far away from the cause.
+     */
+    if (internalConfig.dataType === ODataHttpDataTypes.STREAM) {
+      throw new AxiosClientError(FAILURE_STREAM_UNSUPPORTED);
+    }
+    // Sending binary data works on either adapter, so only a request expecting binary *back* is refused
+    // up front; a write is checked afterwards, once it is known whether a body came back at all.
+    if (internalConfig.dataType === ODataHttpDataTypes.BLOB && !hasBinaryCapableAdapter() && data === undefined) {
+      throw new AxiosClientError(FAILURE_BLOB_UNSUPPORTED);
+    }
+
+    let response: HttpResponseModel<ResponseModel>;
     try {
-      return await this.client.request(resultConfig);
+      response = await this.client.request(resultConfig);
     } catch (error: any) {
       if ((error as AxiosError).isAxiosError) {
         const axiosError = error as AxiosError;
@@ -93,6 +134,14 @@ export class AxiosClient extends BaseHttpClient<AxiosRequestConfig> implements O
       // not an Axios error
       throw new AxiosClientError(buildErrorMessage(FAILURE_AXIOS, error), undefined, undefined, error);
     }
+
+    // A write may answer with the stored content, which runs into the same wall a read would: checked
+    // here rather than up front, because the usual answer is 204 and that case is perfectly fine.
+    if (internalConfig.dataType === ODataHttpDataTypes.BLOB && !hasBinaryCapableAdapter() && !isEmpty(response.data)) {
+      throw new AxiosClientError(FAILURE_BLOB_UNSUPPORTED, response.status, response.headers);
+    }
+
+    return response;
   }
 
   protected mapHeaders(headers: AxiosResponseHeaders | RawAxiosResponseHeaders): Record<string, string> {
