@@ -86,6 +86,25 @@ describe("CSRF Token Handling Tests", () => {
   });
 
   /**
+   * The server signals the expired token by the very header it expects the token in, hence the retry
+   * must respect a custom token key instead of looking for the default one.
+   */
+  test("token expiration with custom token key", async () => {
+    const tokenKey = "my-own-token";
+    mockClient.setCsrfTokenKey(tokenKey);
+
+    // the first request caches the token, the second one runs into its expiration
+    await mockClient.post("test", {});
+    const token = mockClient.generatedCsrfToken;
+    mockClient.simulateTokenExpired = true;
+    await mockClient.post("test", {});
+
+    expect(mockClient.generatedCsrfToken).toBeTruthy();
+    expect(mockClient.generatedCsrfToken).not.toBe(token);
+    expect(mockClient.lastInternalConfig?.headers?.[tokenKey]).toBe(mockClient.generatedCsrfToken);
+  });
+
+  /**
    * A server which demands a new token again and again must not send us into an endless loop:
    * the request is repeated exactly once, then its failure is passed on to the caller.
    */
