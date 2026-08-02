@@ -3,11 +3,11 @@ import {
   HttpResponseModel,
   ODataClientError,
   ODataHttpClientOptions,
+  ODataHttpDataTypes,
   ODataHttpMethods,
   ODataRequestConfig,
   ODataResponse,
 } from "@odata2ts/http-client-api";
-import { ODataHttpDataTypes } from "@odata2ts/http-client-api/lib/ODataHttpDataTypes";
 import { ErrorMessageRetriever, retrieveErrorMessage } from "./ErrorMessageRetriever";
 
 export interface BaseRequestConfig extends ODataRequestConfig {
@@ -93,14 +93,15 @@ export abstract class BaseHttpClient<RequestConfigType> {
    * @param url the URL to use
    * @param data data for the request body if any
    * @param config request configuration from end user which should override default settings
-   * @param internalConfig request configuration from base client including additional headers which should override end user configurations
+   * @param internalConfig request configuration from base client including additional headers which should override end user configurations;
+   *        always handed over, so implementations do not need a fallback for it
    */
   protected abstract executeRequest<ResponseModel>(
     method: ODataHttpMethods,
     url: string,
     data: any,
-    config?: RequestConfigType,
-    internalConfig?: BaseRequestConfig,
+    config: RequestConfigType | undefined,
+    internalConfig: BaseRequestConfig,
   ): Promise<HttpResponseModel<ResponseModel>>;
 
   public getCsrfTokenKey() {
@@ -147,8 +148,8 @@ export abstract class BaseHttpClient<RequestConfigType> {
     method: ODataHttpMethods,
     url: string,
     data: any,
-    requestConfig?: RequestConfigType,
-    internalConfig: BaseRequestConfig = {},
+    requestConfig: RequestConfigType | undefined,
+    internalConfig: BaseRequestConfig,
     isRetry: boolean = false,
   ): Promise<HttpResponseModel<ResponseModel>> {
     // noinspection SuspiciousTypeOfGuard
@@ -160,21 +161,12 @@ export abstract class BaseHttpClient<RequestConfigType> {
     if (this.baseOptions.useCsrfProtection && DATA_MANIPULATION_METHODS.includes(method)) {
       const [tokenKey, tokenValue] = await this.setupSecurityToken();
       if (tokenValue) {
-        if (!internalConfig.headers) {
-          internalConfig.headers = {};
-        }
-        internalConfig.headers[tokenKey] = tokenValue;
+        internalConfig.headers = { ...internalConfig.headers, [tokenKey]: tokenValue };
       }
     }
 
     try {
-      return await this.executeRequest<ResponseModel>(
-        method,
-        url,
-        data,
-        requestConfig,
-        Object.keys(internalConfig).length ? internalConfig : undefined,
-      );
+      return await this.executeRequest<ResponseModel>(method, url, data, requestConfig, internalConfig);
     } catch (e) {
       const clientError = e as ODataClientError;
 

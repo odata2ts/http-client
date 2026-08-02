@@ -2,9 +2,9 @@ import {
   HttpResponseModel,
   ODataHttpClient,
   ODataHttpClientOptions,
+  ODataHttpDataTypes,
   ODataHttpMethods,
 } from "@odata2ts/http-client-api";
-import { ODataHttpDataTypes } from "@odata2ts/http-client-api/lib/ODataHttpDataTypes";
 import { BaseHttpClient, BaseRequestConfig } from "@odata2ts/http-client-base";
 import axios, {
   AxiosError,
@@ -70,7 +70,7 @@ export class AxiosClient extends BaseHttpClient<AxiosRequestConfig> implements O
     url: string,
     data: any,
     requestConfig: AxiosRequestConfig | undefined = {},
-    internalConfig: BaseRequestConfig = {},
+    internalConfig: BaseRequestConfig,
   ): Promise<HttpResponseModel<ResponseModel>> {
     const { headers } = internalConfig;
 

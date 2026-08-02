@@ -8,6 +8,7 @@ describe("Failure Handling Tests", function () {
   let simulateFailure: {
     isFetchFailure?: boolean;
     isJsonFailure?: boolean;
+    isBlobFailure?: boolean;
     message?: string;
     isV2?: boolean;
     isOk?: boolean;
@@ -18,7 +19,7 @@ describe("Failure Handling Tests", function () {
     // store last request config
     requestConfig = config;
 
-    const { isFetchFailure, isV2, isOk, isJsonFailure, message } = simulateFailure;
+    const { isFetchFailure, isV2, isOk, isJsonFailure, isBlobFailure, message } = simulateFailure;
     let jsonResult = { error: { message: isV2 ? { value: message } : message } };
 
     const headers = new Headers(RESPONSE_HEADERS);
@@ -30,6 +31,7 @@ describe("Failure Handling Tests", function () {
           headers,
           ok: !!isOk,
           json: () => (isJsonFailure ? Promise.reject(new Error(message)) : Promise.resolve(jsonResult)),
+          blob: () => (isBlobFailure ? Promise.reject(new Error(message)) : Promise.resolve(new Blob(["a"]))),
         });
   });
 
@@ -40,7 +42,7 @@ describe("Failure Handling Tests", function () {
   });
 
   test("failure response", async () => {
-    simulateFailure.isOk = false
+    simulateFailure.isOk = false;
     simulateFailure.message = "oh no!";
 
     try {
@@ -113,6 +115,24 @@ describe("Failure Handling Tests", function () {
       expect(error.stack).toContain(simulateFailure.message);
       expect(error.stack).toContain("FetchClientError");
       expect(error.responseData).toBeUndefined();
+    }
+  });
+
+  test("blob retrieval failure", async () => {
+    simulateFailure = { isBlobFailure: true, isOk: true, message: "xxxyyyy Dddd!" };
+
+    try {
+      await fetchClient.getBlob("");
+      expect.unreachable("retrieving the blob should have failed");
+    } catch (e) {
+      expect(e).toBeInstanceOf(FetchClientError);
+
+      const error = e as FetchClientError;
+      expect(error.status).toBe(200);
+      // the failure is named after what could not be read, not after the default of json
+      expect(error.message).toContain("Retrieving blob from OData response failed: ");
+      expect(error.message).toContain(simulateFailure.message);
+      expect(error.cause?.message).toBe(simulateFailure.message);
     }
   });
 
