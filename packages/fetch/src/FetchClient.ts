@@ -13,7 +13,19 @@ export const DEFAULT_ERROR_MESSAGE = "No error message!";
 const FETCH_FAILURE_MESSAGE = "OData request failed entirely: ";
 const JSON_RETRIEVAL_FAILURE_MESSAGE = "Retrieving JSON body from OData response failed: ";
 const BLOB_RETRIEVAL_FAILURE_MESSAGE = "Retrieving blob from OData response failed: ";
+const STREAM_RETRIEVAL_FAILURE_MESSAGE = "Retrieving stream from OData response failed: ";
 const RESPONSE_FAILURE_MESSAGE = "OData server responded with error: ";
+
+function getRetrievalFailureMessage(dataType: ODataHttpDataTypes | undefined) {
+  switch (dataType) {
+    case ODataHttpDataTypes.BLOB:
+      return BLOB_RETRIEVAL_FAILURE_MESSAGE;
+    case ODataHttpDataTypes.STREAM:
+      return STREAM_RETRIEVAL_FAILURE_MESSAGE;
+    default:
+      return JSON_RETRIEVAL_FAILURE_MESSAGE;
+  }
+}
 
 function buildErrorMessage(prefix: string, error: any) {
   const msg = typeof error === "string" ? error : (error as Error)?.message;
@@ -115,7 +127,7 @@ export class FetchClient extends BaseHttpClient<FetchRequestConfig> implements O
     try {
       responseData = noBodyEvaluation ? undefined : await this.getResponseBody(response, internalConfig);
     } catch (error) {
-      const msg = internalConfig.dataType === "blob" ? BLOB_RETRIEVAL_FAILURE_MESSAGE : JSON_RETRIEVAL_FAILURE_MESSAGE;
+      const msg = getRetrievalFailureMessage(internalConfig.dataType);
       throw new FetchClientError(
         buildErrorMessage(msg, error),
         response.status,
@@ -142,7 +154,9 @@ export class FetchClient extends BaseHttpClient<FetchRequestConfig> implements O
       case "blob":
         return response.blob();
       case "stream":
-        return response.body;
+        // a response without any body at all yields null here, which the declared ReadableStream does
+        // not include; undefined is what a 204 already hands back for every other data type
+        return response.body ?? undefined;
     }
 
     return undefined;

@@ -5,10 +5,10 @@ import { ODataClientError } from "@odata2ts/http-client-api";
 export class JQueryClientError extends Error implements ODataClientError {
   constructor(
     msg: string,
-    public readonly status: number | undefined,
-    public readonly headers: Record<string, string> | undefined,
-    public readonly cause: Error | undefined,
-    public readonly jqXHR: JQuery.jqXHR,
+    public readonly status?: number,
+    public readonly headers?: Record<string, string>,
+    public readonly cause?: Error,
+    public readonly jqXHR?: JQuery.jqXHR,
   ) {
     // @ts-ignore: fetch requires lib "dom" or "webworker", but then the "cause" property becomes unknown to TS
     super(msg, { cause });

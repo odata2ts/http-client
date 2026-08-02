@@ -14,6 +14,7 @@ describe("FetchClient Tests", function () {
   let requestUrl: string | undefined;
   let requestConfig: RequestInit | undefined;
   let simulateNoContent: boolean = false;
+  let simulateEmptyBody: boolean = false;
 
   // Mocking fetch
   // @ts-ignore: more simplistic parameters and returning different stuff
@@ -30,7 +31,8 @@ describe("FetchClient Tests", function () {
       statusText: "OK",
       headers: new Headers(),
       ok: true,
-      body: DEFAULT_STREAM,
+      // fetch yields null whenever the response carries no body at all
+      body: simulateEmptyBody ? null : DEFAULT_STREAM,
       json: () => Promise.resolve(jsonResult),
       blob: () => Promise.resolve(DEFAULT_BLOB),
     });
@@ -60,6 +62,7 @@ describe("FetchClient Tests", function () {
     requestConfig = undefined;
     fetchClient = new FetchClient();
     simulateNoContent = false;
+    simulateEmptyBody = false;
   });
 
   test("get request", async () => {
@@ -244,6 +247,20 @@ describe("FetchClient Tests", function () {
     expect(response.data).toBe(DEFAULT_STREAM);
     expect(getBaseRequestConfig()).toStrictEqual(DEFAULT_REQUEST_CONFIG);
     expect(getRequestHeaderRecords()).toStrictEqual({});
+  });
+
+  /**
+   * A response without a body leaves fetch with null, which the declared ReadableStream does not
+   * include - handing it on would only be found out at the first getReader().
+   */
+  test("get stream request without a body", async () => {
+    simulateEmptyBody = true;
+
+    const response = await fetchClient.getStream(DEFAULT_URL);
+
+    expect(response.status).toBe(200);
+    expect(response.data).toBeUndefined();
+    expect(response.data).not.toBeNull();
   });
 
   /**
