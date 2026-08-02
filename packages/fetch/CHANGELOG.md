@@ -3,6 +3,29 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.11.0](https://github.com/odata2ts/http-client/compare/@odata2ts/http-client-fetch-v0.10.0...@odata2ts/http-client-fetch-v0.11.0) (2026-08-02)
+
+
+### ⚠ BREAKING CHANGES
+
+* the trailing constructor parameters of JQueryClientError are optional now, as they already are for AxiosClientError and FetchClientError. Reading error.jqXHR therefore yields JQuery.jqXHR | undefined and needs a check under strict TypeScript.
+
+### Features
+
+* upload binary data as a stream ([#44](https://github.com/odata2ts/http-client/issues/44)) ([ccee77a](https://github.com/odata2ts/http-client/commit/ccee77a7f6ad13bcf147485b2b9b91ac3a899fc2))
+
+
+### Bug Fixes
+
+* report a refused or absent stream honestly ([#45](https://github.com/odata2ts/http-client/issues/45)) ([43be086](https://github.com/odata2ts/http-client/commit/43be086884c59cff45ae596b848e72a55b59ac83))
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * @odata2ts/http-client-base bumped from ^0.5.7 to ^0.5.8
+
 ## [0.10.0](https://github.com/odata2ts/http-client/compare/@odata2ts/fetch-v0.9.2...@odata2ts/fetch-v0.10.0) (2026-07-31)
 
 

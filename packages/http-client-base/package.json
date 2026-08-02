@@ -1,6 +1,6 @@
 {
   "name": "@odata2ts/http-client-base",
-  "version": "0.5.7",
+  "version": "0.5.8",
   "description": "Core functionality for odata2ts HTTP clients",
   "keywords": [
     "http client",
@@ -27,7 +27,7 @@
     "test": "vitest run"
   },
   "dependencies": {
-    "@odata2ts/http-client-api": "^0.6.6",
+    "@odata2ts/http-client-api": "^0.6.7",
     "tslib": "^2.8.1"
   },
   "devDependencies": {

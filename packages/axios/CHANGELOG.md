@@ -3,6 +3,29 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.14.0](https://github.com/odata2ts/http-client/compare/@odata2ts/http-client-axios-v0.13.0...@odata2ts/http-client-axios-v0.14.0) (2026-08-02)
+
+
+### ⚠ BREAKING CHANGES
+
+* **http-client-axios:** AxiosClient.getStream() always throws, and getBlob() throws outside a browser environment (no XMLHttpRequest). Code that relied on the string or the Node.js stream these used to return has to switch to the FetchClient.
+
+### Features
+
+* upload binary data as a stream ([#44](https://github.com/odata2ts/http-client/issues/44)) ([ccee77a](https://github.com/odata2ts/http-client/commit/ccee77a7f6ad13bcf147485b2b9b91ac3a899fc2))
+
+
+### Bug Fixes
+
+* **http-client-axios:** refuse binary responses instead of faking them ([#40](https://github.com/odata2ts/http-client/issues/40)) ([a5bcb7b](https://github.com/odata2ts/http-client/commit/a5bcb7b9982c5382ea6870d8c398b407eff69f70))
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * @odata2ts/http-client-base bumped from ^0.5.7 to ^0.5.8
+
 ## [0.13.0](https://github.com/odata2ts/http-client/compare/@odata2ts/axios-v0.12.2...@odata2ts/axios-v0.13.0) (2026-07-31)
 
 

@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.6.7](https://github.com/odata2ts/http-client/compare/@odata2ts/http-client-api-v0.6.6...@odata2ts/http-client-api-v0.6.7) (2026-08-02)
+
+
+### Features
+
+* upload binary data as a stream ([#44](https://github.com/odata2ts/http-client/issues/44)) ([ccee77a](https://github.com/odata2ts/http-client/commit/ccee77a7f6ad13bcf147485b2b9b91ac3a899fc2))
+
 ## [0.6.6](https://github.com/odata2ts/http-client/compare/@odata2ts/http-client-api-v0.6.5...@odata2ts/http-client-api-v0.6.6) (2026-07-31)
 
 

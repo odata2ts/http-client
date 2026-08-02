@@ -3,6 +3,27 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.5.8](https://github.com/odata2ts/http-client/compare/@odata2ts/http-client-base-v0.5.7...@odata2ts/http-client-base-v0.5.8) (2026-08-02)
+
+
+### Features
+
+* upload binary data as a stream ([#44](https://github.com/odata2ts/http-client/issues/44)) ([ccee77a](https://github.com/odata2ts/http-client/commit/ccee77a7f6ad13bcf147485b2b9b91ac3a899fc2))
+
+
+### Bug Fixes
+
+* **http-client-base:** honor a custom token key when a token expires ([#43](https://github.com/odata2ts/http-client/issues/43)) ([0201c55](https://github.com/odata2ts/http-client/commit/0201c55aad4971609b93cdb22da7ee6f339b1278))
+* **http-client-base:** repeat a request at most once after token expiration ([#41](https://github.com/odata2ts/http-client/issues/41)) ([08e32f5](https://github.com/odata2ts/http-client/commit/08e32f50b05414438159a4e95beabc33bec53128))
+* **http-client-base:** repeat the identical request after token expiration ([#38](https://github.com/odata2ts/http-client/issues/38)) ([3155bba](https://github.com/odata2ts/http-client/commit/3155bba94818b073e8b9a9f5f2a908089a7b06cd))
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * @odata2ts/http-client-api bumped from ^0.6.6 to ^0.6.7
+
 ## [0.5.7](https://github.com/odata2ts/http-client/compare/@odata2ts/http-client-base-v0.5.6...@odata2ts/http-client-base-v0.5.7) (2026-07-31)
 
 
