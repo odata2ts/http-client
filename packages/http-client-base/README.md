@@ -9,6 +9,7 @@ Base implementation for [odata2ts](https://github.com/odata2ts/odata2ts) compati
 - implements standard error message retrieval method for OData error responses
   - works for V2 & V4
   - allows user to set custom retrieval method
+  - decodes the error document of a failed binary request, which arrives as a `Blob` or unparsed text
 - streamlines all HTTP calls (POST, GET, ...) into one method
 
 ## Installation

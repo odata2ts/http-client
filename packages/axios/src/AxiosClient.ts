@@ -5,7 +5,7 @@ import {
   ODataHttpDataTypes,
   ODataHttpMethods,
 } from "@odata2ts/http-client-api";
-import { BaseHttpClient, BaseRequestConfig } from "@odata2ts/http-client-base";
+import { BaseHttpClient, BaseRequestConfig, parseErrorResponseBody } from "@odata2ts/http-client-base";
 import axios, {
   AxiosError,
   AxiosInstance,
@@ -112,7 +112,11 @@ export class AxiosClient extends BaseHttpClient<AxiosRequestConfig> implements O
 
         // regular failure handling
         if (axiosError.response) {
-          const errMsg = this.retrieveErrorMessage(axiosError.response.data);
+          // axios applied the request's responseType to the error response as well, so a failing
+          // `getBlob` leaves a Blob here (XHR adapter) resp. an unparsed string (http adapter) - either
+          // way the OData error document inside it has to be decoded before it can be read
+          const responseData = await parseErrorResponseBody(axiosError.response.data);
+          const errMsg = this.retrieveErrorMessage(responseData);
           const msg = buildErrorMessage(FAILURE_RESPONSE_MESSAGE, errMsg);
           throw new AxiosClientError(
             msg,

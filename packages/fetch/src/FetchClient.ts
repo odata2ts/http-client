@@ -5,7 +5,7 @@ import {
   ODataHttpDataTypes,
   ODataHttpMethods,
 } from "@odata2ts/http-client-api";
-import { BaseHttpClient, BaseRequestConfig } from "@odata2ts/http-client-base";
+import { BaseHttpClient, BaseRequestConfig, parseErrorResponseBody } from "@odata2ts/http-client-base";
 import { FetchClientError } from "./FetchClientError";
 import { FetchRequestConfig, getDefaultConfig, mergeFetchConfig } from "./FetchRequestConfig";
 
@@ -96,7 +96,7 @@ export class FetchClient extends BaseHttpClient<FetchRequestConfig> implements O
     if (!response.ok) {
       let responseData;
       try {
-        responseData = await this.getResponseBody(response, internalConfig);
+        responseData = await this.getErrorResponseBody(response);
       } catch (e) {
         responseData = undefined;
       }
@@ -149,6 +149,22 @@ export class FetchClient extends BaseHttpClient<FetchRequestConfig> implements O
       default:
         return response.json();
     }
+  }
+
+  /**
+   * The body of a failed response, read independently of what the request asked for.
+   *
+   * `getResponseBody` would apply the request's data type, which describes the successful payload: a
+   * `getBlob` would read the server's error document as binary and a `getStream` would hand the unread
+   * stream on, so the message inside it never reaches the caller. Text is what every error document has
+   * in common, whether it turns out to be JSON or not.
+   */
+  protected async getErrorResponseBody(response: Response) {
+    if (response.status === 204) {
+      return undefined;
+    }
+
+    return parseErrorResponseBody(await response.text());
   }
 
   protected mapHeaders(headers: Headers): Record<string, string> {

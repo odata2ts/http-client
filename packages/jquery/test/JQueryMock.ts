@@ -9,12 +9,16 @@ function createMockXhr(status: number, statusText: string, data: any, headers: {
         .map(([key, value]) => `${key.toLowerCase()}: ${value}\r\n`)
         .join("");
 
+  // A binary request leaves XmlHttpRequest with nothing to parse, so jQuery has no responseJSON to
+  // offer either - the body is only reachable as the raw `response`.
+  const isBinary = typeof Blob !== "undefined" && data instanceof Blob;
+
   return {
     status,
     statusText,
     getResponseHeader: (name: string) => (headers ? headers[name] : undefined),
     getAllResponseHeaders: () => respHeaders,
-    responseJSON: data,
+    ...(isBinary ? { response: data } : { responseJSON: data }),
   };
 }
 

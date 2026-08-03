@@ -83,6 +83,47 @@ describe("JQueryClient Failure Handling Tests", function () {
     await expect(jqClient.get("")).rejects.toThrow(failMsg);
   });
 
+  /**
+   * A binary request is sent with `responseType: "blob"`, and XmlHttpRequest then offers neither
+   * `responseText` nor anything jQuery could have parsed into `responseJSON`. The server's error
+   * document sits in `response` as binary instead, where nobody looked - so every such failure came out
+   * with whatever jQuery had thrown, never with what the server said.
+   */
+  describe("error response to a binary request", () => {
+    function asBlob(body: object) {
+      return new Blob([JSON.stringify(body)]);
+    }
+
+    test("the error document is decoded from the binary response", async () => {
+      const failBodyMsg = "Testings!!!";
+      jqMock.errorResponse(400, asBlob(createFailureMsg(failBodyMsg)), RESPONSE_HEADERS, "Oh no!");
+
+      try {
+        await jqClient.getBlob(DEFAULT_URL);
+        expect.unreachable("the request should have failed");
+      } catch (e) {
+        const error = e as JQueryClientError;
+        expect(error.status).toBe(400);
+        expect(error.message).toContain(failBodyMsg);
+        expect(error.cause?.message).toBe(failBodyMsg);
+      }
+    });
+
+    test("v2 support included", async () => {
+      const failMsg = "Oh no!!!";
+      jqMock.errorResponse(400, asBlob(createFailureMsg(failMsg, true)), RESPONSE_HEADERS);
+
+      await expect(jqClient.getBlob(DEFAULT_URL)).rejects.toThrow(failMsg);
+    });
+
+    test("a body which is not an error document leaves jQuery's own message", async () => {
+      const failMsg = "Oh no!";
+      jqMock.errorResponse(400, new Blob(["not an error document"]), RESPONSE_HEADERS, failMsg);
+
+      await expect(jqClient.getBlob(DEFAULT_URL)).rejects.toThrow(failMsg);
+    });
+  });
+
   test("custom failure message retriever", async () => {
     const failMsg = "the failure";
 

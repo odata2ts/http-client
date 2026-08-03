@@ -20,6 +20,11 @@ describe("Failure Handling Tests", function () {
     isEmptyBody?: boolean;
     message?: string;
     isV2?: boolean;
+    /**
+     * How the error document arrives: axios applies the request's `responseType` to it as well, so a
+     * failing binary request leaves a Blob (XHR adapter) resp. an unparsed string (http adapter) here.
+     */
+    bodyAs?: "blob" | "string";
   } = {};
 
   // @ts-ignore
@@ -33,8 +38,14 @@ describe("Failure Handling Tests", function () {
         ...defaultConfig,
         ...config,
       } as AxiosRequestConfig;
-      const { isPlainError, isRequestFailure, isResponseFailure, isEmptyBody, message, isV2 } = simulateFailure;
-      let jsonResult = { error: { message: isV2 ? { value: message } : message } };
+      const { isPlainError, isRequestFailure, isResponseFailure, isEmptyBody, message, isV2, bodyAs } = simulateFailure;
+      const errorDocument = { error: { message: isV2 ? { value: message } : message } };
+      const jsonResult =
+        bodyAs === "blob"
+          ? new Blob([JSON.stringify(errorDocument)])
+          : bodyAs === "string"
+            ? JSON.stringify(errorDocument)
+            : errorDocument;
 
       if (isPlainError) {
         return Promise.reject(new Error(message));
@@ -145,6 +156,35 @@ describe("Failure Handling Tests", function () {
       expect(error.stack).toContain(simulateFailure.message);
       expect(error.stack).toContain("AxiosClientError");
     }
+  });
+
+  /**
+   * The request's `responseType` describes the successful payload, but axios applies it to the error
+   * response as well - so the OData error document of a failing binary request arrives as a Blob or as
+   * an unparsed string, and reading it as it is left every such failure reporting the default message.
+   *
+   * `updateBlob` rather than `getBlob`, since reading binary is refused up front without XMLHttpRequest.
+   */
+  describe("error response to a binary request", () => {
+    const blob = new Blob(["a"], { type: "application/epub+zip" });
+
+    test("an error document arriving as a Blob is decoded", async () => {
+      simulateFailure = { message: "oh no!", bodyAs: "blob" };
+
+      await expect(axiosClient.updateBlob("", blob, "application/epub+zip")).rejects.toThrow(simulateFailure.message);
+    });
+
+    test("an error document arriving as an unparsed string is parsed", async () => {
+      simulateFailure = { isV2: true, message: "oh no!", bodyAs: "string" };
+
+      await expect(axiosClient.updateBlob("", blob, "application/epub+zip")).rejects.toThrow(simulateFailure.message);
+    });
+
+    test("a body which is neither stays the default message", async () => {
+      simulateFailure = { isEmptyBody: true, bodyAs: "blob" };
+
+      await expect(axiosClient.updateBlob("", blob, "application/epub+zip")).rejects.toThrow(DEFAULT_ERROR_MESSAGE);
+    });
   });
 
   test("custom failure message retriever", async () => {
