@@ -6,7 +6,7 @@ import {
   ODataHttpClientOptions,
   ODataHttpMethods,
 } from "@odata2ts/http-client-api";
-import { BaseHttpClient, BaseRequestConfig } from "@odata2ts/http-client-base";
+import { BaseHttpClient, BaseRequestConfig, parseErrorResponseBody } from "@odata2ts/http-client-base";
 import { JQueryClientError } from "./JQueryClientError";
 import { JQueryRequestConfig, mergeConfigs } from "./JQueryRequestConfig";
 
@@ -48,6 +48,31 @@ export class JQueryClient extends BaseHttpClient<JQueryRequestConfig> implements
         }
         return collector;
       }, {});
+  }
+
+  /**
+   * Turns a failed request into the error to reject with.
+   *
+   * `responseJSON` is jQuery's own parsing of the response and covers the ordinary case. It stays empty
+   * for a binary request though: with `responseType: "blob"` XmlHttpRequest offers neither `responseText`
+   * nor anything jQuery could have parsed, and the server's error document sits in `response` as binary.
+   * Reading it there is what keeps a failing `getBlob` from reporting the default message.
+   */
+  private async buildFailure(jqXHR: jqXHR, thrownError: string): Promise<JQueryClientError> {
+    let responseData: unknown;
+    try {
+      // `response` belongs to XmlHttpRequest itself, which jQuery's typing does not carry over
+      const rawResponse = (jqXHR as unknown as Partial<XMLHttpRequest> | undefined)?.response;
+      responseData = jqXHR?.responseJSON ?? (await parseErrorResponseBody(rawResponse));
+    } catch (e) {
+      responseData = undefined;
+    }
+
+    const responseMessage = this.retrieveErrorMessage(responseData);
+    const failMsg = responseMessage || thrownError || DEFAULT_ERROR_MESSAGE;
+    const errorMessage = responseMessage ? "OData server responded with error: " + responseMessage : failMsg;
+
+    return new JQueryClientError(errorMessage, jqXHR.status, this.mapHeaders(jqXHR), new Error(failMsg), jqXHR);
   }
 
   protected async executeRequest<ResponseModel>(
@@ -103,11 +128,8 @@ export class JQueryClient extends BaseHttpClient<JQueryRequestConfig> implements
           });
         },
         error: (jqXHR: JQuery.jqXHR, textStatus: string, thrownError: string) => {
-          const responseMessage = this.retrieveErrorMessage(jqXHR?.responseJSON);
-          const failMsg = responseMessage || thrownError || DEFAULT_ERROR_MESSAGE;
-          const errorMessage = responseMessage ? "OData server responded with error: " + responseMessage : failMsg;
-          const responseHeaders = this.mapHeaders(jqXHR);
-          reject(new JQueryClientError(errorMessage, jqXHR.status, responseHeaders, new Error(failMsg), jqXHR));
+          // decoding the error document may take a turn of the event loop, hence the detour
+          this.buildFailure(jqXHR, thrownError).then(reject, reject);
         },
       });
     });
