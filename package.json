@@ -25,7 +25,7 @@
     "@vitest/coverage-istanbul": "^4.1.10",
     "@yarnpkg/types": "^4.0.1",
     "env-cmd": "^11.0.0",
-    "jsdom": "^29.1.1",
+    "jsdom": "^30.0.0",
     "madge": "^8.0.0",
     "prettier": "^3.9.6",
     "prettier-plugin-packagejson": "^3.0.2",
