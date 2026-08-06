@@ -24,6 +24,8 @@ jobs:
 #        run: corepack enable && yarn set version 3.5.0 && yarn install --immutable
       - name: Install packages
         run: yarn --immutable
+      - name: Check dependency consistency
+        run: yarn constraints
       - name: Build
         run: yarn build
       - name: Check Circular Deps
