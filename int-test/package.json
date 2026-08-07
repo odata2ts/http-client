@@ -11,8 +11,8 @@
     "test-compile": "tsc"
   },
   "dependencies": {
-    "@angular/common": "^20.0.0",
-    "@angular/core": "^20.0.0",
+    "@angular/common": "^22.0.0",
+    "@angular/core": "^22.0.0",
     "@odata2ts/http-client-angular": "workspace:^",
     "@odata2ts/http-client-axios": "workspace:^",
     "@odata2ts/http-client-fetch": "workspace:^",
@@ -22,9 +22,9 @@
     "rxjs": "^7.8.0"
   },
   "devDependencies": {
-    "@angular/compiler": "^20.0.0",
-    "@angular/platform-browser": "^20.0.0",
-    "@angular/platform-browser-dynamic": "^20.0.0",
+    "@angular/compiler": "^22.0.0",
+    "@angular/platform-browser": "^22.0.0",
+    "@angular/platform-browser-dynamic": "^22.0.0",
     "@odata2ts/odata-core": "^0.7.0",
     "@types/jquery": "^3.5.34",
     "@types/node": "^24",

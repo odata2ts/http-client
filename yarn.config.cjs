@@ -24,10 +24,6 @@ module.exports = {
       if (dependency.workspace.cwd === root.cwd) continue;
       // workspace:^ links resolve locally and have no root counterpart
       if (dependency.range.startsWith("workspace:")) continue;
-      // the angular package's `typescript` pin is intentionally exempt from the root version: its
-      // `ng-packagr` build step runs `@angular/compiler-cli@^20.0.0`, which rejects anything >=6.0,
-      // while the root pin has already moved on to 6.0.3 for the rest of the repo
-      if (dependency.workspace.ident === "@odata2ts/http-client-angular" && dependency.ident === "typescript") continue;
 
       const rootDependency = Yarn.dependency({ workspace: root, ident: dependency.ident });
       if (rootDependency) {
