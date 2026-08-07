@@ -1,3 +1,3 @@
-export * from "./AngularXhrClient.js";
-export { AngularXhrError } from "./AngularClientError.js";
-export { AngularXhrRequestConfig } from "./AngularXhrRequestConfig.js";
+export * from "./AngularXhrClient";
+export { AngularXhrError } from "./AngularClientError";
+export { AngularXhrRequestConfig } from "./AngularXhrRequestConfig";

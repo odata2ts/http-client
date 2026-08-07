@@ -1,4 +1,4 @@
-import { HttpContext, HttpParams } from "@angular/common/http";
+import { HttpContext } from "@angular/common/http";
 import { ODataRequestConfig } from "@odata2ts/http-client-api";
 
 export interface AngularXhrRequestConfig extends ODataRequestConfig {

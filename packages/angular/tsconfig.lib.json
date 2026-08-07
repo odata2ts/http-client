@@ -1,0 +1,3 @@
+{
+  "extends": "./node_modules/ng-packagr/src/lib/ts/conf/tsconfig.ngc.json"
+}

@@ -11,9 +11,9 @@ import {
   ODataRequestConfig,
   ODataResponse,
 } from "@odata2ts/http-client-api";
-import { ErrorMessageRetriever, retrieveErrorMessage } from "@odata2ts/http-client-base";
-import { AngularXhrRequestConfig } from "./AngularXhrRequestConfig.js";
-import { AngularXhrError } from "./AngularClientError.js";
+import { ErrorMessageRetriever, retrieveErrorMessage } from "./ErrorMessageRetriever";
+import { AngularXhrRequestConfig } from "./AngularXhrRequestConfig";
+import { AngularXhrError } from "./AngularClientError";
 
 export const DEFAULT_ERROR_MESSAGE = "No error message!";
 export const DEFAULT_CSRF_TOKEN_KEY = "x-csrf-token";
@@ -47,10 +47,12 @@ function buildErrorMessage(prefix: string, error: any) {
 
 /**
  * Default headers for a JSON request: every method gets `Accept`, methods that carry a body also get
- * `Content-Type` - mirroring what {@link BaseHttpClient} sets up for the other odata2ts HTTP clients.
+ * `Content-Type`s.
  */
 function getDefaultHeaders(method: ODataHttpMethods): Record<string, string> {
-  return BODYLESS_METHODS.includes(method) ? { Accept: JSON_VALUE } : { Accept: JSON_VALUE, "Content-Type": JSON_VALUE };
+  return BODYLESS_METHODS.includes(method)
+    ? { Accept: JSON_VALUE }
+    : { Accept: JSON_VALUE, "Content-Type": JSON_VALUE };
 }
 
 @Injectable({
@@ -140,14 +142,19 @@ export class AngularXhrClient implements ODataHttpClient<AngularXhrRequestConfig
     requestConfig?: ODataRequestConfig,
     additionalHeaders?: Record<string, string>,
   ): Promise<HttpResponseModel<ResponseModel>> {
-    return this.sendRequest<ResponseModel>(method, requestConfig, additionalHeaders, getDefaultHeaders(method), (headers) =>
-      this.http.request(method, url, {
-        body: data,
-        observe: "response",
-        responseType: "json",
-        headers,
-        params: this.buildParams(requestConfig),
-      }) as Observable<HttpResponse<ResponseModel>>,
+    return this.sendRequest<ResponseModel>(
+      method,
+      requestConfig,
+      additionalHeaders,
+      getDefaultHeaders(method),
+      (headers) =>
+        this.http.request(method, url, {
+          body: data,
+          observe: "response",
+          responseType: "json",
+          headers,
+          params: this.buildParams(requestConfig),
+        }) as Observable<HttpResponse<ResponseModel>>,
     );
   }
 
@@ -206,14 +213,19 @@ export class AngularXhrClient implements ODataHttpClient<AngularXhrRequestConfig
     requestConfig?: ODataRequestConfig,
     additionalHeaders?: Record<string, string>,
   ): ODataResponse<void | Blob> {
-    return this.sendRequest<void | Blob>(method, requestConfig, additionalHeaders, { Accept: JSON_VALUE }, (headers) =>
-      this.http.request(method, url, {
-        body: blob,
-        observe: "response",
-        responseType: "blob",
-        headers: headers.set("Content-Type", mimeType),
-        params: this.buildParams(requestConfig),
-      }) as Observable<HttpResponse<void | Blob>>,
+    return this.sendRequest<void | Blob>(
+      method,
+      requestConfig,
+      additionalHeaders,
+      { Accept: JSON_VALUE },
+      (headers) =>
+        this.http.request(method, url, {
+          body: blob,
+          observe: "response",
+          responseType: "blob",
+          headers: headers.set("Content-Type", mimeType),
+          params: this.buildParams(requestConfig),
+        }) as Observable<HttpResponse<void | Blob>>,
     );
   }
 
