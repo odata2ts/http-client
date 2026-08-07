@@ -8,7 +8,8 @@
   "license": "MIT",
   "type": "commonjs",
   "workspaces": [
-    "packages/*"
+    "packages/*",
+    "int-test"
   ],
   "scripts": {
     "build": "yarn clean && yarn workspaces foreach -A -pt run build",
@@ -16,7 +17,8 @@
     "clean": "rimraf coverage",
     "clean-libs": "yarn clean && yarn workspaces foreach -A -p run clean",
     "coverage": "vitest run --coverage",
-    "test": "yarn workspaces foreach -A -p run test"
+    "int-test": "yarn workspace @odata2ts/int-test-http-communication test",
+    "test": "yarn workspaces foreach -A -p --include 'packages/*' run test"
   },
   "devDependencies": {
     "@ianvs/prettier-plugin-sort-imports": "^4.7.1",

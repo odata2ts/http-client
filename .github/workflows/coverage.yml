@@ -36,3 +36,10 @@ jobs:
         uses: coverallsapp/github-action@v2
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
+
+  # Container-based integration tests against a real OData server. Lives in its own workflow file and is
+  # pulled in here, because `needs:` cannot order across workflows.
+  container-int-test:
+    name: Container Integration Tests
+    needs: test
+    uses: ./.github/workflows/integration-test.yml

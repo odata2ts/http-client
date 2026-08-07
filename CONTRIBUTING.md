@@ -63,37 +63,39 @@ To execute only unit tests of a specific module, change to the module in questio
 
 ### Running Integration Tests
 
-By calling `yarn int-test` from the root folder all integration tests are executed.
+Integration tests run all HTTP clients (fetch, axios, jquery, angular) against a real OData V4 server -
+the [test-server-cap](https://github.com/odata2ts/test-server-cap) "Library" model, started as a Docker
+container via [testcontainers](https://node.testcontainers.org/). They live in `int-test/`, analogous to
+`odata2ts`'s own `int-test` workspace group.
 
-Modules which come with integration tests store them in folder `int-test`.
-You execute them by changing to the module and calling `yarn int-test` from there.
+By calling `yarn int-test` from the root folder, they are executed. Requires a running Docker daemon;
+alternatively, point at an already-running server with `LIBRARY_BASE_URL=<url> yarn int-test`.
 
 ### Commits & Pull Requests
 
 We love [conventional commits](https://www.conventionalcommits.org/en/v1.0.0/) and use them to drive
-our semantic versioning. Try to adhere to these conventions. `odata2ts` uses the following `types`:
+our semantic versioning. Try to adhere to these conventions. We uses the following `types`:
 
 - `fix`: Bug fixes, fixing typos, etc.
 - `feat`: New features
-- `chore`:
+- `chore`: minor dependency updates, boy scout stuff, small maintenance tasks
 - `doc`: Documentation changes
 - `refactor`: Refactoring code
 - `build`: changes to the build process
 
+Try to scope the commit message when it belongs to only one package, e.g. `fix(http-client-fetch): ...`.
+Use the package name as scope without the `@odata2ts/` prefix.
+
+Breaking changes are announced via an exclamation mark after the scope, e.g. `feat(http-client-api)!: ...` or
+`feat!: ...` without scope. Also add an own paragraph in the body starting with "BREAKING CHANGE:".
+
 We will probably squash your commits before merging them into the `main` branch.
 So also adhere to conventional commits within the title of your pull request.
-Examples:
 
-- fix(axios-odata-client): typo in README
-- feat: my new feature
-- ...
+## Release
 
-## Maintaining
+We use [release-please](https://github.com/googleapis/release-please) which has the following workflow:
 
-Only available for maintainers.
-
-### Release
-
-```shell
-yarn release
-```
+- create PR's against `main`
+- after merging into `main`, release-please will create an own PR which will execute the release, when merged
+  Realised via Release-Please.
