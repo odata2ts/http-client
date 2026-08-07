@@ -253,8 +253,8 @@ export abstract class BaseHttpClient<RequestConfigType> {
     url: string,
     requestConfig?: RequestConfigType,
     additionalHeaders?: Record<string, string>,
-  ): Promise<HttpResponseModel<void>> {
-    return this.sendRequest<void>(
+  ): Promise<HttpResponseModel<undefined>> {
+    return this.sendRequest<undefined>(
       ODataHttpMethods.Delete,
       url,
       undefined,
