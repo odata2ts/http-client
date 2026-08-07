@@ -17,7 +17,7 @@
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
-      "default": "./dist/fesm2022/http-client-angular.mjs"
+      "default": "./dist/fesm2022/odata2ts-http-client-angular.mjs"
     }
   },
   "main": "./dist/fesm2022/odata2ts-http-client-angular.mjs",
@@ -30,7 +30,6 @@
     "check-circular-deps": "madge ./src --extensions ts --circular",
     "clean": "rimraf lib dist coverage",
     "compile": "tsc",
-    "int-test": "vitest run --dir int-test",
     "test": "vitest run",
     "unit-test": "vitest run --dir test"
   },

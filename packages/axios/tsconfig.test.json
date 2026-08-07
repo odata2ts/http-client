@@ -4,5 +4,5 @@
     "rootDir": ".",
     "lib": ["DOM"]
   },
-  "include": ["src", "test", "int-test"]
+  "include": ["src", "test"]
 }

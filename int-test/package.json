@@ -1,0 +1,36 @@
+{
+  "name": "@odata2ts/int-test-http-communication",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Integration tests running the odata2ts HTTP clients (fetch, axios, jquery, angular) against a real OData V4 server",
+  "repository": "git@github.com:odata2ts/http-client.git",
+  "license": "MIT",
+  "type": "module",
+  "scripts": {
+    "test": "vitest run",
+    "test-compile": "tsc"
+  },
+  "dependencies": {
+    "@angular/common": "^20.0.0",
+    "@angular/core": "^20.0.0",
+    "@odata2ts/http-client-angular": "workspace:^",
+    "@odata2ts/http-client-axios": "workspace:^",
+    "@odata2ts/http-client-fetch": "workspace:^",
+    "@odata2ts/http-client-jquery": "workspace:^",
+    "axios": "^1.18.1",
+    "jquery": "~3.6.4",
+    "rxjs": "^7.8.0"
+  },
+  "devDependencies": {
+    "@angular/compiler": "^20.0.0",
+    "@angular/platform-browser": "^20.0.0",
+    "@angular/platform-browser-dynamic": "^20.0.0",
+    "@odata2ts/odata-core": "^0.7.0",
+    "@types/jquery": "^3.5.34",
+    "@types/node": "^24",
+    "jsdom": "^30.0.0",
+    "testcontainers": "^12.0.4",
+    "typescript": "6.0.3",
+    "vitest": "^4.1.10"
+  }
+}

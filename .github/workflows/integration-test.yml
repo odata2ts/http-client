@@ -1,0 +1,22 @@
+name: Integration Tests
+
+# Called from the Build & Test workflow so that `needs:` can order it after the unit tests - `needs:`
+# does not work across workflows, and a separately triggered workflow would run in parallel instead.
+on:
+  workflow_call:
+
+jobs:
+  integration-test:
+    name: HTTP Communication (CAP Library server)
+    runs-on: ubuntu-latest # Docker is preinstalled, which testcontainers needs
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+      - name: Install packages
+        run: yarn --immutable
+      - name: Build packages
+        run: yarn build
+      - name: Run integration tests
+        run: yarn workspace @odata2ts/int-test-http-communication test
