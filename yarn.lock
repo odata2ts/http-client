@@ -970,7 +970,6 @@ __metadata:
     "@angular/compiler-cli": "npm:^20.0.0"
     "@angular/core": "npm:^20.0.0"
     "@odata2ts/http-client-api": "npm:^0.6.5"
-    "@odata2ts/http-client-base": "npm:^0.5.8"
     "@types/node": "npm:^24"
     madge: "npm:^8.0.0"
     ng-packagr: "npm:^20.0.0"
