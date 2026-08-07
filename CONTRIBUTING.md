@@ -9,17 +9,17 @@ We welcome any contribution to `odata2ts`:
 - usage questions
 - ...
 
-We're using [Github Issues](https://github.com/odata2ts/http-client/issues) and
+We're using [GitHub Issues](https://github.com/odata2ts/http-client/issues) and
 [Pull Requests](https://github.com/odata2ts/http-client/pulls) as main line of communication.
 
 ## Having Questions
 
 We expect that you've read the [odata2ts documentation](https://odata2ts.github.io/docs/intro).
-A lot of work went into it and it should be your prime source to get the information you need.
+A lot of work went into it, and it should be your prime source to get the information you need.
 
 However, as soon as the documentation does not live up to this standard
 (you don't find the documentation or don't get the answer you actually need, etc.),
-then by all means **open an issue** on Github. Please feel encouraged to do so, because it indicates
+then by all means **open an issue** on GitHub. Please feel encouraged to do so, because it indicates
 a shortcoming of the documentation.
 
 Also, if your OData service doesn't behave according to the specification, please create an issue as well.
@@ -74,7 +74,7 @@ alternatively, point at an already-running server with `LIBRARY_BASE_URL=<url> y
 ### Commits & Pull Requests
 
 We love [conventional commits](https://www.conventionalcommits.org/en/v1.0.0/) and use them to drive
-our semantic versioning. Try to adhere to these conventions. We uses the following `types`:
+our semantic versioning. Try to adhere to these conventions. We use the following `types`:
 
 - `fix`: Bug fixes, fixing typos, etc.
 - `feat`: New features
