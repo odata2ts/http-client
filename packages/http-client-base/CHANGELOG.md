@@ -3,6 +3,23 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.6.0](https://github.com/odata2ts/http-client/compare/@odata2ts/http-client-base-v0.5.8...@odata2ts/http-client-base-v0.6.0) (2026-08-08)
+
+
+### ⚠ BREAKING CHANGES
+
+* the responseData of an error thrown for a binary request is no longer the Blob or the ReadableStream the successful response would have carried, but the parsed error document - or its text, if it is not JSON. Code decoding that Blob itself has to stop doing so.
+
+### Features
+
+* **http-client-angular:** add Angular HTTP client ([#63](https://github.com/odata2ts/http-client/issues/63)) ([b0adb27](https://github.com/odata2ts/http-client/commit/b0adb278916c91eb1bd2d569eda29082eeed8837))
+
+
+### Bug Fixes
+
+* **http-client-base:** type delete()'s response body as undefined instead of void ([b0adb27](https://github.com/odata2ts/http-client/commit/b0adb278916c91eb1bd2d569eda29082eeed8837))
+* surface the server's message when a binary request fails ([#47](https://github.com/odata2ts/http-client/issues/47)) ([c69ef66](https://github.com/odata2ts/http-client/commit/c69ef662171e7f2480fc928474b831fd18855133))
+
 ## [0.5.8](https://github.com/odata2ts/http-client/compare/@odata2ts/http-client-base-v0.5.7...@odata2ts/http-client-base-v0.5.8) (2026-08-02)
 
 

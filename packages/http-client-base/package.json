@@ -1,6 +1,6 @@
 {
   "name": "@odata2ts/http-client-base",
-  "version": "0.5.8",
+  "version": "0.6.0",
   "description": "Core functionality for odata2ts HTTP clients",
   "keywords": [
     "http client",

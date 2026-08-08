@@ -1229,7 +1229,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@odata2ts/http-client-axios@workspace:packages/axios"
   dependencies:
-    "@odata2ts/http-client-base": "npm:^0.5.8"
+    "@odata2ts/http-client-base": "npm:^0.6.0"
     "@types/node": "npm:^24"
     axios: "npm:^1.18.1"
     madge: "npm:^8.0.0"
@@ -1242,7 +1242,7 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@odata2ts/http-client-base@npm:^0.5.8, @odata2ts/http-client-base@workspace:packages/http-client-base":
+"@odata2ts/http-client-base@npm:^0.6.0, @odata2ts/http-client-base@workspace:packages/http-client-base":
   version: 0.0.0-use.local
   resolution: "@odata2ts/http-client-base@workspace:packages/http-client-base"
   dependencies:
@@ -1261,7 +1261,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@odata2ts/http-client-fetch@workspace:packages/fetch"
   dependencies:
-    "@odata2ts/http-client-base": "npm:^0.5.8"
+    "@odata2ts/http-client-base": "npm:^0.6.0"
     "@odata2ts/odata-core": "npm:^0.7.0"
     "@types/node": "npm:^24"
     madge: "npm:^8.0.0"
@@ -1276,7 +1276,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@odata2ts/http-client-jquery@workspace:packages/jquery"
   dependencies:
-    "@odata2ts/http-client-base": "npm:^0.5.8"
+    "@odata2ts/http-client-base": "npm:^0.6.0"
     "@types/jquery": "npm:^3.5.34"
     "@types/node": "npm:^24"
     jquery: "npm:~3.6.4"
