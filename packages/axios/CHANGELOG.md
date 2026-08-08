@@ -3,6 +3,24 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.15.0](https://github.com/odata2ts/http-client/compare/@odata2ts/http-client-axios-v0.14.0...@odata2ts/http-client-axios-v0.15.0) (2026-08-08)
+
+
+### ⚠ BREAKING CHANGES
+
+* the responseData of an error thrown for a binary request is no longer the Blob or the ReadableStream the successful response would have carried, but the parsed error document - or its text, if it is not JSON. Code decoding that Blob itself has to stop doing so.
+
+### Bug Fixes
+
+* surface the server's message when a binary request fails ([#47](https://github.com/odata2ts/http-client/issues/47)) ([c69ef66](https://github.com/odata2ts/http-client/commit/c69ef662171e7f2480fc928474b831fd18855133))
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * @odata2ts/http-client-base bumped from ^0.5.8 to ^0.6.0
+
 ## [0.14.0](https://github.com/odata2ts/http-client/compare/@odata2ts/http-client-axios-v0.13.0...@odata2ts/http-client-axios-v0.14.0) (2026-08-02)
 
 
