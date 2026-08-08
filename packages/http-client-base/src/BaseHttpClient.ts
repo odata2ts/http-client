@@ -87,7 +87,7 @@ export abstract class BaseHttpClient<RequestConfigType> {
   /**
    * Main function to implement by any extending http client.
    * As it name suggests, the request gets executed in this method.
-   * Additionally, failures should be handled and errors of type <code>HttpClientError</code> should be thrown.
+   * Additionally, failures should be handled and errors of type `HttpClientError` should be thrown.
    *
    * @param method the http method to use
    * @param url the URL to use

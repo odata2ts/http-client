@@ -1,7 +1,7 @@
 /**
  * Function type used to retrieve the error message from the response payload.
  *
- * @return error message or <code>undefined</code> if retrieval failed / had no outcome
+ * @return error message or `undefined` if retrieval failed / had no outcome
  */
 export type ErrorMessageRetriever = (errorResponse: any) => string | undefined;
 
