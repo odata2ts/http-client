@@ -1,26 +1,28 @@
 // @vitest-environment jsdom
 
 // required so @angular/common/http's own Ivy-decorated classes (e.g. HttpClient) can be loaded outside of
-// an Angular CLI build - see packages/angular/test/AngularXhrODataClient.test.ts for the same import.
+// an Angular CLI build - see packages/angular/test/AngularODataClient.test.ts for the same import.
 import "@angular/compiler";
 import { provideHttpClient } from "@angular/common/http";
 import { provideZonelessChangeDetection } from "@angular/core";
 import { getTestBed, TestBed } from "@angular/core/testing";
 import { BrowserDynamicTestingModule, platformBrowserDynamicTesting } from "@angular/platform-browser-dynamic/testing";
-import { AngularXhrClient, AngularXhrError } from "@odata2ts/http-client-angular";
+import { AngularODataClient, AngularODataError } from "@odata2ts/http-client-angular";
 import { ODataCollectionResponseV4, ODataModelResponseV4 } from "@odata2ts/odata-core";
 import { afterEach, beforeAll, beforeEach, describe, expect, test } from "vitest";
 import { BOOK_DER_PROZESS, booksUrl, bookUrl, UNKNOWN_BOOK_ID } from "./constants.js";
 
 /**
- * Unlike the other three clients, `AngularXhrClient` is not constructed directly - it is provided by
- * Angular's DI container (`@Injectable({ providedIn: "root" })`), and `provideHttpClient()` defaults to
- * the XHR-based backend (as opposed to `withFetch()`). Running under `jsdom` gives it a real
- * `XMLHttpRequest` to drive, so this is the one test in the suite that actually exercises the XHR code
- * path the class is built around, rather than a `HttpClient` mock like packages/angular/test does.
+ * Unlike the other three clients, `AngularODataClient` is not constructed directly - it is provided by
+ * Angular's DI container (`@Injectable({ providedIn: "root" })`). It wraps whatever `HttpClient` backend
+ * the app configures - `provideHttpClient()` here defaults to `XhrBackend` (as opposed to
+ * `provideHttpClient(withFetch())`), so running under `jsdom` gives it a real `XMLHttpRequest` to drive.
+ * This is the one test in the suite that exercises that backend end-to-end against a real server, rather
+ * than a `HttpClient` mock like packages/angular/test does; it says nothing XHR-specific about the class
+ * itself, which is backend-agnostic.
  */
-describe("AngularXhrClient against a real server", () => {
-  let CLIENT: AngularXhrClient;
+describe("AngularODataClient against a real server", () => {
+  let CLIENT: AngularODataClient;
 
   // TestBed needs an initialized platform before `configureTestingModule` can resolve a compiler, even
   // though nothing here ever renders a component - it's the minimal setup Angular's own CLI-generated
@@ -34,10 +36,10 @@ describe("AngularXhrClient against a real server", () => {
       // no zone.js in this suite - real awaited HTTP calls don't need change-detection scheduling
       providers: [provideZonelessChangeDetection(), provideHttpClient()],
     });
-    CLIENT = TestBed.inject(AngularXhrClient);
+    CLIENT = TestBed.inject(AngularODataClient);
   });
 
-  // each test injects AngularXhrClient, which instantiates the testing module - it must be torn down
+  // each test injects AngularODataClient, which instantiates the testing module - it must be torn down
   // before the next `configureTestingModule` call is allowed
   afterEach(() => {
     TestBed.resetTestingModule();
@@ -67,7 +69,7 @@ describe("AngularXhrClient against a real server", () => {
 
   test("404", async () => {
     await expect(CLIENT.get(bookUrl(UNKNOWN_BOOK_ID))).rejects.toMatchObject({
-      name: "AngularXhrError",
+      name: "AngularODataError",
       status: 404,
       message: expect.stringMatching(/Not Found/),
     });
@@ -105,7 +107,7 @@ describe("AngularXhrClient against a real server", () => {
       const response = await CLIENT.delete(bookUrl(id));
       expect(response.status).toBe(204);
 
-      await expect(CLIENT.get(bookUrl(id))).rejects.toBeInstanceOf(AngularXhrError);
+      await expect(CLIENT.get(bookUrl(id))).rejects.toBeInstanceOf(AngularODataError);
     });
   });
 });
