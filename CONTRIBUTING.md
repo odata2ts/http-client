@@ -73,6 +73,9 @@ alternatively, point at an already-running server with `LIBRARY_BASE_URL=<url> y
 
 ### Commits & Pull Requests
 
+Format the code with prettier as it is configured in the project. Deviations in the formatting will let
+the build fail.
+
 We love [conventional commits](https://www.conventionalcommits.org/en/v1.0.0/) and use them to drive
 our semantic versioning. Try to adhere to these conventions. We use the following `types`:
 
