@@ -1,6 +1,6 @@
 {
   "name": "@odata2ts/http-client-angular",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Angular based OData HTTP client consumable by odata2ts",
   "keywords": [
     "http client",
