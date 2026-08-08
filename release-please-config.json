@@ -28,6 +28,9 @@
     },
     "packages/jquery": {
       "component": "@odata2ts/http-client-jquery"
+    },
+    "packages/angular": {
+      "component": "@odata2ts/http-client-angular"
     }
   }
 }
