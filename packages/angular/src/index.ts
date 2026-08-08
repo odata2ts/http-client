@@ -1,3 +1,3 @@
-export * from "./AngularXhrClient";
-export { AngularXhrError } from "./AngularClientError";
-export { AngularXhrRequestConfig } from "./AngularXhrRequestConfig";
+export * from "./AngularODataClient";
+export { AngularODataError } from "./AngularODataError";
+export { AngularODataRequestConfig } from "./AngularODataRequestConfig";

@@ -1,14 +1,14 @@
 // required so @angular/common/http's own Ivy-decorated classes can be loaded outside of an Angular CLI
-// build - see the comment in AngularXhrODataClient.test.ts for details.
+// build - see the comment in AngularODataClient.test.ts for details.
 import "@angular/compiler";
 
 import { HttpClient, HttpErrorResponse, HttpHeaders } from "@angular/common/http";
 import { throwError } from "rxjs";
 import { beforeEach, describe, expect, test } from "vitest";
-import { AngularXhrError, AngularXhrClient, DEFAULT_ERROR_MESSAGE } from "../src/index.js";
+import { AngularODataError, AngularODataClient, DEFAULT_ERROR_MESSAGE } from "../src/index.js";
 
-describe("AngularXhrClient Failure Handling Tests", () => {
-  let client: AngularXhrClient;
+describe("AngularODataClient Failure Handling Tests", () => {
+  let client: AngularODataClient;
   let errorToThrow: HttpErrorResponse;
 
   beforeEach(() => {
@@ -16,7 +16,7 @@ describe("AngularXhrClient Failure Handling Tests", () => {
       request: () => throwError(() => errorToThrow),
       get: () => throwError(() => errorToThrow),
     } as unknown as HttpClient;
-    client = new AngularXhrClient(httpClientMock);
+    client = new AngularODataClient(httpClientMock);
   });
 
   test("V4 error message is extracted from the response body", async () => {
@@ -31,10 +31,10 @@ describe("AngularXhrClient Failure Handling Tests", () => {
       await client.get("");
       expect.fail("should have thrown");
     } catch (e) {
-      expect(e).toBeInstanceOf(AngularXhrError);
+      expect(e).toBeInstanceOf(AngularODataError);
 
-      const error = e as AngularXhrError;
-      expect(error.name).toBe("AngularXhrError");
+      const error = e as AngularODataError;
+      expect(error.name).toBe("AngularODataError");
       expect(error.status).toBe(400);
       expect(error.headers).toStrictEqual({ "content-type": "application/json" });
       expect(error.message).toContain("oh no!");
@@ -77,9 +77,9 @@ describe("AngularXhrClient Failure Handling Tests", () => {
       await client.get("");
       expect.fail("should have thrown");
     } catch (e) {
-      expect(e).toBeInstanceOf(AngularXhrError);
+      expect(e).toBeInstanceOf(AngularODataError);
 
-      const error = e as AngularXhrError;
+      const error = e as AngularODataError;
       expect(error.status).toBe(0);
       expect(error.headers).toBeUndefined();
       expect(error.message).toMatch(/No response from server/);
@@ -98,9 +98,9 @@ describe("AngularXhrClient Failure Handling Tests", () => {
   test("blob operations (getBlob, createBlob, updateBlob) report failures the same way as get/post/put/patch/delete", async () => {
     errorToThrow = new HttpErrorResponse({ status: 404, error: { error: { message: "not found" } } });
 
-    await expect(client.getBlob("")).rejects.toBeInstanceOf(AngularXhrError);
+    await expect(client.getBlob("")).rejects.toBeInstanceOf(AngularODataError);
     await expect(client.getBlob("")).rejects.toThrow("not found");
-    await expect(client.updateBlob("", new Blob(["a"]), "image/jpg")).rejects.toBeInstanceOf(AngularXhrError);
-    await expect(client.createBlob("", new Blob(["a"]), "image/jpg")).rejects.toBeInstanceOf(AngularXhrError);
+    await expect(client.updateBlob("", new Blob(["a"]), "image/jpg")).rejects.toBeInstanceOf(AngularODataError);
+    await expect(client.createBlob("", new Blob(["a"]), "image/jpg")).rejects.toBeInstanceOf(AngularODataError);
   });
 });

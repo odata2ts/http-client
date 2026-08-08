@@ -12,8 +12,8 @@ import {
   ODataResponse,
 } from "@odata2ts/http-client-api";
 import { ErrorMessageRetriever, retrieveErrorMessage } from "./ErrorMessageRetriever";
-import { AngularXhrRequestConfig } from "./AngularXhrRequestConfig";
-import { AngularXhrError } from "./AngularClientError";
+import { AngularODataRequestConfig } from "./AngularODataRequestConfig";
+import { AngularODataError } from "./AngularODataError";
 
 export const DEFAULT_ERROR_MESSAGE = "No error message!";
 export const DEFAULT_CSRF_TOKEN_KEY = "x-csrf-token";
@@ -27,18 +27,18 @@ const BODYLESS_METHODS: ReadonlyArray<ODataHttpMethods> = [ODataHttpMethods.Get,
 /**
  * DI token for {@link ODataHttpClientOptions}, e.g. to activate automatic CSRF token handling.
  *
- * `AngularXhrClient` is provided in root and constructed by Angular's own DI container, so its options
+ * `AngularODataClient` is provided in root and constructed by Angular's own DI container, so its options
  * cannot be passed as a plain constructor argument the way the other odata2ts HTTP clients accept them -
- * there is no `new AngularXhrClient(options)` call for Angular to intercept. Providing this token is how a
+ * there is no `new AngularODataClient(options)` call for Angular to intercept. Providing this token is how a
  * consuming application supplies them instead:
  *
  * ```ts
  * providers: [
- *   { provide: ANGULAR_XHR_CLIENT_OPTIONS, useValue: { useCsrfProtection: true, csrfTokenFetchUrl: "/odata/service/" } },
+ *   { provide: ANGULAR_ODATA_CLIENT_OPTIONS, useValue: { useCsrfProtection: true, csrfTokenFetchUrl: "/odata/service/" } },
  * ]
  * ```
  */
-export const ANGULAR_XHR_CLIENT_OPTIONS = new InjectionToken<ODataHttpClientOptions>("ANGULAR_XHR_CLIENT_OPTIONS");
+export const ANGULAR_ODATA_CLIENT_OPTIONS = new InjectionToken<ODataHttpClientOptions>("ANGULAR_ODATA_CLIENT_OPTIONS");
 
 function buildErrorMessage(prefix: string, error: any) {
   const msg = typeof error === "string" ? error : (error as Error)?.message;
@@ -58,7 +58,7 @@ function getDefaultHeaders(method: ODataHttpMethods): Record<string, string> {
 @Injectable({
   providedIn: "root",
 })
-export class AngularXhrClient implements ODataHttpClient<AngularXhrRequestConfig> {
+export class AngularODataClient implements ODataHttpClient<AngularODataRequestConfig> {
   protected retrieveErrorMessage: ErrorMessageRetriever = retrieveErrorMessage;
 
   private readonly options: ODataHttpClientOptions;
@@ -67,7 +67,7 @@ export class AngularXhrClient implements ODataHttpClient<AngularXhrRequestConfig
 
   constructor(
     private readonly http: HttpClient,
-    @Optional() @Inject(ANGULAR_XHR_CLIENT_OPTIONS) options?: ODataHttpClientOptions | null,
+    @Optional() @Inject(ANGULAR_ODATA_CLIENT_OPTIONS) options?: ODataHttpClientOptions | null,
   ) {
     this.options = options ?? { useCsrfProtection: false };
     if (this.options.useCsrfProtection && !this.options.csrfTokenFetchUrl?.trim()) {
@@ -194,15 +194,27 @@ export class AngularXhrClient implements ODataHttpClient<AngularXhrRequestConfig
   }
 
   async getStream(): ODataResponse<ReadableStream> {
-    throw new Error("AngularXhrClient is based on XMLHttpRequest and does not support ReadableStream responses.");
+    throw new Error(
+      "AngularODataClient does not support ReadableStream responses, regardless of the configured HttpClient " +
+        "backend (XhrBackend or FetchBackend via withFetch()) - use the Fetch Client (@odata2ts/http-client-fetch) " +
+        "for streams.",
+    );
   }
 
   async createStream(): ODataResponse<void | ReadableStream> {
-    throw new Error("AngularXhrClient is based on XMLHttpRequest and does not support ReadableStream uploads.");
+    throw new Error(
+      "AngularODataClient does not support ReadableStream uploads, regardless of the configured HttpClient " +
+        "backend (XhrBackend or FetchBackend via withFetch()) - use the Fetch Client (@odata2ts/http-client-fetch) " +
+        "for streams.",
+    );
   }
 
   async updateStream(): ODataResponse<void | ReadableStream> {
-    throw new Error("AngularXhrClient is based on XMLHttpRequest and does not support ReadableStream uploads.");
+    throw new Error(
+      "AngularODataClient does not support ReadableStream uploads, regardless of the configured HttpClient " +
+        "backend (XhrBackend or FetchBackend via withFetch()) - use the Fetch Client (@odata2ts/http-client-fetch) " +
+        "for streams.",
+    );
   }
 
   private uploadBlob(
@@ -256,7 +268,7 @@ export class AngularXhrClient implements ODataHttpClient<AngularXhrRequestConfig
     try {
       return await this.execute<T>(buildRequest(headers));
     } catch (e) {
-      const error = e as AngularXhrError;
+      const error = e as AngularODataError;
 
       if (
         !isRetry &&
@@ -300,7 +312,7 @@ export class AngularXhrClient implements ODataHttpClient<AngularXhrRequestConfig
 
   /**
    * Runs the request and normalizes both outcomes: a successful response is mapped to a
-   * {@link HttpResponseModel}, a failing one is wrapped in an {@link AngularXhrError} so every entry point
+   * {@link HttpResponseModel}, a failing one is wrapped in an {@link AngularODataError} so every entry point
    * (including the blob operations) reports failures the same way.
    */
   private async execute<T>(source: Observable<HttpResponse<T>>): Promise<HttpResponseModel<T>> {
@@ -314,7 +326,7 @@ export class AngularXhrClient implements ODataHttpClient<AngularXhrRequestConfig
       // OData error document in the body to parse in that case
       if (typeof error.status === "number" && error.status > 0) {
         const errMsg = this.retrieveErrorMessage(error.error);
-        throw new AngularXhrError(
+        throw new AngularODataError(
           buildErrorMessage(FAILURE_RESPONSE_MESSAGE, errMsg),
           error.status,
           this.mapHeaders(error.headers),
@@ -323,7 +335,7 @@ export class AngularXhrClient implements ODataHttpClient<AngularXhrRequestConfig
         );
       }
 
-      throw new AngularXhrError(buildErrorMessage(FAILURE_NO_RESPONSE, error), error.status, undefined, error, error);
+      throw new AngularODataError(buildErrorMessage(FAILURE_NO_RESPONSE, error), error.status, undefined, error, error);
     }
   }
 

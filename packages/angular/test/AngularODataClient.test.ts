@@ -7,7 +7,7 @@ import { HttpClient, HttpHeaders, HttpParams, HttpResponse } from "@angular/comm
 import { ODataHttpMethods } from "@odata2ts/http-client-api";
 import { of } from "rxjs";
 import { beforeEach, describe, expect, test, vi } from "vitest";
-import { AngularXhrClient } from "../src/index.js";
+import { AngularODataClient } from "../src/index.js";
 
 const DEFAULT_URL = "TEST/hi";
 const SUCCESS_BODY = { Name: "Test" };
@@ -36,8 +36,8 @@ function paramsToObject(params: HttpParams): Record<string, string | Array<strin
   }, {});
 }
 
-describe("AngularXhrClient Tests", () => {
-  let client: AngularXhrClient;
+describe("AngularODataClient Tests", () => {
+  let client: AngularODataClient;
   let requestMock: ReturnType<typeof vi.fn>;
   let getMock: ReturnType<typeof vi.fn>;
   let lastCall: RecordedCall | undefined;
@@ -61,7 +61,7 @@ describe("AngularXhrClient Tests", () => {
     });
 
     const httpClientMock = { request: requestMock, get: getMock } as unknown as HttpClient;
-    client = new AngularXhrClient(httpClientMock);
+    client = new AngularODataClient(httpClientMock);
   });
 
   test("get request", async () => {
