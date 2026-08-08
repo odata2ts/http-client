@@ -3,5 +3,6 @@
   "packages/http-client-base": "0.5.8",
   "packages/axios": "0.14.0",
   "packages/fetch": "0.11.0",
-  "packages/jquery": "0.13.0"
+  "packages/jquery": "0.13.0",
+  "packages/angular": "0.1.0"
 }
