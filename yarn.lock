@@ -16,14 +16,14 @@ __metadata:
   linkType: hard
 
 "@angular/common@npm:^22.0.0":
-  version: 22.1.1
-  resolution: "@angular/common@npm:22.1.1"
+  version: 22.1.2
+  resolution: "@angular/common@npm:22.1.2"
   dependencies:
     tslib: "npm:^2.3.0"
   peerDependencies:
-    "@angular/core": 22.1.1
+    "@angular/core": 22.1.2
     rxjs: ^6.5.3 || ^7.4.0
-  checksum: 10/3a03419bcc5e2c87b93cb509ae9046abbb2ec294b82eb920ece7b5d5752bd17e7e6644ff2b6a821ad74b56765c6ead2150f1ba44cf5e03a34d469625c057dcfe
+  checksum: 10/9396c3ef7afb5f25f8efad81f83c00319023e3ee7a2a5c18e9c6f41e5c4ec51407e4c79fc28a00738cd263f0ebd52485b374f940da0ba34c098570f227895b3d
   languageName: node
   linkType: hard
 
@@ -62,12 +62,12 @@ __metadata:
   linkType: hard
 
 "@angular/core@npm:^22.0.0":
-  version: 22.1.1
-  resolution: "@angular/core@npm:22.1.1"
+  version: 22.1.2
+  resolution: "@angular/core@npm:22.1.2"
   dependencies:
     tslib: "npm:^2.3.0"
   peerDependencies:
-    "@angular/compiler": 22.1.1
+    "@angular/compiler": 22.1.2
     rxjs: ^6.5.3 || ^7.4.0
     zone.js: ~0.15.0 || ~0.16.0
   peerDependenciesMeta:
@@ -75,7 +75,7 @@ __metadata:
       optional: true
     zone.js:
       optional: true
-  checksum: 10/a8641d6ed65a5e94e0fd2a4cbe1ae20a02443c7d96bce9bb7ff80cd36744629ac3dad9e6bd70b56e9df68a401e4b8f8f27b8e78257f136e6eb3009a8a384116a
+  checksum: 10/8cf8b2a1f4f8c1baf8507eaaea66f59a3bc9f5ebe80c8688dd81fe17ae08821998b6f68964160c1675cf9c5ad88c11ac020b164f93e812d5a2dc609a7a3c72f2
   languageName: node
   linkType: hard
 
