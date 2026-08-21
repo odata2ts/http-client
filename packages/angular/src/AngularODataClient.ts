@@ -3,6 +3,7 @@ import { HttpClient, HttpErrorResponse, HttpHeaders, HttpParams, HttpResponse } 
 import { firstValueFrom, Observable } from "rxjs";
 
 import {
+  ConcurrencyHandler,
   HttpResponseModel,
   ODataHttpClient,
   ODataHttpClientOptions,
@@ -18,6 +19,7 @@ import {
   FAILURE_NO_RESPONSE,
   FAILURE_RESPONSE_MESSAGE,
   getDefaultJsonHeaders,
+  InMemoryConcurrencyHandler,
   JSON_MIME_TYPE,
   mergeHeaders,
   retrieveErrorMessage,
@@ -49,13 +51,23 @@ export const ANGULAR_ODATA_CLIENT_OPTIONS = new InjectionToken<ODataHttpClientOp
 export class AngularODataClient implements ODataHttpClient<AngularODataRequestConfig> {
   protected retrieveErrorMessage: ErrorMessageRetriever = retrieveErrorMessage;
 
+  /**
+   * The ETags this client has seen - see {@link ConcurrencyHandler}. Always present, so that
+   * `@odata2ts/odata-service` never has to ask whether this client can do concurrency control.
+   */
+  public readonly concurrency: ConcurrencyHandler;
+
   private readonly csrf: CsrfTokenHandler;
 
   constructor(
     private readonly http: HttpClient,
     @Optional() @Inject(ANGULAR_ODATA_CLIENT_OPTIONS) options?: ODataHttpClientOptions | null,
   ) {
-    this.csrf = new CsrfTokenHandler(options ?? { useCsrfProtection: false });
+    const resolved = options ?? { useCsrfProtection: false };
+    this.csrf = new CsrfTokenHandler(resolved);
+    this.concurrency =
+      resolved.concurrencyHandler ??
+      new InMemoryConcurrencyHandler({ blindConcurrencyWrites: resolved.blindConcurrencyWrites });
   }
 
   /**
