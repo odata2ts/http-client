@@ -1,4 +1,5 @@
 import {
+  ConcurrencyHandler,
   HttpResponseModel,
   ODataClientError,
   ODataHttpClientOptions,
@@ -12,6 +13,7 @@ import {
   ErrorMessageRetriever,
   getDefaultJsonHeaders,
   getJsonHeaders,
+  InMemoryConcurrencyHandler,
   isPlainTextBody,
   JSON_MIME_TYPE,
   mergeHeaders,
@@ -51,12 +53,21 @@ function getAdditionalHeaders(jsonResponse: boolean, additionalHeaders?: Record<
 }
 
 export abstract class BaseHttpClient<RequestConfigType> {
+  /**
+   * The ETags this client has seen - see {@link ConcurrencyHandler}. Always present, so that
+   * `@odata2ts/odata-service` never has to ask whether this client can do concurrency control.
+   */
+  public readonly concurrency: ConcurrencyHandler;
+
   protected readonly csrf: CsrfTokenHandler;
 
   protected retrieveErrorMessage: ErrorMessageRetriever = retrieveErrorMessage;
 
   protected constructor(baseOptions: ODataHttpClientOptions = { useCsrfProtection: false }) {
     this.csrf = new CsrfTokenHandler(baseOptions);
+    this.concurrency =
+      baseOptions.concurrencyHandler ??
+      new InMemoryConcurrencyHandler({ blindConcurrencyWrites: baseOptions.blindConcurrencyWrites });
   }
 
   /**

@@ -1,7 +1,6 @@
 // required so @angular/common/http's own Ivy-decorated classes can be loaded outside of an Angular CLI
 // build - see the comment in AngularODataClient.test.ts for details.
 import "@angular/compiler";
-
 import { HttpClient, HttpErrorResponse, HttpHeaders, HttpResponse } from "@angular/common/http";
 import { ODataHttpClientOptions } from "@odata2ts/http-client-api";
 import { of, throwError } from "rxjs";
@@ -26,7 +25,12 @@ describe("AngularODataClient Automatic CSRF Handling Tests", () => {
       const fetchKey = headerKeys.find((key) => options.headers.get(key) === "Fetch");
       if (fetchKey) {
         return of(
-          new HttpResponse({ status: 200, statusText: "OK", body: "", headers: new HttpHeaders({ [fetchKey]: TOKEN }) }),
+          new HttpResponse({
+            status: 200,
+            statusText: "OK",
+            body: "",
+            headers: new HttpHeaders({ [fetchKey]: TOKEN }),
+          }),
         );
       }
 
@@ -110,7 +114,9 @@ describe("AngularODataClient Automatic CSRF Handling Tests", () => {
 
         return fetchKey
           ? of(new HttpResponse({ status: 200, body: "", headers: new HttpHeaders({ [fetchKey]: TOKEN }) }))
-          : throwError(() => new HttpErrorResponse({ status: 403, headers: new HttpHeaders({ [TOKEN_KEY]: "Required" }) }));
+          : throwError(
+              () => new HttpErrorResponse({ status: 403, headers: new HttpHeaders({ [TOKEN_KEY]: "Required" }) }),
+            );
       }),
       get: vi.fn(),
     } as unknown as HttpClient;

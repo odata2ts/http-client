@@ -1,3 +1,4 @@
+import { ConcurrencyHandler } from "./ConcurrencyHandler";
 import { ODataHttpMethods } from "./ODataHttpMethods";
 import { ODataRequestConfig } from "./ODataRequestConfig";
 import { ODataResponse } from "./ODataResponseModel";
@@ -9,6 +10,14 @@ export type ODataHttpClientConfig<ClientType extends ODataHttpClient<any>> =
   ClientType extends ODataHttpClient<infer Config> ? Config : never;
 
 export interface ODataHttpClient<RequestConfig extends ODataRequestConfig = ODataRequestConfig> {
+  /**
+   * The ETags this client has seen, if it supports optimistic concurrency control.
+   *
+   * Optional on purpose: a client implementation predating this, or one which simply has no use for it,
+   * still satisfies the contract. `@odata2ts/odata-service` treats its absence as "no ETag is ever known".
+   */
+  readonly concurrency?: ConcurrencyHandler;
+
   /**
    * Create a model or collection entry.
    *

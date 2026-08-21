@@ -8,6 +8,8 @@ Transport-agnostic building blocks shared by all [odata2ts](https://github.com/o
 - CSRF token state: the cached token, the configurable header key, and the rule for when an expired token is
   worth one repetition
 - the JSON content negotiation constants, the default headers of a request and their precedence
+- the ETag store behind optimistic concurrency control: a bounded, in-memory `ConcurrencyHandler`, plus the
+  `blindConcurrencyWrites` mode which resolves an unknown ETag to `*` rather than failing
 
 None of it touches a transport, which is why it can be shared by `@odata2ts/http-client-base` — the base class
 behind the fetch, axios and jQuery clients — as well as by `@odata2ts/http-client-angular`, which implements the
