@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.6.8](https://github.com/odata2ts/http-client/compare/@odata2ts/http-client-api-v0.6.7...@odata2ts/http-client-api-v0.6.8) (2026-08-21)
+
+
+### Features
+
+* **http-client-api:** declare the ETag store used for optimistic concurrency ([b95c5c8](https://github.com/odata2ts/http-client/commit/b95c5c8a5f3721071e54fddb4bbdc4bb45053573))
+
 ## [0.6.7](https://github.com/odata2ts/http-client/compare/@odata2ts/http-client-api-v0.6.6...@odata2ts/http-client-api-v0.6.7) (2026-08-02)
 
 

@@ -1,5 +1,20 @@
 # Changelog
 
+## [0.1.2](https://github.com/odata2ts/http-client/compare/@odata2ts/http-client-angular-v0.1.1...@odata2ts/http-client-angular-v0.1.2) (2026-08-21)
+
+
+### Features
+
+* **http-client-angular:** hold the ETags seen by this client ([b95c5c8](https://github.com/odata2ts/http-client/commit/b95c5c8a5f3721071e54fddb4bbdc4bb45053573))
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * @odata2ts/http-client-api bumped from ^0.6.5 to ^0.6.8
+    * @odata2ts/http-client-common bumped from ^0.1.0 to ^0.1.1
+
 ## [0.1.1](https://github.com/odata2ts/http-client/compare/@odata2ts/http-client-angular-v0.1.0...@odata2ts/http-client-angular-v0.1.1) (2026-08-08)
 
 
