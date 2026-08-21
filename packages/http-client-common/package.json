@@ -1,6 +1,6 @@
 {
   "name": "@odata2ts/http-client-common",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Transport-agnostic building blocks shared by all odata2ts HTTP clients",
   "keywords": [
     "http client",
@@ -29,7 +29,7 @@
     "unit-test": "vitest run --dir test"
   },
   "dependencies": {
-    "@odata2ts/http-client-api": "^0.6.8",
+    "@odata2ts/http-client-api": "^0.7.0",
     "tslib": "^2.8.1"
   },
   "devDependencies": {
