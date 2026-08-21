@@ -2,8 +2,7 @@ import { ODataRequestConfig } from "@odata2ts/http-client-api";
 import { AxiosRequestConfig as OriginalRequestConfig } from "axios";
 
 export interface AxiosRequestConfig
-  extends ODataRequestConfig,
-    Omit<OriginalRequestConfig, "method" | "url" | "headers" | "params"> {}
+  extends ODataRequestConfig, Omit<OriginalRequestConfig, "method" | "url" | "headers" | "params"> {}
 
 export function mergeConfig(): undefined;
 export function mergeConfig(...configs: Array<AxiosRequestConfig | undefined>): AxiosRequestConfig;

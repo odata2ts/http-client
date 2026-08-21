@@ -1,7 +1,7 @@
-import { ODataCollectionResponseV4, ODataModelResponseV4 } from "@odata2ts/odata-core";
 import { FetchClient, FetchClientError } from "@odata2ts/http-client-fetch";
+import { ODataCollectionResponseV4, ODataModelResponseV4 } from "@odata2ts/odata-core";
 import { describe, expect, test } from "vitest";
-import { BOOK_DER_PROZESS, DEFAULT_HEADERS, UNKNOWN_BOOK_ID, bookUrl, booksUrl } from "./constants.js";
+import { BOOK_DER_PROZESS, booksUrl, bookUrl, DEFAULT_HEADERS, UNKNOWN_BOOK_ID } from "./constants.js";
 
 describe("FetchClient against a real server", () => {
   const CLIENT = new FetchClient({ headers: DEFAULT_HEADERS });

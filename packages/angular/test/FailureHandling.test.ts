@@ -1,11 +1,10 @@
 // required so @angular/common/http's own Ivy-decorated classes can be loaded outside of an Angular CLI
 // build - see the comment in AngularODataClient.test.ts for details.
 import "@angular/compiler";
-
 import { HttpClient, HttpErrorResponse, HttpHeaders } from "@angular/common/http";
 import { throwError } from "rxjs";
 import { beforeEach, describe, expect, test } from "vitest";
-import { AngularODataError, AngularODataClient, DEFAULT_ERROR_MESSAGE } from "../src/index.js";
+import { AngularODataClient, AngularODataError, DEFAULT_ERROR_MESSAGE } from "../src/index.js";
 
 describe("AngularODataClient Failure Handling Tests", () => {
   let client: AngularODataClient;

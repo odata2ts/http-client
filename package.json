@@ -14,9 +14,11 @@
   "scripts": {
     "build": "yarn clean && yarn workspaces foreach -A -pt run build",
     "check-circular-deps": "yarn workspaces foreach -A -p run check-circular-deps",
+    "check-format": "prettier --check .",
     "clean": "rimraf coverage",
     "clean-libs": "yarn clean && yarn workspaces foreach -A -p run clean",
     "coverage": "vitest run --coverage",
+    "format": "prettier --write .",
     "int-test": "yarn workspace @odata2ts/int-test-http-communication test",
     "test": "yarn workspaces foreach -A -p --include 'packages/*' run test"
   },

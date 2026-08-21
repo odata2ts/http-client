@@ -1,7 +1,8 @@
 import { ODataRequestConfig } from "@odata2ts/http-client-api";
 
 export interface JQueryRequestConfig
-  extends ODataRequestConfig,
+  extends
+    ODataRequestConfig,
     Pick<JQuery.AjaxSettings, "complete" | "beforeSend" | "statusCode" | "timeout" | "cache"> {}
 
 export function mergeConfigs(config?: JQueryRequestConfig, toMerge?: JQueryRequestConfig): JQueryRequestConfig {

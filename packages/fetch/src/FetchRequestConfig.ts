@@ -8,7 +8,8 @@ const DEFAULT_CONFIG: FetchRequestConfig = {
  * Available config options for end user when making a given request.
  */
 export interface FetchRequestConfig
-  extends ODataRequestConfig,
+  extends
+    ODataRequestConfig,
     Partial<Pick<RequestInit, "credentials" | "cache" | "mode" | "redirect" | "referrerPolicy" | "signal">> {}
 
 export function getDefaultConfig(config?: FetchRequestConfig): FetchRequestConfig {

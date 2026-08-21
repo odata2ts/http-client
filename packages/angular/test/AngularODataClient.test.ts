@@ -2,7 +2,6 @@
 // an Angular CLI build, which normally runs the Angular Linker over node_modules as well: without either
 // that or this JIT fallback, merely importing them throws "needs to be compiled using the JIT compiler".
 import "@angular/compiler";
-
 import { HttpClient, HttpHeaders, HttpParams, HttpResponse } from "@angular/common/http";
 import { ODataHttpMethods } from "@odata2ts/http-client-api";
 import { of } from "rxjs";
@@ -53,11 +52,15 @@ describe("AngularODataClient Tests", () => {
 
     requestMock = vi.fn((method: string, url: string, options: any) => {
       lastCall = { method, url, options };
-      return of(new HttpResponse({ status: responseStatus, statusText: "OK", body: responseBody, headers: responseHeaders }));
+      return of(
+        new HttpResponse({ status: responseStatus, statusText: "OK", body: responseBody, headers: responseHeaders }),
+      );
     });
     getMock = vi.fn((url: string, options: any) => {
       lastCall = { method: "GET", url, options };
-      return of(new HttpResponse({ status: responseStatus, statusText: "OK", body: responseBody, headers: responseHeaders }));
+      return of(
+        new HttpResponse({ status: responseStatus, statusText: "OK", body: responseBody, headers: responseHeaders }),
+      );
     });
 
     const httpClientMock = { request: requestMock, get: getMock } as unknown as HttpClient;
@@ -197,7 +200,10 @@ describe("AngularODataClient Tests", () => {
       expect(lastCall?.method).toBe("POST");
       expect(lastCall?.options.body).toBe(blob);
       expect(lastCall?.options.responseType).toBe("blob");
-      expect(headersToObject(lastCall!.options.headers)).toStrictEqual({ Accept: JSON_VALUE, "Content-Type": mimeType });
+      expect(headersToObject(lastCall!.options.headers)).toStrictEqual({
+        Accept: JSON_VALUE,
+        "Content-Type": mimeType,
+      });
     });
 
     test("update blob request", async () => {
@@ -207,7 +213,10 @@ describe("AngularODataClient Tests", () => {
       await client.updateBlob(DEFAULT_URL, blob, mimeType);
 
       expect(lastCall?.method).toBe("PUT");
-      expect(headersToObject(lastCall!.options.headers)).toStrictEqual({ Accept: JSON_VALUE, "Content-Type": mimeType });
+      expect(headersToObject(lastCall!.options.headers)).toStrictEqual({
+        Accept: JSON_VALUE,
+        "Content-Type": mimeType,
+      });
     });
 
     test("caller headers are combined with the mime type for blob uploads, but the mime type always wins the content type", async () => {
