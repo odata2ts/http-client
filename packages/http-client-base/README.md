@@ -11,6 +11,8 @@ Base implementation for [odata2ts](https://github.com/odata2ts/odata2ts) compati
   - allows user to set custom retrieval method
   - decodes the error document of a failed binary request, which arrives as a `Blob` or unparsed text
 - streamlines all HTTP calls (POST, GET, ...) into one method
+- holds the ETags seen by this client, so that `@odata2ts/odata-service` can send `If-Match` on a write to
+  a resource under optimistic concurrency control
 
 The parts of this which need no transport — the CSRF token state, the error message retrieval, the header
 defaults — live in [`@odata2ts/http-client-common`](../http-client-common) and are shared with

@@ -52,6 +52,28 @@ With this in place, `AngularODataClient` fetches a token via a `GET` to `csrfTok
 (`POST`/`PUT`/`PATCH`/`DELETE`), caches it, and re-fetches it once if the server answers `403` with the
 same header set to `Required`.
 
+### Optimistic concurrency
+
+The same token carries the options for optimistic concurrency control. The client holds the ETags it has
+seen, so that a write to a resource requiring one can carry `If-Match`:
+
+```ts
+providers: [
+  {
+    provide: ANGULAR_ODATA_CLIENT_OPTIONS,
+    useValue: {
+      // write even where no ETag is known, by sending `If-Match: *` - last write wins
+      blindConcurrencyWrites: true,
+      // or bring your own store, e.g. one surviving a page reload
+      // concurrencyHandler: myHandler,
+    },
+  },
+];
+```
+
+Both are optional: without them the client keeps a bounded in-memory store and a write to a
+concurrency-controlled resource whose ETag was never read fails before the request is sent.
+
 ## Installation
 
 Install package `@odata2ts/http-client-angular` as runtime dependency:
