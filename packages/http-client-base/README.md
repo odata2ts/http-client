@@ -12,6 +12,10 @@ Base implementation for [odata2ts](https://github.com/odata2ts/odata2ts) compati
   - decodes the error document of a failed binary request, which arrives as a `Blob` or unparsed text
 - streamlines all HTTP calls (POST, GET, ...) into one method
 
+The parts of this which need no transport — the CSRF token state, the error message retrieval, the header
+defaults — live in [`@odata2ts/http-client-common`](../http-client-common) and are shared with
+`@odata2ts/http-client-angular`, which cannot extend this base class.
+
 ## Installation
 
 Install package `@odata2ts/http-client-base` as dependency:

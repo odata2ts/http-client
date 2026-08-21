@@ -6,19 +6,15 @@ import {
   ODataHttpMethods,
 } from "@odata2ts/http-client-api";
 import { BaseHttpClient, BaseRequestConfig, parseErrorResponseBody } from "@odata2ts/http-client-base";
+import { buildErrorMessage, DEFAULT_ERROR_MESSAGE, FAILURE_RESPONSE_MESSAGE } from "@odata2ts/http-client-common";
 import { FetchClientError } from "./FetchClientError";
 import { FetchRequestConfig, getDefaultConfig, mergeFetchConfig } from "./FetchRequestConfig";
 
-export const DEFAULT_ERROR_MESSAGE = "No error message!";
+export { DEFAULT_ERROR_MESSAGE } from "@odata2ts/http-client-common";
+
 const FETCH_FAILURE_MESSAGE = "OData request failed entirely: ";
 const JSON_RETRIEVAL_FAILURE_MESSAGE = "Retrieving JSON body from OData response failed: ";
 const BLOB_RETRIEVAL_FAILURE_MESSAGE = "Retrieving blob from OData response failed: ";
-const RESPONSE_FAILURE_MESSAGE = "OData server responded with error: ";
-
-function buildErrorMessage(prefix: string, error: any) {
-  const msg = typeof error === "string" ? error : (error as Error)?.message;
-  return prefix + (msg || DEFAULT_ERROR_MESSAGE);
-}
 
 /**
  * Whether the body is a stream, in which case fetch needs to be told about it explicitly.
@@ -103,7 +99,7 @@ export class FetchClient extends BaseHttpClient<FetchRequestConfig> implements O
       const errMsg = this.retrieveErrorMessage(responseData);
 
       throw new FetchClientError(
-        buildErrorMessage(RESPONSE_FAILURE_MESSAGE, errMsg),
+        buildErrorMessage(FAILURE_RESPONSE_MESSAGE, errMsg),
         response.status,
         this.mapHeaders(response.headers),
         new Error(errMsg || DEFAULT_ERROR_MESSAGE),

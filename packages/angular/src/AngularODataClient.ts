@@ -3,7 +3,6 @@ import { HttpClient, HttpErrorResponse, HttpHeaders, HttpParams, HttpResponse } 
 import { firstValueFrom, Observable } from "rxjs";
 
 import {
-  DATA_MANIPULATION_METHODS,
   HttpResponseModel,
   ODataHttpClient,
   ODataHttpClientOptions,
@@ -11,18 +10,22 @@ import {
   ODataRequestConfig,
   ODataResponse,
 } from "@odata2ts/http-client-api";
-import { ErrorMessageRetriever, retrieveErrorMessage } from "./ErrorMessageRetriever";
+import {
+  buildErrorMessage,
+  CsrfTokenHandler,
+  DEFAULT_ERROR_MESSAGE,
+  ErrorMessageRetriever,
+  FAILURE_NO_RESPONSE,
+  FAILURE_RESPONSE_MESSAGE,
+  getDefaultJsonHeaders,
+  JSON_MIME_TYPE,
+  mergeHeaders,
+  retrieveErrorMessage,
+} from "@odata2ts/http-client-common";
 import { AngularODataRequestConfig } from "./AngularODataRequestConfig";
 import { AngularODataError } from "./AngularODataError";
 
-export const DEFAULT_ERROR_MESSAGE = "No error message!";
-export const DEFAULT_CSRF_TOKEN_KEY = "x-csrf-token";
-const FAILURE_RESPONSE_MESSAGE = "OData server responded with error: ";
-const FAILURE_NO_RESPONSE = "No response from server! Failure: ";
-const FAILURE_MISSING_CSRF_URL =
-  "When automatic CSRF token handling is activated, the URL must be supplied via attribute [csrfTokenFetchUrl]!";
-const JSON_VALUE = "application/json";
-const BODYLESS_METHODS: ReadonlyArray<ODataHttpMethods> = [ODataHttpMethods.Get, ODataHttpMethods.Delete];
+export { DEFAULT_CSRF_TOKEN_KEY, DEFAULT_ERROR_MESSAGE } from "@odata2ts/http-client-common";
 
 /**
  * DI token for {@link ODataHttpClientOptions}, e.g. to activate automatic CSRF token handling.
@@ -40,39 +43,19 @@ const BODYLESS_METHODS: ReadonlyArray<ODataHttpMethods> = [ODataHttpMethods.Get,
  */
 export const ANGULAR_ODATA_CLIENT_OPTIONS = new InjectionToken<ODataHttpClientOptions>("ANGULAR_ODATA_CLIENT_OPTIONS");
 
-function buildErrorMessage(prefix: string, error: any) {
-  const msg = typeof error === "string" ? error : (error as Error)?.message;
-  return prefix + (msg || DEFAULT_ERROR_MESSAGE);
-}
-
-/**
- * Default headers for a JSON request: every method gets `Accept`, methods that carry a body also get
- * `Content-Type`s.
- */
-function getDefaultHeaders(method: ODataHttpMethods): Record<string, string> {
-  return BODYLESS_METHODS.includes(method)
-    ? { Accept: JSON_VALUE }
-    : { Accept: JSON_VALUE, "Content-Type": JSON_VALUE };
-}
-
 @Injectable({
   providedIn: "root",
 })
 export class AngularODataClient implements ODataHttpClient<AngularODataRequestConfig> {
   protected retrieveErrorMessage: ErrorMessageRetriever = retrieveErrorMessage;
 
-  private readonly options: ODataHttpClientOptions;
-  private csrfToken: string | undefined;
-  private csrfTokenKey = DEFAULT_CSRF_TOKEN_KEY;
+  private readonly csrf: CsrfTokenHandler;
 
   constructor(
     private readonly http: HttpClient,
     @Optional() @Inject(ANGULAR_ODATA_CLIENT_OPTIONS) options?: ODataHttpClientOptions | null,
   ) {
-    this.options = options ?? { useCsrfProtection: false };
-    if (this.options.useCsrfProtection && !this.options.csrfTokenFetchUrl?.trim()) {
-      throw new Error(FAILURE_MISSING_CSRF_URL);
-    }
+    this.csrf = new CsrfTokenHandler(options ?? { useCsrfProtection: false });
   }
 
   /**
@@ -85,11 +68,11 @@ export class AngularODataClient implements ODataHttpClient<AngularODataRequestCo
   }
 
   public getCsrfTokenKey() {
-    return this.csrfTokenKey;
+    return this.csrf.getKey();
   }
 
   public setCsrfTokenKey(newKey: string) {
-    this.csrfTokenKey = newKey || DEFAULT_CSRF_TOKEN_KEY;
+    this.csrf.setKey(newKey);
   }
 
   get<ResponseModel>(
@@ -146,7 +129,7 @@ export class AngularODataClient implements ODataHttpClient<AngularODataRequestCo
       method,
       requestConfig,
       additionalHeaders,
-      getDefaultHeaders(method),
+      getDefaultJsonHeaders(method),
       (headers) =>
         this.http.request(method, url, {
           body: data,
@@ -229,7 +212,7 @@ export class AngularODataClient implements ODataHttpClient<AngularODataRequestCo
       method,
       requestConfig,
       additionalHeaders,
-      { Accept: JSON_VALUE },
+      { Accept: JSON_MIME_TYPE },
       (headers) =>
         this.http.request(method, url, {
           body: blob,
@@ -258,26 +241,18 @@ export class AngularODataClient implements ODataHttpClient<AngularODataRequestCo
   ): Promise<HttpResponseModel<T>> {
     let headers = this.buildHeaders(requestConfig, additionalHeaders, defaultHeaders);
 
-    if (this.options.useCsrfProtection && DATA_MANIPULATION_METHODS.includes(method)) {
-      const token = await this.getCsrfToken();
+    if (this.csrf.appliesTo(method)) {
+      const token = await this.csrf.getToken(() => this.fetchCsrfToken());
       if (token) {
-        headers = headers.set(this.csrfTokenKey, token);
+        headers = headers.set(this.csrf.getKey(), token);
       }
     }
 
     try {
       return await this.execute<T>(buildRequest(headers));
     } catch (e) {
-      const error = e as AngularODataError;
-
-      if (
-        !isRetry &&
-        this.options.useCsrfProtection &&
-        DATA_MANIPULATION_METHODS.includes(method) &&
-        error.status === 403 &&
-        error.headers?.[this.csrfTokenKey.toLowerCase()] === "Required"
-      ) {
-        this.csrfToken = undefined;
+      if (!isRetry && this.csrf.isExpired(e as AngularODataError, method)) {
+        this.csrf.reset();
         return this.sendRequest<T>(method, requestConfig, additionalHeaders, defaultHeaders, buildRequest, true);
       }
 
@@ -285,16 +260,10 @@ export class AngularODataClient implements ODataHttpClient<AngularODataRequestCo
     }
   }
 
-  private async getCsrfToken(): Promise<string | undefined> {
-    if (!this.csrfToken) {
-      this.csrfToken = await this.fetchCsrfToken();
-    }
-    return this.csrfToken;
-  }
-
   private async fetchCsrfToken(): Promise<string | undefined> {
-    const fetchUrl = this.options.csrfTokenFetchUrl!;
-    const headers = new HttpHeaders({ [this.csrfTokenKey]: "Fetch", Accept: JSON_VALUE });
+    const tokenKey = this.csrf.getKey();
+    const fetchUrl = this.csrf.getFetchUrl();
+    const headers = new HttpHeaders({ [tokenKey]: "Fetch", Accept: JSON_MIME_TYPE });
 
     // read as text rather than json: this request only cares about the response header carrying the
     // token, and forcing json parsing on whatever body the fetch URL happens to return could fail the
@@ -307,7 +276,7 @@ export class AngularODataClient implements ODataHttpClient<AngularODataRequestCo
       }) as Observable<HttpResponse<string>>,
     );
 
-    return response.headers[this.csrfTokenKey.toLowerCase()];
+    return response.headers[tokenKey.toLowerCase()];
   }
 
   /**
@@ -340,10 +309,8 @@ export class AngularODataClient implements ODataHttpClient<AngularODataRequestCo
   }
 
   /**
-   * Merges headers with increasing precedence: the JSON defaults are the fallback, `additionalHeaders`
-   * (passed by callers alongside the request) can override them, and `requestConfig.headers` (passed
-   * alongside the request's own configuration) wins over both - matching the precedence used by the other
-   * odata2ts HTTP clients.
+   * Turns the merged headers - see {@link mergeHeaders} for the precedence - into Angular's own
+   * `HttpHeaders`.
    */
   private buildHeaders(
     requestConfig?: ODataRequestConfig,
@@ -352,13 +319,9 @@ export class AngularODataClient implements ODataHttpClient<AngularODataRequestCo
   ): HttpHeaders {
     let headers = new HttpHeaders();
 
-    const merged = {
-      ...(defaultHeaders ?? {}),
-      ...(additionalHeaders ?? {}),
-      ...(requestConfig?.headers ?? {}),
-    };
-
-    for (const [key, value] of Object.entries(merged)) {
+    for (const [key, value] of Object.entries(
+      mergeHeaders(defaultHeaders, additionalHeaders, requestConfig?.headers),
+    )) {
       headers = headers.set(key, value);
     }
 
