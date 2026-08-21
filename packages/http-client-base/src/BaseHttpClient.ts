@@ -1,5 +1,4 @@
 import {
-  DATA_MANIPULATION_METHODS,
   HttpResponseModel,
   ODataClientError,
   ODataHttpClientOptions,
@@ -8,7 +7,16 @@ import {
   ODataRequestConfig,
   ODataResponse,
 } from "@odata2ts/http-client-api";
-import { ErrorMessageRetriever, retrieveErrorMessage } from "./ErrorMessageRetriever";
+import {
+  CsrfTokenHandler,
+  ErrorMessageRetriever,
+  getDefaultJsonHeaders,
+  getJsonHeaders,
+  isPlainTextBody,
+  JSON_MIME_TYPE,
+  mergeHeaders,
+  retrieveErrorMessage,
+} from "@odata2ts/http-client-common";
 
 export interface BaseRequestConfig extends ODataRequestConfig {
   dataType?: ODataHttpDataTypes;
@@ -18,24 +26,11 @@ export interface BaseRequestConfig extends ODataRequestConfig {
   noBodyEvaluation?: boolean;
 }
 
-export const DEFAULT_CSRF_TOKEN_KEY = "x-csrf-token";
-const FAILURE_MISSING_CSRF_URL =
-  "When automatic CSRF token handling is activated, the URL must be supplied via attribute [csrfTokenFetchUrl]!";
 const FAILURE_MISSING_URL = "Value for URL must be provided!";
-const JSON_VALUE = "application/json";
-const PLAIN_TEXT_VALUE = "text/plain";
-const CONTENT_TYPE_KEY = "content-type";
 
-function getInternalConfigWithJsonHeaders(
-  headers?: Record<string, string>,
-  setContentType: boolean = true,
-): BaseRequestConfig {
+function toInternalConfig(headers: Record<string, string>, additionalHeaders?: Record<string, string>) {
   return {
-    headers: {
-      Accept: JSON_VALUE,
-      ...(setContentType ? { "Content-Type": JSON_VALUE } : undefined),
-      ...headers,
-    },
+    headers: mergeHeaders(headers, additionalHeaders),
     dataType: ODataHttpDataTypes.JSON,
   };
 }
@@ -43,7 +38,7 @@ function getInternalConfigWithJsonHeaders(
 function getAdditionalHeaders(jsonResponse: boolean, additionalHeaders?: Record<string, string>, contentType?: string) {
   let headers: Record<string, string> = {};
   if (jsonResponse) {
-    headers.Accept = JSON_VALUE;
+    headers.Accept = JSON_MIME_TYPE;
   }
   if (additionalHeaders) {
     headers = { ...headers, ...additionalHeaders };
@@ -56,32 +51,22 @@ function getAdditionalHeaders(jsonResponse: boolean, additionalHeaders?: Record<
 }
 
 export abstract class BaseHttpClient<RequestConfigType> {
-  private csrfToken: string | undefined;
-  private csrfTokenKey = DEFAULT_CSRF_TOKEN_KEY;
+  protected readonly csrf: CsrfTokenHandler;
 
   protected retrieveErrorMessage: ErrorMessageRetriever = retrieveErrorMessage;
 
-  protected constructor(private baseOptions: ODataHttpClientOptions = { useCsrfProtection: false }) {
-    if (baseOptions.useCsrfProtection && !baseOptions.csrfTokenFetchUrl?.trim()) {
-      throw new Error(FAILURE_MISSING_CSRF_URL);
-    }
+  protected constructor(baseOptions: ODataHttpClientOptions = { useCsrfProtection: false }) {
+    this.csrf = new CsrfTokenHandler(baseOptions);
   }
 
   /**
    * Whether the given headers declare the request body as plain text, in which case it must be passed
    * to the server as it is: serializing it as JSON would wrap it into double quotes.
    *
-   * The header name is matched case-insensitively, since callers are free to choose their own spelling.
-   * Of multiple matches the last one wins, mirroring how the headers were merged in the first place.
-   *
    * @param headers the headers of the request
    */
   protected isPlainTextBody(headers?: Record<string, string>): boolean {
-    const contentType = Object.entries(headers ?? {})
-      .filter(([key]) => key.toLowerCase() === CONTENT_TYPE_KEY)
-      .pop()?.[1];
-
-    return !!contentType?.toLowerCase().startsWith(PLAIN_TEXT_VALUE);
+    return isPlainTextBody(headers);
   }
 
   /**
@@ -105,11 +90,11 @@ export abstract class BaseHttpClient<RequestConfigType> {
   ): Promise<HttpResponseModel<ResponseModel>>;
 
   public getCsrfTokenKey() {
-    return this.csrfTokenKey;
+    return this.csrf.getKey();
   }
 
   public setCsrfTokenKey(newKey: string) {
-    this.csrfTokenKey = newKey || DEFAULT_CSRF_TOKEN_KEY;
+    this.csrf.setKey(newKey);
   }
 
   public setErrorMessageRetriever(getErrorMsg: ErrorMessageRetriever) {
@@ -117,20 +102,17 @@ export abstract class BaseHttpClient<RequestConfigType> {
   }
 
   protected async setupSecurityToken(): Promise<[string, string | undefined]> {
-    if (!this.csrfToken) {
-      this.csrfToken = await this.fetchSecurityToken();
-    }
-    return [this.csrfTokenKey, this.csrfToken];
+    return [this.csrf.getKey(), await this.csrf.getToken(() => this.fetchSecurityToken())];
   }
 
   protected async fetchSecurityToken(): Promise<string | undefined> {
-    const fetchUrl = this.baseOptions!.csrfTokenFetchUrl!;
-    const response = await this.sendRequest(ODataHttpMethods.Get, fetchUrl, undefined, undefined, {
+    const tokenKey = this.csrf.getKey();
+    const response = await this.sendRequest(ODataHttpMethods.Get, this.csrf.getFetchUrl(), undefined, undefined, {
       noBodyEvaluation: true,
-      headers: { [this.csrfTokenKey]: "Fetch", Accept: JSON_VALUE },
+      headers: { [tokenKey]: "Fetch", Accept: JSON_MIME_TYPE },
     });
 
-    return response.headers[this.csrfTokenKey];
+    return response.headers[tokenKey];
   }
 
   /**
@@ -158,7 +140,7 @@ export abstract class BaseHttpClient<RequestConfigType> {
     }
 
     // setup automatic CSRF token handling
-    if (this.baseOptions.useCsrfProtection && DATA_MANIPULATION_METHODS.includes(method)) {
+    if (this.csrf.appliesTo(method)) {
       const [tokenKey, tokenValue] = await this.setupSecurityToken();
       if (tokenValue) {
         internalConfig.headers = { ...internalConfig.headers, [tokenKey]: tokenValue };
@@ -168,21 +150,13 @@ export abstract class BaseHttpClient<RequestConfigType> {
     try {
       return await this.executeRequest<ResponseModel>(method, url, data, requestConfig, internalConfig);
     } catch (e) {
-      const clientError = e as ODataClientError;
-
       // automatic CSRF token handling: only ever repeat a request once, since a server which keeps
       // demanding a new token would otherwise make us recurse endlessly
-      if (
-        !isRetry &&
-        !!this.baseOptions.useCsrfProtection &&
-        clientError.status === 403 &&
-        !!clientError.headers &&
-        clientError.headers[this.csrfTokenKey] === "Required"
-      ) {
+      if (!isRetry && this.csrf.isExpired(e as ODataClientError, method)) {
         // token has expired: reset csrf token & perform the original request again;
         // the internal config must be handed over as well, otherwise the repeated request would lose
         // its headers (content type!) and its data type
-        this.csrfToken = undefined;
+        this.csrf.reset();
         return this.sendRequest<ResponseModel>(method, url, data, requestConfig, internalConfig, true);
       }
 
@@ -200,7 +174,7 @@ export abstract class BaseHttpClient<RequestConfigType> {
       url,
       undefined,
       requestConfig,
-      getInternalConfigWithJsonHeaders(additionalHeaders, false),
+      toInternalConfig(getJsonHeaders(false), additionalHeaders),
     );
   }
 
@@ -215,7 +189,7 @@ export abstract class BaseHttpClient<RequestConfigType> {
       url,
       data,
       requestConfig,
-      getInternalConfigWithJsonHeaders(additionalHeaders),
+      toInternalConfig(getJsonHeaders(true), additionalHeaders),
     );
   }
 
@@ -230,7 +204,7 @@ export abstract class BaseHttpClient<RequestConfigType> {
       url,
       data,
       requestConfig,
-      getInternalConfigWithJsonHeaders(additionalHeaders),
+      toInternalConfig(getJsonHeaders(true), additionalHeaders),
     );
   }
 
@@ -245,7 +219,7 @@ export abstract class BaseHttpClient<RequestConfigType> {
       url,
       data,
       requestConfig,
-      getInternalConfigWithJsonHeaders(additionalHeaders),
+      toInternalConfig(getJsonHeaders(true), additionalHeaders),
     );
   }
 
@@ -259,7 +233,7 @@ export abstract class BaseHttpClient<RequestConfigType> {
       url,
       undefined,
       requestConfig,
-      getInternalConfigWithJsonHeaders(additionalHeaders, false),
+      toInternalConfig(getJsonHeaders(false), additionalHeaders),
     );
   }
 
@@ -275,7 +249,9 @@ export abstract class BaseHttpClient<RequestConfigType> {
       url,
       data,
       requestConfig,
-      getInternalConfigWithJsonHeaders(additionalHeaders),
+      // unlike the dedicated methods above the method is only known here, so the content type follows it:
+      // a GET or DELETE routed through this entry point carries no body and therefore declares none
+      toInternalConfig(getDefaultJsonHeaders(method), additionalHeaders),
     );
   }
 

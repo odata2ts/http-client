@@ -7,12 +7,13 @@ import {
   ODataHttpMethods,
 } from "@odata2ts/http-client-api";
 import { BaseHttpClient, BaseRequestConfig, parseErrorResponseBody } from "@odata2ts/http-client-base";
+import { DEFAULT_ERROR_MESSAGE, FAILURE_RESPONSE_MESSAGE } from "@odata2ts/http-client-common";
 import { JQueryClientError } from "./JQueryClientError";
 import { JQueryRequestConfig, mergeConfigs } from "./JQueryRequestConfig";
 
 import jqXHR = JQuery.jqXHR;
 
-export const DEFAULT_ERROR_MESSAGE = "No error message!";
+export { DEFAULT_ERROR_MESSAGE } from "@odata2ts/http-client-common";
 export const FAILURE_STREAM_UNSUPPORTED =
   "Streaming is not supported by the JqueryClient! XmlHttpRequest, which jQuery's ajax method builds " +
   "upon, has no streaming API at all - neither for reading a response nor for sending a request body. " +
@@ -70,7 +71,7 @@ export class JQueryClient extends BaseHttpClient<JQueryRequestConfig> implements
 
     const responseMessage = this.retrieveErrorMessage(responseData);
     const failMsg = responseMessage || thrownError || DEFAULT_ERROR_MESSAGE;
-    const errorMessage = responseMessage ? "OData server responded with error: " + responseMessage : failMsg;
+    const errorMessage = responseMessage ? FAILURE_RESPONSE_MESSAGE + responseMessage : failMsg;
 
     return new JQueryClientError(errorMessage, jqXHR.status, this.mapHeaders(jqXHR), new Error(failMsg), jqXHR);
   }

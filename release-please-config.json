@@ -20,6 +20,9 @@
     "packages/http-client-base": {
       "component": "@odata2ts/http-client-base"
     },
+    "packages/http-client-common": {
+      "component": "@odata2ts/http-client-common"
+    },
     "packages/axios": {
       "component": "@odata2ts/http-client-axios"
     },

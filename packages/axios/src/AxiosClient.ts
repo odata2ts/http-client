@@ -6,6 +6,12 @@ import {
   ODataHttpMethods,
 } from "@odata2ts/http-client-api";
 import { BaseHttpClient, BaseRequestConfig, parseErrorResponseBody } from "@odata2ts/http-client-base";
+import {
+  buildErrorMessage,
+  DEFAULT_ERROR_MESSAGE,
+  FAILURE_NO_RESPONSE,
+  FAILURE_RESPONSE_MESSAGE,
+} from "@odata2ts/http-client-common";
 import axios, {
   AxiosError,
   AxiosInstance,
@@ -16,10 +22,9 @@ import axios, {
 import { AxiosClientError } from "./AxiosClientError";
 import { AxiosRequestConfig, mergeConfig } from "./AxiosRequestConfig";
 
-export const DEFAULT_ERROR_MESSAGE = "No error message!";
-const FAILURE_NO_RESPONSE = "No response from server! Failure: ";
+export { DEFAULT_ERROR_MESSAGE } from "@odata2ts/http-client-common";
+
 const FAILURE_NO_REQUEST = "No request was sent! Failure: ";
-const FAILURE_RESPONSE_MESSAGE = "OData server responded with error: ";
 const FAILURE_AXIOS = "Fatal Axios failure: ";
 
 export const FAILURE_STREAM_UNSUPPORTED =
@@ -30,11 +35,6 @@ export const FAILURE_BLOB_UNSUPPORTED =
   "Binary responses are not supported by the AxiosClient outside the browser! Without XMLHttpRequest " +
   "axios falls back to its http adapter, which decodes the response as text - so a Blob can never be " +
   "delivered. Use the FetchClient for binary data.";
-
-function buildErrorMessage(prefix: string, error: any) {
-  const msg = typeof error === "string" ? error : (error as Error)?.message;
-  return prefix + (msg || DEFAULT_ERROR_MESSAGE);
-}
 
 /**
  * Whether axios will use its XHR adapter, which is the only one of the two that can deliver a `Blob`.
