@@ -1,3 +1,4 @@
+export * from "./ConcurrencyHandler";
 export * from "./ODataResponseModel";
 export * from "./ODataHttpClient";
 export * from "./ODataHttpClientOptions";
