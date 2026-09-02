@@ -11,6 +11,18 @@ export interface HttpResponseModel<T> {
   // config?: any;
   /** response data */
   data: T;
+  /**
+   * This array describes the caching keys that have been invalidated by this
+   * request. Absent on reads and only populated when enabled via configuration.
+   *
+   * The HTTP client implementation (fetch, axios, jQuery, Angular) never sets it, only odata2ts's own response
+   * handling populates it.
+   *
+   * **For an action this is a lower bound, not a statement.** OData has no way to declare what an
+   * action changes, so an action contributes the same entries as any other write on its bound
+   * resource and nothing more.
+   */
+  readonly invalidates?: ReadonlyArray<ReadonlyArray<unknown>>;
 }
 
 /**
