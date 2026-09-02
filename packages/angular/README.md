@@ -21,6 +21,7 @@ It supports:
   see below) - this is a **different** mechanism than Angular's own built-in XSRF protection
   (`withXsrfConfiguration`), which only echoes back a cookie the server already set and knows nothing about
   the `X-CSRF-Token: Fetch` / `Required` handshake OData services use
+- OData batch requests (`$batch`), as `multipart/mixed` (default) or as JSON batch (`batch()`)
 
 It does **not** support:
 

@@ -11,6 +11,10 @@ The main implementations are:
 - [fetch](./packages/fetch)
 - [Axios](./packages/axios)
 - [jQuery](./packages/jquery)
+- [Angular](./packages/angular)
+
+Every implementation supports OData batch requests (`$batch`), as `multipart/mixed` (default) or as JSON
+batch - see each package's README for client-specific details.
 
 ## Documentation
 

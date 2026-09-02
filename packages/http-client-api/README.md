@@ -10,9 +10,9 @@ The responsibilities of the HTTP Client are:
 - mapping responses to conventionalized structures
 - custom request configuration (optional)
 - automatic CSRF Token Handling (optional)
-
-Features like **optimistic locking** (via `ETag`) or **batch requests** are currently not in scope
-of the HTTP client and may never be.
+- optimistic concurrency control via `ETag` (optional - the `concurrency` handler)
+- sending a set of requests as a single OData batch request (`$batch`), as `multipart/mixed` (default) or
+  as JSON batch (`batch()`)
 
 ## Documentation
 

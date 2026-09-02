@@ -10,6 +10,9 @@ Transport-agnostic building blocks shared by all [odata2ts](https://github.com/o
 - the JSON content negotiation constants, the default headers of a request and their precedence
 - the ETag store behind optimistic concurrency control: a bounded, in-memory `ConcurrencyHandler`, plus the
   `blindConcurrencyWrites` mode which resolves an unknown ETag to `*` rather than failing
+- the OData batch request/response wire format - `serializeBatchRequest` / `parseBatchResponse` - covering
+  both `multipart/mixed` and JSON batch; this is the only code in the ecosystem that knows the multipart
+  grammar
 
 None of it touches a transport, which is why it can be shared by `@odata2ts/http-client-base` — the base class
 behind the fetch, axios and jQuery clients — as well as by `@odata2ts/http-client-angular`, which implements the
