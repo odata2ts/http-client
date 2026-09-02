@@ -161,9 +161,9 @@ export class AngularODataClient implements ODataHttpClient<AngularODataRequestCo
   batch(
     url: string,
     body: BatchRequestBody,
+    options?: BatchClientOptions,
     requestConfig?: ODataRequestConfig,
     additionalHeaders?: Record<string, string>,
-    options?: BatchClientOptions,
   ): ODataResponse<BatchResponseBody> {
     const format = options?.format ?? "multipart";
     const { contentType, accept, payload } = serializeBatchRequest(body, { format });
