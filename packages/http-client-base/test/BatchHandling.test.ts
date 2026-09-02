@@ -35,7 +35,7 @@ describe("BaseHttpClient.batch()", () => {
     };
 
     const body = { requests: [{ id: "0", method: "get" as const, url: "People" }] };
-    await mockClient.batch("$batch", body, undefined, undefined, { format: "json", continueOnError: true });
+    await mockClient.batch("$batch", body, { format: "json", continueOnError: true });
 
     expect(mockClient.lastData).toBe(JSON.stringify(body));
     expect(mockClient.lastInternalConfig?.headers).toMatchObject({

@@ -274,9 +274,9 @@ export abstract class BaseHttpClient<RequestConfigType> {
   public async batch(
     url: string,
     body: BatchRequestBody,
+    options?: BatchClientOptions,
     requestConfig?: RequestConfigType,
     additionalHeaders?: Record<string, string>,
-    options?: BatchClientOptions,
   ): Promise<HttpResponseModel<BatchResponseBody>> {
     const format = options?.format ?? "multipart";
     const { contentType, accept, payload } = serializeBatchRequest(body, { format });
