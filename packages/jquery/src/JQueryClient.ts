@@ -86,13 +86,15 @@ export class JQueryClient extends BaseHttpClient<JQueryRequestConfig> implements
     const { headers } = internalConfig;
     const { params, ...mergedConfig } = mergeConfigs(this.config, mergeConfigs({ headers }, requestConfig));
     const isBinary = internalConfig.dataType === "blob";
+    const isText = internalConfig.dataType === "text";
 
     // set core inputs for request
     const resultConfig: InternalRequestConfig = {
       ...mergedConfig,
       method,
-      // only binary data and an explicitly plain text body are passed through as they are
-      data: isBinary || this.isPlainTextBody(internalConfig.headers) ? data : JSON.stringify(data),
+      // only binary/already-serialized-text data and an explicitly plain text body are passed through as
+      // they are
+      data: isBinary || isText || this.isPlainTextBody(internalConfig.headers) ? data : JSON.stringify(data),
       url,
     };
 
@@ -104,13 +106,17 @@ export class JQueryClient extends BaseHttpClient<JQueryRequestConfig> implements
         new URLSearchParams(params).toString();
     }
 
-    // handling of extra data types: blob and stream (not supported)
+    // handling of extra data types: blob, text and stream (not supported)
     if (isBinary) {
       resultConfig.xhrFields = { responseType: "blob" };
       // jQuery would otherwise turn the blob into a query string (processData defaults to true)
       // and add its own urlencoded content type; the actual mime type is already part of the headers
       resultConfig.processData = false;
       resultConfig.contentType = false;
+    } else if (isText) {
+      // jQuery must not guess a parser from the response's Content-Type - a batch response is read as
+      // raw text and parsed explicitly by parseBatchResponse
+      resultConfig.dataType = "text";
     } else if (internalConfig.dataType === "stream") {
       // a refusal is a failure of this client like any other, hence it carries the same error type
       throw new JQueryClientError(FAILURE_STREAM_UNSUPPORTED);
