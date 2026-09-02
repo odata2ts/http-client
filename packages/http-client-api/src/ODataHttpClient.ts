@@ -105,16 +105,16 @@ export interface ODataHttpClient<RequestConfig extends ODataRequestConfig = ODat
    *
    * @param url the batch endpoint, e.g. "$batch"
    * @param body the canonical batch request
+   * @param options
    * @param requestConfig
    * @param additionalHeaders
-   * @param options
    */
   batch(
     url: string,
     body: BatchRequestBody,
+    options?: BatchClientOptions,
     requestConfig?: RequestConfig,
     additionalHeaders?: Record<string, string>,
-    options?: BatchClientOptions,
   ): ODataResponse<BatchResponseBody>;
 
   /**
