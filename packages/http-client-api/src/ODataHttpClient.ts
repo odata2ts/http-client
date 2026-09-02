@@ -99,9 +99,9 @@ export interface ODataHttpClient<RequestConfig extends ODataRequestConfig = ODat
   /**
    * Sends a collected set of requests as a single OData batch request (`$batch`).
    *
-   * Optional for the same reason {@link concurrency} is: a third-party client written against today's
-   * contract must keep satisfying it. `@odata2ts/odata-service` throws a clear error naming the client
-   * when this is absent.
+   * Required, unlike {@link concurrency}: a client that cannot or will not support batching must still
+   * implement this and throw a clear error explaining why, rather than silently omitting it and leaving
+   * every caller of `@odata2ts/odata-service` to discover the gap at first use.
    *
    * @param url the batch endpoint, e.g. "$batch"
    * @param body the canonical batch request
@@ -109,7 +109,7 @@ export interface ODataHttpClient<RequestConfig extends ODataRequestConfig = ODat
    * @param additionalHeaders
    * @param options
    */
-  batch?(
+  batch(
     url: string,
     body: BatchRequestBody,
     requestConfig?: RequestConfig,

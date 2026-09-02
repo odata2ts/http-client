@@ -2,8 +2,10 @@ import { describe, expectTypeOf, test } from "vitest";
 import { ODataHttpClient, ODataRequestConfig, ODataResponse } from "../src";
 
 describe("ODataHttpClient batch() contract", () => {
-  test("batch() is optional - a client omitting it still satisfies the interface", () => {
-    const minimal: ODataHttpClient<ODataRequestConfig> = {
+  test("batch() is required - a client omitting it does not satisfy the interface", () => {
+    // @ts-expect-error - batch is required; a client without it must fail to type-check, not silently
+    // satisfy ODataHttpClient. A client that cannot support batching still has to implement it and throw.
+    const missingBatch: ODataHttpClient<ODataRequestConfig> = {
       get: () => Promise.resolve({} as any),
       post: () => Promise.resolve({} as any),
       put: () => Promise.resolve({} as any),
@@ -17,12 +19,11 @@ describe("ODataHttpClient batch() contract", () => {
       createStream: () => Promise.resolve({} as any),
       updateStream: () => Promise.resolve({} as any),
     };
-
-    expectTypeOf(minimal.batch).toEqualTypeOf<ODataHttpClient["batch"]>();
+    void missingBatch;
   });
 
-  test("batch(), when present, returns a canonical BatchResponseBody", () => {
-    type BatchReturn = ReturnType<NonNullable<ODataHttpClient["batch"]>>;
+  test("batch() returns a canonical BatchResponseBody", () => {
+    type BatchReturn = ReturnType<ODataHttpClient["batch"]>;
     expectTypeOf<BatchReturn>().resolves.toHaveProperty("data");
   });
 });
