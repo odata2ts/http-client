@@ -1,3 +1,4 @@
+export * from "./BatchTypes";
 export * from "./ConcurrencyHandler";
 export * from "./ODataResponseModel";
 export * from "./ODataHttpClient";
