@@ -1,4 +1,7 @@
 import {
+  BatchClientOptions,
+  BatchRequestBody,
+  BatchResponseBody,
   ConcurrencyHandler,
   HttpResponseModel,
   ODataClientError,
@@ -17,7 +20,9 @@ import {
   isPlainTextBody,
   JSON_MIME_TYPE,
   mergeHeaders,
+  parseBatchResponse,
   retrieveErrorMessage,
+  serializeBatchRequest,
 } from "@odata2ts/http-client-common";
 
 export interface BaseRequestConfig extends ODataRequestConfig {
@@ -264,6 +269,32 @@ export abstract class BaseHttpClient<RequestConfigType> {
       // a GET or DELETE routed through this entry point carries no body and therefore declares none
       toInternalConfig(getDefaultJsonHeaders(method), additionalHeaders),
     );
+  }
+
+  public async batch(
+    url: string,
+    body: BatchRequestBody,
+    options?: BatchClientOptions,
+    requestConfig?: RequestConfigType,
+    additionalHeaders?: Record<string, string>,
+  ): Promise<HttpResponseModel<BatchResponseBody>> {
+    const format = options?.format ?? "multipart";
+    const { contentType, accept, payload } = serializeBatchRequest(body, { format });
+    const headers = mergeHeaders(
+      { Accept: accept, "Content-Type": contentType },
+      options?.continueOnError ? { Prefer: "odata.continue-on-error" } : undefined,
+      additionalHeaders,
+    );
+
+    const response = await this.sendRequest<string>(ODataHttpMethods.Post, url, payload, requestConfig, {
+      headers,
+      dataType: ODataHttpDataTypes.TEXT,
+    });
+
+    return {
+      ...response,
+      data: parseBatchResponse(response.data, body, { format, contentType: response.headers["content-type"] }),
+    };
   }
 
   public getBlob(

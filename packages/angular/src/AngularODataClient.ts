@@ -3,6 +3,9 @@ import { HttpClient, HttpErrorResponse, HttpHeaders, HttpParams, HttpResponse } 
 import { firstValueFrom, Observable } from "rxjs";
 
 import {
+  BatchClientOptions,
+  BatchRequestBody,
+  BatchResponseBody,
   ConcurrencyHandler,
   HttpResponseModel,
   ODataHttpClient,
@@ -22,7 +25,9 @@ import {
   InMemoryConcurrencyHandler,
   JSON_MIME_TYPE,
   mergeHeaders,
+  parseBatchResponse,
   retrieveErrorMessage,
+  serializeBatchRequest,
 } from "@odata2ts/http-client-common";
 import { AngularODataRequestConfig } from "./AngularODataRequestConfig";
 import { AngularODataError } from "./AngularODataError";
@@ -151,6 +156,40 @@ export class AngularODataClient implements ODataHttpClient<AngularODataRequestCo
           params: this.buildParams(requestConfig),
         }) as Observable<HttpResponse<ResponseModel>>,
     );
+  }
+
+  batch(
+    url: string,
+    body: BatchRequestBody,
+    options?: BatchClientOptions,
+    requestConfig?: ODataRequestConfig,
+    additionalHeaders?: Record<string, string>,
+  ): ODataResponse<BatchResponseBody> {
+    const format = options?.format ?? "multipart";
+    const { contentType, accept, payload } = serializeBatchRequest(body, { format });
+    const defaultHeaders = {
+      Accept: accept,
+      "Content-Type": contentType,
+      ...(options?.continueOnError ? { Prefer: "odata.continue-on-error" } : {}),
+    };
+
+    return this.sendRequest<string>(
+      ODataHttpMethods.Post,
+      requestConfig,
+      additionalHeaders,
+      defaultHeaders,
+      (headers) =>
+        this.http.request(ODataHttpMethods.Post, url, {
+          body: payload,
+          observe: "response",
+          responseType: "text",
+          headers,
+          params: this.buildParams(requestConfig),
+        }) as Observable<HttpResponse<string>>,
+    ).then((response) => ({
+      ...response,
+      data: parseBatchResponse(response.data, body, { format, contentType: response.headers["content-type"] }),
+    }));
   }
 
   getBlob(

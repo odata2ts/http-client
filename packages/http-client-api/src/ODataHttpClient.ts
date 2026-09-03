@@ -1,3 +1,4 @@
+import { BatchClientOptions, BatchRequestBody, BatchResponseBody } from "./BatchTypes";
 import { ConcurrencyHandler } from "./ConcurrencyHandler";
 import { ODataHttpMethods } from "./ODataHttpMethods";
 import { ODataRequestConfig } from "./ODataRequestConfig";
@@ -94,6 +95,27 @@ export interface ODataHttpClient<RequestConfig extends ODataRequestConfig = ODat
     requestConfig?: RequestConfig,
     additionalHeaders?: Record<string, string>,
   ): ODataResponse<ResponseModel>;
+
+  /**
+   * Sends a collected set of requests as a single OData batch request (`$batch`).
+   *
+   * Required, unlike {@link concurrency}: a client that cannot or will not support batching must still
+   * implement this and throw a clear error explaining why, rather than silently omitting it and leaving
+   * every caller of `@odata2ts/odata-service` to discover the gap at first use.
+   *
+   * @param url the batch endpoint, e.g. "$batch"
+   * @param body the canonical batch request
+   * @param options
+   * @param requestConfig
+   * @param additionalHeaders
+   */
+  batch(
+    url: string,
+    body: BatchRequestBody,
+    options?: BatchClientOptions,
+    requestConfig?: RequestConfig,
+    additionalHeaders?: Record<string, string>,
+  ): ODataResponse<BatchResponseBody>;
 
   /**
    * Get binary data (Edm.Stream) as Blob.

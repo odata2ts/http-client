@@ -11,6 +11,7 @@ The main implementations are:
 - [fetch](./packages/fetch)
 - [Axios](./packages/axios)
 - [jQuery](./packages/jquery)
+- [Angular](./packages/angular)
 
 ## Documentation
 

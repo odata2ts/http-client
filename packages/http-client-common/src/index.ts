@@ -1,3 +1,6 @@
+export * from "./batch/BatchErrors";
+export * from "./batch/parseBatchResponse";
+export * from "./batch/serializeBatchRequest";
 export * from "./CsrfTokenHandler";
 export * from "./ErrorMessageRetriever";
 export * from "./ErrorMessages";

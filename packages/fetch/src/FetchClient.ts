@@ -137,6 +137,8 @@ export class FetchClient extends BaseHttpClient<FetchRequestConfig> implements O
     switch (options.dataType) {
       case "blob":
         return response.blob();
+      case "text":
+        return response.text();
       case "stream":
         // a response without any body at all yields null here, which the declared ReadableStream does
         // not include; undefined is what a 204 already hands back for every other data type

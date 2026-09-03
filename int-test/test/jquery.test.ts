@@ -4,7 +4,7 @@ import { JQueryClient, JQueryClientError } from "@odata2ts/http-client-jquery";
 import { ODataCollectionResponseV4, ODataModelResponseV4 } from "@odata2ts/odata-core";
 import jquery from "jquery";
 import { beforeAll, describe, expect, test } from "vitest";
-import { BOOK_DER_PROZESS, booksUrl, bookUrl, DEFAULT_HEADERS, UNKNOWN_BOOK_ID } from "./constants.js";
+import { batchUrl, BOOK_DER_PROZESS, booksUrl, bookUrl, DEFAULT_HEADERS, UNKNOWN_BOOK_ID } from "./constants.js";
 
 describe("JQueryClient against a real server", () => {
   let CLIENT: JQueryClient;
@@ -83,6 +83,94 @@ describe("JQueryClient against a real server", () => {
       expect(response.status).toBe(204);
 
       await expect(CLIENT.get(bookUrl(id))).rejects.toBeInstanceOf(JQueryClientError);
+    });
+  });
+
+  describe("Batch requests", () => {
+    test("multipart batch (default format): GET + POST, correlated by Content-ID", async () => {
+      const response = await CLIENT.batch(batchUrl, {
+        requests: [
+          { id: "1", method: "get", url: `Books(${BOOK_DER_PROZESS})` },
+          {
+            id: "2",
+            method: "post",
+            url: "Books",
+            body: { Title: "Multipart Batch Book", Language: "de", PageCount: 111 },
+          },
+        ],
+      });
+
+      expect(response.status).toBe(200);
+      expect(response.data.resolvedBy).toBe("id");
+      const [getResponse, postResponse] = response.data.responses;
+      expect(getResponse).toMatchObject({ id: "1", status: 200 });
+      expect(getResponse.body).toMatchObject({ Title: "Der Prozess" });
+      expect(postResponse.status).toBe(201);
+
+      const createdId = (postResponse.body as { Id: string }).Id;
+      expect(createdId).toBeDefined();
+      await CLIENT.delete(bookUrl(createdId));
+    });
+
+    test('JSON batch: same shape, format: "json"', async () => {
+      const response = await CLIENT.batch(
+        batchUrl,
+        {
+          requests: [
+            { id: "1", method: "get", url: `Books(${BOOK_DER_PROZESS})` },
+            {
+              id: "2",
+              method: "post",
+              url: "Books",
+              body: { Title: "JSON Batch Book", Language: "de", PageCount: 222 },
+            },
+          ],
+        },
+        { format: "json" },
+      );
+
+      expect(response.status).toBe(200);
+      expect(response.data.resolvedBy).toBe("id");
+      const [getResponse, postResponse] = response.data.responses;
+      expect(getResponse).toMatchObject({ id: "1", status: 200 });
+      expect(getResponse.body).toMatchObject({ Title: "Der Prozess" });
+      expect(postResponse.status).toBe(201);
+
+      const createdId = (postResponse.body as { Id: string }).Id;
+      expect(createdId).toBeDefined();
+      await CLIENT.delete(bookUrl(createdId));
+    });
+
+    test("multipart batch: an atomicity group creates two books as one change set", async () => {
+      const response = await CLIENT.batch(batchUrl, {
+        requests: [
+          {
+            id: "1",
+            method: "post",
+            url: "Books",
+            atomicityGroup: "g1",
+            body: { Title: "Change Set Book A", Language: "de", PageCount: 100 },
+          },
+          {
+            id: "2",
+            method: "post",
+            url: "Books",
+            atomicityGroup: "g1",
+            body: { Title: "Change Set Book B", Language: "de", PageCount: 200 },
+          },
+        ],
+      });
+
+      expect(response.data.resolvedBy).toBe("id");
+      expect(response.data.responses).toHaveLength(2);
+      for (const r of response.data.responses) {
+        expect(r.status).toBe(201);
+        expect(r.atomicityGroup).toBe("g1");
+      }
+
+      const [bookA, bookB] = response.data.responses;
+      await CLIENT.delete(bookUrl((bookA.body as { Id: string }).Id));
+      await CLIENT.delete(bookUrl((bookB.body as { Id: string }).Id));
     });
   });
 });

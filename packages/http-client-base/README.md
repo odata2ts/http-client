@@ -13,6 +13,10 @@ Base implementation for [odata2ts](https://github.com/odata2ts/odata2ts) compati
 - streamlines all HTTP calls (POST, GET, ...) into one method
 - holds the ETags seen by this client, so that `@odata2ts/odata-service` can send `If-Match` on a write to
   a resource under optimistic concurrency control
+- implements batch support in form of a JSON format facade, shared by every client extending this base class
+  - you specify the batch call in the JSON format
+  - the client translates it by default to the `multipart/mixed` format for you
+  - on the way back you get JSON as result again
 
 The parts of this which need no transport — the CSRF token state, the error message retrieval, the header
 defaults — live in [`@odata2ts/http-client-common`](../http-client-common) and are shared with

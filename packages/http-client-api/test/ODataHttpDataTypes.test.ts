@@ -10,5 +10,6 @@ describe("ODataHttpDataTypes Tests", function () {
     expect(ODataHttpDataTypes.JSON).toBe("json");
     expect(ODataHttpDataTypes.BLOB).toBe("blob");
     expect(ODataHttpDataTypes.STREAM).toBe("stream");
+    expect(ODataHttpDataTypes.TEXT).toBe("text");
   });
 });

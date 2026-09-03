@@ -4,6 +4,7 @@ import {
   ODataClientError,
   ODataHttpClient,
   ODataHttpClientOptions,
+  ODataHttpDataTypes,
   ODataHttpMethods,
 } from "@odata2ts/http-client-api";
 import { BaseHttpClient, BaseRequestConfig } from "../src";
@@ -38,6 +39,12 @@ export class MockHttpClient extends BaseHttpClient<MockRequestConfig> implements
   public lastInternalConfig?: BaseRequestConfig;
 
   public requestCount: number = 0;
+
+  /**
+   * When set, a request with `dataType: TEXT` (i.e. `batch()`) answers with this instead of the default
+   * `{}` - batch requests are read as text, and a real batch response is never an empty object.
+   */
+  public simulateBatchResponse?: { body: string; headers?: Record<string, string>; status?: number };
 
   public simulateClientFailure: boolean = false;
   public simulateTokenExpired: boolean = false;
@@ -86,6 +93,15 @@ export class MockHttpClient extends BaseHttpClient<MockRequestConfig> implements
     this.lastConfig = config;
     this.lastInternalConfig = internalConfig;
     this.requestCount++;
+
+    if (internalConfig?.dataType === ODataHttpDataTypes.TEXT && this.simulateBatchResponse) {
+      return Promise.resolve({
+        status: this.simulateBatchResponse.status ?? 200,
+        statusText: "OK",
+        headers: this.simulateBatchResponse.headers ?? {},
+        data: this.simulateBatchResponse.body as unknown as ResponseModel,
+      });
+    }
 
     const responseHeaders: Record<string, string> = {};
 
