@@ -11,6 +11,7 @@ export const BOOK_DER_PROZESS = "11111111-1111-1111-1111-111111111111";
 export const UNKNOWN_BOOK_ID = "00000000-0000-0000-0000-000000000000";
 
 export const booksUrl = `${BASE_URL}/Books`;
+export const batchUrl = `${BASE_URL}/$batch`;
 
 export function bookUrl(id: string): string {
   return `${booksUrl}(${id})`;
