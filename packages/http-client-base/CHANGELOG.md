@@ -3,6 +3,25 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.7.0](https://github.com/odata2ts/http-client/compare/@odata2ts/http-client-base-v0.6.1...@odata2ts/http-client-base-v0.7.0) (2026-09-03)
+
+
+### ⚠ BREAKING CHANGES
+
+* batch() is required on ODataHttpClient, not optional. A third-party client that cannot or will not support batching must still implement the method and throw a clear error explaining why.
+
+### Features
+
+* add batch method to HTTP clients ([#86](https://github.com/odata2ts/http-client/issues/86)) ([cb4c11e](https://github.com/odata2ts/http-client/commit/cb4c11eec32edab827b08af0f65c77ab34948f6d))
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * @odata2ts/http-client-api bumped from ^0.6.8 to ^0.7.0
+    * @odata2ts/http-client-common bumped from ^0.1.1 to ^0.2.0
+
 ## [0.6.1](https://github.com/odata2ts/http-client/compare/@odata2ts/http-client-base-v0.6.0...@odata2ts/http-client-base-v0.6.1) (2026-08-21)
 
 
