@@ -11,8 +11,10 @@ The responsibilities of the HTTP Client are:
 - custom request configuration (optional)
 - automatic CSRF Token Handling (optional)
 - optimistic concurrency control via `ETag` (optional - the `concurrency` handler)
-- sending a set of requests as a single OData batch request (`$batch`), as `multipart/mixed` (default) or
-  as JSON batch (`batch()`)
+- batch support in form of a JSON format facade
+  - the caller specifies the batch call in the JSON format
+  - the client translates it by default to the `multipart/mixed` format
+  - on the way back the caller gets JSON as result again
 
 ## Documentation
 

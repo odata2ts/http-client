@@ -12,7 +12,10 @@ It supports:
 - automatic CSRF token handling
 - binary data in both directions: as `Blob` (`getBlob` / `createBlob` / `updateBlob`) and as stream
   (`getStream` / `createStream` / `updateStream`), the latter being the only client able to do so
-- OData batch requests (`$batch`), as `multipart/mixed` (default) or as JSON batch (`batch()`)
+- batch support in form of a JSON format facade
+  - you specify the batch call in the JSON format
+  - the client translates it by default to the `multipart/mixed` format for you
+  - on the way back you get JSON as result again
 
 Works also for Node.js v18+, but is still marked as **experimental**.
 

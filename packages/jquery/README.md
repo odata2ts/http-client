@@ -10,7 +10,11 @@ The existing JQuery instance must be provided when initializing the client.
 
 The whole client is meant to support usage of `odata2ts` in UI5 apps, which use Jquery for HTTP communication.
 
-It supports OData batch requests (`$batch`), as `multipart/mixed` (default) or as JSON batch (`batch()`).
+It supports batch requests in form of a JSON format facade:
+
+- you specify the batch call in the JSON format
+- the client translates it by default to the `multipart/mixed` format for you
+- on the way back you get JSON as result again
 
 It does **not** support **streaming** in either direction (`getStream`, `createStream` / `updateStream`):
 XmlHttpRequest, which jQuery's ajax method builds upon, has no streaming API at all. Those calls are

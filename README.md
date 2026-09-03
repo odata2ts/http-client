@@ -13,9 +13,6 @@ The main implementations are:
 - [jQuery](./packages/jquery)
 - [Angular](./packages/angular)
 
-Every implementation supports OData batch requests (`$batch`), as `multipart/mixed` (default) or as JSON
-batch - see each package's README for client-specific details.
-
 ## Documentation
 
 [Http Client Documentation](https://odata2ts.github.io/docs/odata-client/http-client/)

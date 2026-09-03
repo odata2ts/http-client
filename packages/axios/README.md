@@ -10,17 +10,19 @@ It supports:
 - request configuration
 - automatic CSRF token handling
 - uploading binary data (`createBlob` / `updateBlob`)
-- OData batch requests (`$batch`), as `multipart/mixed` (default) or as JSON batch (`batch()`)
+- batch support in form of a JSON format facade
+  - you specify the batch call in the JSON format
+  - the client translates it by default to the `multipart/mixed` format for you
+  - on the way back you get JSON as result again
 
 It does **not** support:
 
 - **streaming** in either direction (`getStream`, `createStream` / `updateStream`): axios' XHR adapter
   cannot stream at all, and its http adapter neither accepts a `ReadableStream` as request body nor
   yields one as response. The call is refused with an error.
-- **binary responses outside the browser** (`getBlob`, and a write answering with the stored content):
-  without `XMLHttpRequest` axios falls back to its http adapter, which decodes the response as text, so
-  a `Blob` can never be delivered. Refused with an error instead of handing back a string that only
-  claims to be a `Blob`.
+- **binary responses in node.js** (`getBlob`, and a write answering with the stored content):
+  without `XMLHttpRequest` axios falls back to its http adapter, which decodes the response as text.
+  Refused with an error instead of handing back a string that only claims to be a `Blob`.
 
 Use the [Fetch Client](https://www.npmjs.com/package/@odata2ts/http-client-fetch) if you need either.
 
