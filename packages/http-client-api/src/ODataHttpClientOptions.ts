@@ -1,4 +1,5 @@
 import { ConcurrencyHandler } from "./ConcurrencyHandler";
+import { ResourceIdentityHandler } from "./ResourceIdentityHandler";
 
 export interface ODataHttpClientOptions {
   /**
@@ -25,4 +26,10 @@ export interface ODataHttpClientOptions {
    * across a page reload.
    */
   concurrencyHandler?: ConcurrencyHandler;
+  /**
+   * Replaces the default in-memory {@link ResourceIdentityHandler}. Supply one to bound it differently, to
+   * keep its mappings across a page reload, or to seed it with entries {@link ResourceIdentityHandler.dehydrate}
+   * produced elsewhere (e.g. server-side).
+   */
+  resourceIdentityHandler?: ResourceIdentityHandler;
 }

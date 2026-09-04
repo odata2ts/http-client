@@ -7,3 +7,4 @@ export * from "./ODataHttpDataTypes";
 export * from "./ODataHttpMethods";
 export * from "./ODataRequestConfig";
 export * from "./ODataClientError";
+export * from "./ResourceIdentityHandler";
