@@ -10,6 +10,7 @@ import {
   ODataHttpMethods,
   ODataRequestConfig,
   ODataResponse,
+  ResourceIdentityHandler,
 } from "@odata2ts/http-client-api";
 import {
   CsrfTokenHandler,
@@ -17,6 +18,7 @@ import {
   getDefaultJsonHeaders,
   getJsonHeaders,
   InMemoryConcurrencyHandler,
+  InMemoryResourceIdentityHandler,
   isPlainTextBody,
   JSON_MIME_TYPE,
   mergeHeaders,
@@ -64,6 +66,13 @@ export abstract class BaseHttpClient<RequestConfigType> {
    */
   public readonly concurrency: ConcurrencyHandler;
 
+  /**
+   * The route↔canonical-resource mappings this client has observed - see {@link ResourceIdentityHandler}.
+   * Always present, for the same reason {@link concurrency} is: `@odata2ts/odata-service` never has to ask
+   * whether this client can do it.
+   */
+  public readonly resourceIdentity: ResourceIdentityHandler;
+
   protected readonly csrf: CsrfTokenHandler;
 
   protected retrieveErrorMessage: ErrorMessageRetriever = retrieveErrorMessage;
@@ -73,6 +82,7 @@ export abstract class BaseHttpClient<RequestConfigType> {
     this.concurrency =
       baseOptions.concurrencyHandler ??
       new InMemoryConcurrencyHandler({ blindConcurrencyWrites: baseOptions.blindConcurrencyWrites });
+    this.resourceIdentity = baseOptions.resourceIdentityHandler ?? new InMemoryResourceIdentityHandler();
   }
 
   /**
