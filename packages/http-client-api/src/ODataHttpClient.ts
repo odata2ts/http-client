@@ -3,6 +3,7 @@ import { ConcurrencyHandler } from "./ConcurrencyHandler";
 import { ODataHttpMethods } from "./ODataHttpMethods";
 import { ODataRequestConfig } from "./ODataRequestConfig";
 import { ODataResponse } from "./ODataResponseModel";
+import { ResourceIdentityHandler } from "./ResourceIdentityHandler";
 
 /**
  * Retrieves the configuration type for the given HTTP client.
@@ -18,6 +19,15 @@ export interface ODataHttpClient<RequestConfig extends ODataRequestConfig = ODat
    * still satisfies the contract. `@odata2ts/odata-service` treats its absence as "no ETag is ever known".
    */
   readonly concurrency?: ConcurrencyHandler;
+
+  /**
+   * The route↔canonical-resource mappings this client has observed, if it supports response-observed
+   * cache invalidation - see {@link ResourceIdentityHandler}.
+   *
+   * Optional on purpose, for the same reason {@link concurrency} is: `@odata2ts/odata-service` treats its
+   * absence as "no mapping is ever known".
+   */
+  readonly resourceIdentity?: ResourceIdentityHandler;
 
   /**
    * Create a model or collection entry.
