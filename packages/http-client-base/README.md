@@ -13,6 +13,8 @@ Base implementation for [odata2ts](https://github.com/odata2ts/odata2ts) compati
 - streamlines all HTTP calls (POST, GET, ...) into one method
 - holds the ETags seen by this client, so that `@odata2ts/odata-service` can send `If-Match` on a write to
   a resource under optimistic concurrency control
+- holds the request cache keys this client observed resolving to each canonical resource, so that
+  `@odata2ts/odata-service` can invalidate the keys of every other route to a resource when a write reaches it
 - implements batch support in form of a JSON format facade, shared by every client extending this base class
   - you specify the batch call in the JSON format
   - the client translates it by default to the `multipart/mixed` format for you

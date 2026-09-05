@@ -11,6 +11,7 @@ The responsibilities of the HTTP Client are:
 - custom request configuration (optional)
 - automatic CSRF Token Handling (optional)
 - optimistic concurrency control via `ETag` (optional - the `concurrency` handler)
+- cross-route cache invalidation via response-observed resource identity (optional - the `resourceIdentity` handler)
 - batch support in form of a JSON format facade
   - the caller specifies the batch call in the JSON format
   - the client translates it by default to the `multipart/mixed` format

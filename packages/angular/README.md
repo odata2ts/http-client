@@ -78,6 +78,27 @@ providers: [
 Both are optional: without them the client keeps a bounded in-memory store and a write to a
 concurrency-controlled resource whose ETag was never read fails before the request is sent.
 
+### Resource identity
+
+The same token carries the options for the client's resource identity store. It remembers which request cache
+keys were observed to resolve to which canonical resource, so that a write reached via one route invalidates the
+keys of every other route to the same resource:
+
+```ts
+providers: [
+  {
+    provide: ANGULAR_ODATA_CLIENT_OPTIONS,
+    useValue: {
+      // or bring your own store: to bound it differently, to keep its mappings across a page reload, or to
+      // seed it with entries another instance dehydrated (e.g. server-side)
+      // resourceIdentityHandler: myHandler,
+    },
+  },
+];
+```
+
+Optional: without it the client keeps a bounded in-memory store.
+
 ## Installation
 
 Install package `@odata2ts/http-client-angular` as runtime dependency:
