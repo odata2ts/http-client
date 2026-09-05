@@ -1,5 +1,20 @@
 # Changelog
 
+## [0.2.1](https://github.com/odata2ts/http-client/compare/@odata2ts/http-client-angular-v0.2.0...@odata2ts/http-client-angular-v0.2.1) (2026-09-05)
+
+
+### Features
+
+* **http-client-angular:** wire resourceIdentity into AngularODataClient ([67d62d9](https://github.com/odata2ts/http-client/commit/67d62d9e7be00c6ad7d6001e26270472acd8ce95))
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * @odata2ts/http-client-api bumped from ^0.7.0 to ^0.7.1
+    * @odata2ts/http-client-common bumped from ^0.2.0 to ^0.2.1
+
 ## [0.2.0](https://github.com/odata2ts/http-client/compare/@odata2ts/http-client-angular-v0.1.2...@odata2ts/http-client-angular-v0.2.0) (2026-09-03)
 
 

@@ -1,5 +1,19 @@
 # Changelog
 
+## [0.2.1](https://github.com/odata2ts/http-client/compare/@odata2ts/http-client-common-v0.2.0...@odata2ts/http-client-common-v0.2.1) (2026-09-05)
+
+
+### Features
+
+* **http-client-common:** add InMemoryResourceIdentityHandler ([ca89566](https://github.com/odata2ts/http-client/commit/ca8956661bc84f983bb6fa8aeb3270071aa1b73e))
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * @odata2ts/http-client-api bumped from ^0.7.0 to ^0.7.1
+
 ## [0.2.0](https://github.com/odata2ts/http-client/compare/@odata2ts/http-client-common-v0.1.1...@odata2ts/http-client-common-v0.2.0) (2026-09-03)
 
 

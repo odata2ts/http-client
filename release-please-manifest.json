@@ -1,9 +1,9 @@
 {
-  "packages/http-client-api": "0.7.0",
-  "packages/http-client-base": "0.7.0",
-  "packages/http-client-common": "0.2.0",
-  "packages/axios": "0.16.0",
-  "packages/fetch": "0.13.0",
-  "packages/jquery": "0.15.0",
-  "packages/angular": "0.2.0"
+  "packages/http-client-api": "0.7.1",
+  "packages/http-client-base": "0.7.1",
+  "packages/http-client-common": "0.2.1",
+  "packages/axios": "0.16.1",
+  "packages/fetch": "0.13.1",
+  "packages/jquery": "0.15.1",
+  "packages/angular": "0.2.1"
 }

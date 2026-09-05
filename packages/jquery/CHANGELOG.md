@@ -3,6 +3,16 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.15.1](https://github.com/odata2ts/http-client/compare/@odata2ts/http-client-jquery-v0.15.0...@odata2ts/http-client-jquery-v0.15.1) (2026-09-05)
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * @odata2ts/http-client-base bumped from ^0.7.0 to ^0.7.1
+    * @odata2ts/http-client-common bumped from ^0.2.0 to ^0.2.1
+
 ## [0.15.0](https://github.com/odata2ts/http-client/compare/@odata2ts/http-client-jquery-v0.14.1...@odata2ts/http-client-jquery-v0.15.0) (2026-09-03)
 
 
