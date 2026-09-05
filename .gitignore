@@ -29,6 +29,10 @@ tsconfig.build.tsbuildinfo
 # TODO - not now, reconsider when production ready
 # !.yarn/cache
 
+# Agent instruction files
+CLAUDE.md
+AGENTS.md
+
 # Other
 .DS_Store
 *.orig
