@@ -8,9 +8,12 @@ Transport-agnostic building blocks shared by all [odata2ts](https://github.com/o
 - CSRF token state: the cached token, the configurable header key, and the rule for when an expired token is
   worth one repetition
 - the JSON content negotiation constants, the default headers of a request and their precedence
-- the ETag store behind optimistic concurrency control: a bounded, in-memory `ConcurrencyHandler`, plus the
+- In-memory ETag store behind optimistic concurrency control: a bounded `ConcurrencyHandler`, plus the
   `blindConcurrencyWrites` mode which resolves an unknown ETag to `*` rather than failing
-- batch support in form of a JSON format facade - `serializeBatchRequest` / `parseBatchResponse`: the batch
+- In-memory resource identity store behind cross-route cache invalidation: a bounded `ResourceIdentityHandler`
+  remembering which request cache keys were observed to resolve to which canonical resource, so that a write
+  reached via one route invalidates the keys of every other route to the same resource
+- batch support in form of a JSON format facade: the batch
   call is specified in the JSON format, translated by default to the `multipart/mixed` format on the wire,
   and the response comes back as JSON again; this is the only code in the ecosystem that knows the
   multipart grammar
