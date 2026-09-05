@@ -13,6 +13,7 @@ import {
   ODataHttpMethods,
   ODataRequestConfig,
   ODataResponse,
+  ResourceIdentityHandler,
 } from "@odata2ts/http-client-api";
 import {
   buildErrorMessage,
@@ -23,6 +24,7 @@ import {
   FAILURE_RESPONSE_MESSAGE,
   getDefaultJsonHeaders,
   InMemoryConcurrencyHandler,
+  InMemoryResourceIdentityHandler,
   JSON_MIME_TYPE,
   mergeHeaders,
   parseBatchResponse,
@@ -62,6 +64,12 @@ export class AngularODataClient implements ODataHttpClient<AngularODataRequestCo
    */
   public readonly concurrency: ConcurrencyHandler;
 
+  /**
+   * The route↔canonical-resource mappings this client has observed - see {@link ResourceIdentityHandler}.
+   * Always present, for the same reason {@link concurrency} is.
+   */
+  public readonly resourceIdentity: ResourceIdentityHandler;
+
   private readonly csrf: CsrfTokenHandler;
 
   constructor(
@@ -73,6 +81,7 @@ export class AngularODataClient implements ODataHttpClient<AngularODataRequestCo
     this.concurrency =
       resolved.concurrencyHandler ??
       new InMemoryConcurrencyHandler({ blindConcurrencyWrites: resolved.blindConcurrencyWrites });
+    this.resourceIdentity = resolved.resourceIdentityHandler ?? new InMemoryResourceIdentityHandler();
   }
 
   /**
