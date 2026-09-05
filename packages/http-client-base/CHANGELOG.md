@@ -3,6 +3,21 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.7.1](https://github.com/odata2ts/http-client/compare/@odata2ts/http-client-base-v0.7.0...@odata2ts/http-client-base-v0.7.1) (2026-09-05)
+
+
+### Features
+
+* **http-client-base:** wire resourceIdentity into BaseHttpClient ([a61ed86](https://github.com/odata2ts/http-client/commit/a61ed86653bb646c7f56ddf2e123f96d50af8ae8))
+
+
+### Dependencies
+
+* The following workspace dependencies were updated
+  * dependencies
+    * @odata2ts/http-client-api bumped from ^0.7.0 to ^0.7.1
+    * @odata2ts/http-client-common bumped from ^0.2.0 to ^0.2.1
+
 ## [0.7.0](https://github.com/odata2ts/http-client/compare/@odata2ts/http-client-base-v0.6.1...@odata2ts/http-client-base-v0.7.0) (2026-09-03)
 
 

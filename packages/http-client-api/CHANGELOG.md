@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [0.7.1](https://github.com/odata2ts/http-client/compare/@odata2ts/http-client-api-v0.7.0...@odata2ts/http-client-api-v0.7.1) (2026-09-05)
+
+
+### Features
+
+* **http-client-api:** add ResourceIdentityHandler contract ([aa2a033](https://github.com/odata2ts/http-client/commit/aa2a0333ffec07ef8605fc733365a14e3d50e1b5))
+* **http-client-api:** declare resourceIdentity on the ODataHttpClient interface ([c8db99c](https://github.com/odata2ts/http-client/commit/c8db99ccb9c2355cd3193bddd3b5f49604551289))
+
 ## [0.7.0](https://github.com/odata2ts/http-client/compare/@odata2ts/http-client-api-v0.6.8...@odata2ts/http-client-api-v0.7.0) (2026-09-03)
 
 
