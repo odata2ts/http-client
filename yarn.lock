@@ -4428,8 +4428,8 @@ __metadata:
   linkType: hard
 
 "ng-packagr@npm:^22.0.0":
-  version: 22.2.4
-  resolution: "ng-packagr@npm:22.2.4"
+  version: 22.2.5
+  resolution: "ng-packagr@npm:22.2.5"
   dependencies:
     "@ampproject/remapping": "npm:^2.3.0"
     ajv: "npm:^8.17.1"
@@ -4460,7 +4460,7 @@ __metadata:
       optional: true
   bin:
     ng-packagr: src/cli/main.js
-  checksum: 10/352dac485a071bdd0b5e902cec05a475806dfbb7f9ae736c16381f0bb2ef9935ece879f6bcbb45f4e99e35aa3f48962a839335c14ac5b986c64198357649c508
+  checksum: 10/d998b81ad0451a7b25359edff909106a9a56f1902f1b4ccabe60d9f3c817d11a8fc3309822e4d301f9ca7567929977005c86b5e9dba680641f92ac7cabdb365e
   languageName: node
   linkType: hard
 
