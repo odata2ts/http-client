@@ -16,23 +16,23 @@ __metadata:
   linkType: hard
 
 "@angular/common@npm:^22.0.0":
-  version: 22.2.3
-  resolution: "@angular/common@npm:22.2.3"
+  version: 22.2.4
+  resolution: "@angular/common@npm:22.2.4"
   dependencies:
     tslib: "npm:^2.3.0"
   peerDependencies:
-    "@angular/core": 22.2.3
+    "@angular/core": 22.2.4
     rxjs: ^6.5.3 || ^7.4.0
-  checksum: 10/7c0693f64105a9193e30b84939d9c5c9e9bcc4061fbe8b428ba0284956eb37356a5b4ca7b29c2bf55b655a5f87cdbf59ab052d6e54745fcc12bde6fff3c6176f
+  checksum: 10/20a3ceb31a3ec0873fca6a106e8e6640d205ef7f8e82f3cc0625938222e062d00d116a02134a26a79223a06a1dbefd2aeb078ec4fa7c1ff8104e205538e52ba9
   languageName: node
   linkType: hard
 
 "@angular/compiler-cli@npm:^22.0.0":
-  version: 22.2.3
-  resolution: "@angular/compiler-cli@npm:22.2.3"
+  version: 22.2.4
+  resolution: "@angular/compiler-cli@npm:22.2.4"
   dependencies:
     "@babel/core": "npm:8.0.1"
-    "@jridgewell/sourcemap-codec": "npm:^1.4.14"
+    "@jridgewell/sourcemap-codec": "npm:^1.6.0"
     chokidar: "npm:^5.0.0"
     convert-source-map: "npm:^1.5.1"
     reflect-metadata: "npm:^0.2.0"
@@ -40,7 +40,7 @@ __metadata:
     tslib: "npm:^2.3.0"
     yargs: "npm:^18.0.0"
   peerDependencies:
-    "@angular/compiler": 22.2.3
+    "@angular/compiler": 22.2.4
     typescript: ">=6.0 <6.1"
   peerDependenciesMeta:
     typescript:
@@ -48,26 +48,26 @@ __metadata:
   bin:
     ng-xi18n: bundles/src/bin/ng_xi18n.js
     ngc: bundles/src/bin/ngc.js
-  checksum: 10/945bf210de1d85d21e8f5e9d843d975246d7cee55775cb91f9385dfae1cd306d95cd162d01ce01278cf5933c3a231082fd5ad40a02fe61a7c65ded842e49ddc9
+  checksum: 10/74fba88bc6d4aa34d1a61a016d67ff18c777f9e07ca8b7a7cfc3a65600bd14214f439134ad475b4e08378538e3216ef26485747c079678fa225c91955aa6a363
   languageName: node
   linkType: hard
 
 "@angular/compiler@npm:^22.0.0":
-  version: 22.2.3
-  resolution: "@angular/compiler@npm:22.2.3"
+  version: 22.2.4
+  resolution: "@angular/compiler@npm:22.2.4"
   dependencies:
     tslib: "npm:^2.3.0"
-  checksum: 10/21eb8b3627d621385bbb66d3c7aa8b923379a14b0e6a37543e71281d93e4b391a26608b06e02c800acecb1e27b71b205c2bd9fea94ef2336c50fbc51afcdeefa
+  checksum: 10/91e8bcc8ec1e36c0887eed4f865cd952f3c2785f1e2d5f9ffae47cd38b03ba8b045a49949d084f99666761478434acb826b70ff9eb8e9868f9bd646f82c79347
   languageName: node
   linkType: hard
 
 "@angular/core@npm:^22.0.0":
-  version: 22.2.3
-  resolution: "@angular/core@npm:22.2.3"
+  version: 22.2.4
+  resolution: "@angular/core@npm:22.2.4"
   dependencies:
     tslib: "npm:^2.3.0"
   peerDependencies:
-    "@angular/compiler": 22.2.3
+    "@angular/compiler": 22.2.4
     rxjs: ^6.5.3 || ^7.4.0
     zone.js: ~0.15.0 || ~0.16.0
   peerDependenciesMeta:
@@ -75,37 +75,37 @@ __metadata:
       optional: true
     zone.js:
       optional: true
-  checksum: 10/8553093d7bb4a495d77ba1a455bb37ab6bf2b0bee1d67f6fbb38ff38cf49001fb8d2aa0d82cfae43e2f1531afff8eec92b275ea0bbee34aa5ad8f8155483b605
+  checksum: 10/a66f52eb40293983de3f2fc69f59976da4620d76aaf680b7fdd31758a0935be36155d07cb37ea1f11aac098e7c0af236f391192fc640d7f87fd1ca5408ca81a9
   languageName: node
   linkType: hard
 
 "@angular/platform-browser-dynamic@npm:^22.0.0":
-  version: 22.2.3
-  resolution: "@angular/platform-browser-dynamic@npm:22.2.3"
+  version: 22.2.4
+  resolution: "@angular/platform-browser-dynamic@npm:22.2.4"
   dependencies:
     tslib: "npm:^2.3.0"
   peerDependencies:
-    "@angular/common": 22.2.3
-    "@angular/compiler": 22.2.3
-    "@angular/core": 22.2.3
-    "@angular/platform-browser": 22.2.3
-  checksum: 10/bf3dd2d62ff7fcee98e45ee681c991bea0f6aa11dfbcfed73e7cee0c71085e0973e0b9174433bd9586676078f6725adffd5396525500985cd8b2e3852644f303
+    "@angular/common": 22.2.4
+    "@angular/compiler": 22.2.4
+    "@angular/core": 22.2.4
+    "@angular/platform-browser": 22.2.4
+  checksum: 10/fc0e926b70683606652d45c24d3eda35676edcaffb93648629eb72442814171adc0e42658f311a18fc4ea4fa9c097d562728f333a0628062f3567181a2b3b779
   languageName: node
   linkType: hard
 
 "@angular/platform-browser@npm:^22.0.0":
-  version: 22.2.3
-  resolution: "@angular/platform-browser@npm:22.2.3"
+  version: 22.2.4
+  resolution: "@angular/platform-browser@npm:22.2.4"
   dependencies:
     tslib: "npm:^2.3.0"
   peerDependencies:
-    "@angular/animations": 22.2.3
-    "@angular/common": 22.2.3
-    "@angular/core": 22.2.3
+    "@angular/animations": 22.2.4
+    "@angular/common": 22.2.4
+    "@angular/core": 22.2.4
   peerDependenciesMeta:
     "@angular/animations":
       optional: true
-  checksum: 10/6c0d7057a6ab984816eaa40fbb695bd95ff7f4c7669d204ea56bdc723062f3906d77f3a2bb264fe118acc0201dcebffc0c897f2f55b03d7d7067757e5712fa40
+  checksum: 10/210e4f9ccb02a347b7268ce902dd0f3341671c23d3bf9595fcc01d9b7914e227193ff8705bcab6ebafafd3b397e4b028b89eb103eef533668bc45aa573443840
   languageName: node
   linkType: hard
 
@@ -898,7 +898,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@jridgewell/sourcemap-codec@npm:^1.4.14, @jridgewell/sourcemap-codec@npm:^1.5.0, @jridgewell/sourcemap-codec@npm:^1.5.5, @jridgewell/sourcemap-codec@npm:^1.6.0-beta.0":
+"@jridgewell/sourcemap-codec@npm:^1.4.14, @jridgewell/sourcemap-codec@npm:^1.5.0, @jridgewell/sourcemap-codec@npm:^1.5.5, @jridgewell/sourcemap-codec@npm:^1.6.0, @jridgewell/sourcemap-codec@npm:^1.6.0-beta.0":
   version: 1.6.0
   resolution: "@jridgewell/sourcemap-codec@npm:1.6.0"
   checksum: 10/eb53fbf7eb4051302a599d6b91425f381168b2856f321336fb00852cea1e0c1904af2610c157b1535e94a61caa98f0bd068d1d0394dd46adf9e9c45c4e11af91
@@ -2112,14 +2112,14 @@ __metadata:
   linkType: hard
 
 "axios@npm:^1.18.1":
-  version: 1.20.0
-  resolution: "axios@npm:1.20.0"
+  version: 1.21.0
+  resolution: "axios@npm:1.21.0"
   dependencies:
     follow-redirects: "npm:^1.16.0"
     form-data: "npm:^4.0.6"
     https-proxy-agent: "npm:^5.0.1"
     proxy-from-env: "npm:^2.1.0"
-  checksum: 10/0376b6178baecbe0f5d36088f5b5f6c21362ce301e0731f77172f9c89be740bdee20d8ae6ab186340d7cb752020c6a4f1381290e5a5cd10f6f9003941615ac77
+  checksum: 10/1d350436e2bcda52ea62607452bbefa17fa04c43192ecb989d5650215306f9aabfd98bbd1690fcf24ee4c9587630af2e7795feab4e7931f80c43ddd6eceeecc9
   languageName: node
   linkType: hard
 
@@ -4752,16 +4752,16 @@ __metadata:
   linkType: hard
 
 "prettier-plugin-packagejson@npm:^3.0.2":
-  version: 3.0.2
-  resolution: "prettier-plugin-packagejson@npm:3.0.2"
+  version: 3.0.3
+  resolution: "prettier-plugin-packagejson@npm:3.0.3"
   dependencies:
-    sort-package-json: "npm:^3.6.0"
+    sort-package-json: "npm:^4.0.0"
   peerDependencies:
     prettier: ^3
   peerDependenciesMeta:
     prettier:
       optional: true
-  checksum: 10/45693ad53ab4b5d3f2d61f50194f110dfa31972c82b1c3f81988a03c373e2b8431ea9d773086aeb854115587b39a0525979adcafaad8b931aa753c5adb745409
+  checksum: 10/937371dcc5dec05dd0141e46255da76d009e50e7d2088c5668d507b7ba8f99242cb43e2ea39baa98e274999c26710b9a8500d81fef908b30e41ee054d3a03e47
   languageName: node
   linkType: hard
 
@@ -5520,9 +5520,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"sort-package-json@npm:^3.6.0":
-  version: 3.7.1
-  resolution: "sort-package-json@npm:3.7.1"
+"sort-package-json@npm:^4.0.0":
+  version: 4.1.0
+  resolution: "sort-package-json@npm:4.1.0"
   dependencies:
     detect-indent: "npm:^7.0.2"
     detect-newline: "npm:^4.0.1"
@@ -5533,7 +5533,7 @@ __metadata:
     tinyglobby: "npm:^0.2.15"
   bin:
     sort-package-json: cli.js
-  checksum: 10/f7349c02cbf5dee05ad26e6bea1ef9c63a9980007acf809c8d241431751825a7da2ab290618e965fb57798514607dc199e2dd791fb4a0a5003c349144aa36d16
+  checksum: 10/7b9cd0ed1a4cc373ff93d3ee49819ef60b6a91ecf1554b70b727376e1aed95f7001bf83be995581658cf6073937636ea572ae3cf15299d78ce9e57734190664a
   languageName: node
   linkType: hard
 
